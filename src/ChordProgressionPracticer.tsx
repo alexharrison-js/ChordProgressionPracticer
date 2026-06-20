@@ -1,680 +1,1167 @@
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 
-/* ---------------------------------------------------------------
-   THEORY ENGINE
-   --------------------------------------------------------------- */
+// ============================================================================
+// JAZZ STANDARDS DATA
+// ============================================================================
+// In production this should be fetched/imported from jazz_standards.json.
+// To keep this a single self-contained file as requested, we fetch it at
+// runtime if available at /jazz_standards.json, otherwise fall back to a
+// small embedded sample so the component still works standalone.
 
-const NOTE_NAMES = [
-  "C",
-  "C#",
-  "D",
-  "D#",
-  "E",
-  "F",
-  "F#",
-  "G",
-  "G#",
-  "A",
-  "A#",
-  "B",
+interface ChordDef {
+  root: string;
+  quality: string;
+  beats: number;
+}
+interface MeasureDef {
+  chords: ChordDef[];
+  spansBars?: number;
+}
+interface SectionDef {
+  repeat?: boolean;
+  measures: MeasureDef[];
+}
+interface SongDef {
+  title: string;
+  composer?: string;
+  key: string;
+  mode: "major" | "minor";
+  timeSignature: { numerator: number; denominator: number };
+  tempo: { bpm: number; source?: string };
+  verified?: boolean;
+  notes?: string;
+  form: string[];
+  sections: Record<string, SectionDef>;
+}
+
+const FALLBACK_SONGS: SongDef[] = [
+  {
+    title: "Autumn Leaves",
+    composer: "Joseph Kosma",
+    key: "Gm",
+    mode: "minor",
+    timeSignature: { numerator: 4, denominator: 4 },
+    tempo: { bpm: 130 },
+    form: ["A", "B"],
+    sections: {
+      A: {
+        repeat: true,
+        measures: [
+          { chords: [{ root: "C", quality: "-7", beats: 4 }] },
+          { chords: [{ root: "F", quality: "7", beats: 4 }] },
+          { chords: [{ root: "Bb", quality: "maj7", beats: 4 }] },
+          { chords: [{ root: "Eb", quality: "maj7", beats: 4 }] },
+          { chords: [{ root: "A", quality: "-7b5", beats: 4 }] },
+          { chords: [{ root: "D", quality: "7b9", beats: 4 }] },
+          { chords: [{ root: "G", quality: "-7", beats: 4 }] },
+          { chords: [{ root: "G", quality: "-7", beats: 4 }] },
+        ],
+      },
+      B: {
+        measures: [
+          { chords: [{ root: "A", quality: "-7b5", beats: 4 }] },
+          { chords: [{ root: "D", quality: "7b9", beats: 4 }] },
+          { chords: [{ root: "G", quality: "-7", beats: 4 }] },
+          { chords: [{ root: "G", quality: "-7", beats: 4 }] },
+          { chords: [{ root: "A", quality: "-7b5", beats: 4 }] },
+          { chords: [{ root: "D", quality: "7b9", beats: 4 }] },
+          {
+            chords: [
+              { root: "G", quality: "-7", beats: 2 },
+              { root: "C", quality: "7", beats: 2 },
+            ],
+          },
+          {
+            chords: [
+              { root: "F", quality: "maj7", beats: 2 },
+              { root: "A", quality: "-7b5", beats: 2 },
+            ],
+          },
+          { chords: [{ root: "D", quality: "7b9", beats: 4 }] },
+        ],
+      },
+    },
+  },
+  {
+    title: "My Funny Valentine",
+    composer: "Richard Rodgers",
+    key: "Cm",
+    mode: "minor",
+    timeSignature: { numerator: 4, denominator: 4 },
+    tempo: { bpm: 120 },
+    form: ["A", "A2", "B"],
+    sections: {
+      A: {
+        measures: [
+          { chords: [{ root: "C", quality: "-7", beats: 4 }] },
+          { chords: [{ root: "C", quality: "-6", beats: 4 }] },
+          { chords: [{ root: "C", quality: "-7", beats: 4 }] },
+          { chords: [{ root: "B", quality: "maj7", beats: 4 }] },
+          { chords: [{ root: "Bb", quality: "7#5", beats: 4 }] },
+          { chords: [{ root: "Eb", quality: "maj7", beats: 4 }] },
+          { chords: [{ root: "Ab", quality: "maj7", beats: 4 }] },
+          {
+            chords: [
+              { root: "D", quality: "-7b5", beats: 2 },
+              { root: "G", quality: "7b9", beats: 2 },
+            ],
+          },
+        ],
+      },
+      A2: {
+        measures: [
+          { chords: [{ root: "C", quality: "-7", beats: 4 }] },
+          { chords: [{ root: "C", quality: "-6", beats: 4 }] },
+          { chords: [{ root: "C", quality: "-7", beats: 4 }] },
+          { chords: [{ root: "B", quality: "maj7", beats: 4 }] },
+          { chords: [{ root: "Bb", quality: "7#5", beats: 4 }] },
+          { chords: [{ root: "Eb", quality: "maj7", beats: 4 }] },
+          { chords: [{ root: "F", quality: "-7", beats: 4 }] },
+          { chords: [{ root: "F", quality: "-7", beats: 4 }] },
+        ],
+      },
+      B: {
+        measures: [
+          { chords: [{ root: "C", quality: "-7", beats: 4 }] },
+          {
+            chords: [
+              { root: "G", quality: "-7b5", beats: 2 },
+              { root: "C", quality: "7b9", beats: 2 },
+            ],
+          },
+          { chords: [{ root: "F", quality: "-7", beats: 4 }] },
+          { chords: [{ root: "F", quality: "-7", beats: 4 }] },
+          { chords: [{ root: "C", quality: "-7", beats: 4 }] },
+          {
+            chords: [
+              { root: "D", quality: "-7b5", beats: 2 },
+              { root: "G", quality: "7b9", beats: 2 },
+            ],
+          },
+          { chords: [{ root: "C", quality: "-7", beats: 4 }] },
+          { chords: [{ root: "C", quality: "-7", beats: 4 }] },
+        ],
+      },
+    },
+  },
+  {
+    title: "Blue Monk",
+    composer: "Thelonious Monk",
+    key: "Bb",
+    mode: "major",
+    timeSignature: { numerator: 4, denominator: 4 },
+    tempo: { bpm: 130 },
+    form: ["A"],
+    sections: {
+      A: {
+        measures: [
+          { chords: [{ root: "Bb", quality: "7", beats: 4 }] },
+          { chords: [{ root: "Eb", quality: "7", beats: 4 }] },
+          { chords: [{ root: "Bb", quality: "7", beats: 4 }] },
+          { chords: [{ root: "Bb", quality: "7", beats: 4 }] },
+          { chords: [{ root: "Eb", quality: "7", beats: 4 }] },
+          { chords: [{ root: "Eb", quality: "7", beats: 4 }] },
+          { chords: [{ root: "Bb", quality: "7", beats: 4 }] },
+          { chords: [{ root: "Bb", quality: "7", beats: 4 }] },
+          { chords: [{ root: "F", quality: "7", beats: 4 }] },
+          { chords: [{ root: "Eb", quality: "7", beats: 4 }] },
+          {
+            chords: [
+              { root: "Bb", quality: "7", beats: 2 },
+              { root: "F", quality: "7", beats: 2 },
+            ],
+          },
+          { chords: [{ root: "Bb", quality: "7", beats: 4 }] },
+        ],
+      },
+    },
+  },
 ];
 
-// Scale-degree -> semitone offset from root, including alterations.
-const DEGREE_SEMITONES = {
-  1: 0,
-  b2: 1,
-  2: 2,
-  "#2": 3,
-  b3: 3,
-  3: 4,
-  4: 5,
-  "#4": 6,
-  b5: 6,
-  5: 7,
-  "#5": 8,
-  b6: 8,
-  6: 9,
-  bb7: 9,
-  b7: 10,
-  7: 11,
-  b9: 13,
-  9: 14,
-  "#9": 15,
-  11: 17,
-  "#11": 18,
-  b13: 20,
-  13: 21,
+// ============================================================================
+// MUSIC THEORY UTILITIES
+// ============================================================================
+
+const NOTE_TO_SEMITONE: Record<string, number> = {
+  C: 0, "B#": 0,
+  "C#": 1, Db: 1,
+  D: 2,
+  "D#": 3, Eb: 3,
+  E: 4, Fb: 4,
+  F: 5, "E#": 5,
+  "F#": 6, Gb: 6,
+  G: 7,
+  "G#": 8, Ab: 8,
+  A: 9,
+  "A#": 10, Bb: 10,
+  B: 11, Cb: 11,
 };
 
-// Chord formulas as the degrees present (already designed to come out
-// monotonically ascending in semitone order above the root).
-const CHORD_TYPES = [
-  { id: "maj", label: "maj", degrees: [1, 3, 5] },
-  { id: "min", label: "min", degrees: [1, "b3", 5] },
-  { id: "dim", label: "dim", degrees: [1, "b3", "b5"] },
-  { id: "aug", label: "aug", degrees: [1, 3, "#5"] },
-  { id: "maj7", label: "maj7", degrees: [1, 3, 5, 7] },
-  { id: "min7", label: "min7", degrees: [1, "b3", 5, "b7"] },
-  { id: "dom7", label: "7", degrees: [1, 3, 5, "b7"] },
-  { id: "min7b5", label: "min7b5", degrees: [1, "b3", "b5", "b7"] },
-  { id: "dim7", label: "dim7", degrees: [1, "b3", "b5", "bb7"] },
-  { id: "minMaj7", label: "min(maj7)", degrees: [1, "b3", 5, 7] },
-  { id: "maj9", label: "maj9", degrees: [1, 3, 5, 7, 9] },
-  { id: "min9", label: "min9", degrees: [1, "b3", 5, "b7", 9] },
-  { id: "dom9", label: "9", degrees: [1, 3, 5, "b7", 9] },
-  { id: "dom7sharp9", label: "7#9", degrees: [1, 3, 5, "b7", "#9"] },
-  { id: "dom7flat9", label: "7b9", degrees: [1, 3, 5, "b7", "b9"] },
-  { id: "maj11", label: "maj11", degrees: [1, 3, 5, 7, 9, 11] },
-  { id: "min11", label: "min11", degrees: [1, "b3", 5, "b7", 9, 11] },
-  { id: "dom11", label: "11", degrees: [1, 3, 5, "b7", 9, 11] },
-  { id: "dom7sharp11", label: "7#11", degrees: [1, 3, 5, "b7", "#11"] },
-  { id: "domsharp11", label: "dom7#11", degrees: [1, 3, 5, "b7", 9, "#11"] },
-  { id: "maj13", label: "maj13", degrees: [1, 3, 5, 7, 9, 13] },
-  { id: "min13", label: "min13", degrees: [1, "b3", 5, "b7", 9, 13] },
-  { id: "dom13", label: "13", degrees: [1, 3, 5, "b7", 9, 13] },
-  {
-    id: "dom13sharp11",
-    label: "13#11",
-    degrees: [1, 3, 5, "b7", 9, "#11", 13],
-  },
-  { id: "altDom", label: "7alt", degrees: [1, 3, "b5", "b7", "b9", "#9"] },
-  { id: "sus4", label: "sus4", degrees: [1, 4, 5] },
-  { id: "sus2", label: "sus2", degrees: [1, 2, 5] },
-  { id: "dom7sus4", label: "7sus4", degrees: [1, 4, 5, "b7"] },
-  { id: "add9", label: "add9", degrees: [1, 3, 5, 9] },
-  { id: "six", label: "6", degrees: [1, 3, 5, 6] },
-  { id: "min6", label: "min6", degrees: [1, "b3", 5, 6] },
+const SEMITONE_TO_SHARP = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+const SEMITONE_TO_FLAT = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
+
+// Keys whose conventional spelling uses flats rather than sharps.
+const FLAT_KEY_ROOTS = new Set(["F", "Bb", "Eb", "Ab", "Db", "Gb", "Cb"]);
+
+const ALL_KEYS = [
+  "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B",
+];
+const ALL_MINOR_KEYS = ALL_KEYS.map((k) => `${k}m`);
+
+function keyRoot(key: string): string {
+  return key.endsWith("m") && key.length > 1 ? key.slice(0, -1) : key;
+}
+
+function keySemitone(key: string): number {
+  const r = keyRoot(key);
+  return NOTE_TO_SEMITONE[r] ?? 0;
+}
+
+function useFlatsForKey(key: string): boolean {
+  return FLAT_KEY_ROOTS.has(keyRoot(key));
+}
+
+function transposeRoot(root: string, semitoneShift: number, targetKey: string): string {
+  const base = NOTE_TO_SEMITONE[root];
+  if (base === undefined) return root;
+  const newSemitone = (((base + semitoneShift) % 12) + 12) % 12;
+  return useFlatsForKey(targetKey) ? SEMITONE_TO_FLAT[newSemitone] : SEMITONE_TO_SHARP[newSemitone];
+}
+
+// Chord quality -> interval set (semitones from root). Covers the qualities
+// present in jazz_standards.json. Falls back to dominant 7 for anything unknown.
+const QUALITY_INTERVALS: Record<string, number[]> = {
+  "maj7": [0, 4, 7, 11],
+  "maj9": [0, 4, 7, 11, 14],
+  "6": [0, 4, 7, 9],
+  "-6": [0, 3, 7, 9],
+  "-7": [0, 3, 7, 10],
+  "-9": [0, 3, 7, 10, 14],
+  "-7b5": [0, 3, 6, 10],
+  "-": [0, 3, 7],
+  "7": [0, 4, 7, 10],
+  "7b9": [0, 4, 7, 10, 13],
+  "7#11": [0, 4, 7, 10, 6],
+  "9#11": [0, 4, 7, 10, 14, 6],
+  "7#5": [0, 4, 8, 10],
+  "9": [0, 4, 7, 10, 14],
+  "sus": [0, 5, 7, 10],
+  "7sus": [0, 5, 7, 10],
+  "7alt": [0, 4, 6, 10, 1],
+  "dim7": [0, 3, 6, 9],
+  "o7": [0, 3, 6, 9],
+  "o": [0, 3, 6],
+};
+
+function qualityIntervals(quality: string): number[] {
+  return QUALITY_INTERVALS[quality] || QUALITY_INTERVALS["7"];
+}
+
+// Friendly display label for a chord quality (used in the chart).
+function qualityLabel(quality: string): string {
+  const MAP: Record<string, string> = {
+    "maj7": "maj7", "maj9": "maj9", "6": "6", "-6": "m6", "-7": "m7",
+    "-9": "m9", "-7b5": "m7\u266D5", "-": "m", "7": "7", "7b9": "7\u266D9",
+    "7#11": "7#11", "9#11": "9#11", "7#5": "7#5", "9": "9", "sus": "sus",
+    "7sus": "7sus", "7alt": "7alt", "dim7": "dim7", "o7": "dim7", "o": "dim",
+  };
+  return MAP[quality] ?? quality;
+}
+
+// ============================================================================
+// VOICING GENERATION
+// ============================================================================
+
+type VoicingStyle = "root" | "closed" | "open" | "block" | "drop2";
+
+function rootMidi(root: string, octave: number): number {
+  return (octave + 1) * 12 + (NOTE_TO_SEMITONE[root] ?? 0);
+}
+
+// Find the MIDI note with the given pitch class closest to a reference MIDI note.
+function closestOctaveNote(pitchClass: number, referenceMidi: number): number {
+  const base = referenceMidi - (((referenceMidi % 12) + 12) % 12) + pitchClass;
+  let best = base;
+  for (const cand of [base - 12, base, base + 12]) {
+    if (Math.abs(cand - referenceMidi) < Math.abs(best - referenceMidi)) best = cand;
+  }
+  return best;
+}
+
+interface VoicedChord {
+  notes: number[]; // MIDI note numbers
+  bass: number; // MIDI note for the bass voice (played separately, lower octave)
+}
+
+// Generates a voicing for a chord, optionally voice-led from the previous voicing.
+function generateVoicing(
+  root: string,
+  quality: string,
+  style: VoicingStyle,
+  prevVoicing: VoicedChord | null,
+  centerMidi: number = 65
+): VoicedChord {
+  const rootPc = NOTE_TO_SEMITONE[root] ?? 0;
+  const pitchClasses = [...new Set(qualityIntervals(quality).map((i) => ((i + rootPc) % 12 + 12) % 12))];
+  const bass = rootMidi(root, 2);
+
+  // Reference point to voice-lead against: average of the previous chord's notes,
+  // or a comfortable center register if this is the first chord.
+  const reference =
+    prevVoicing && prevVoicing.notes.length
+      ? prevVoicing.notes.reduce((a, b) => a + b, 0) / prevVoicing.notes.length
+      : centerMidi;
+
+  if (style === "root") {
+    // Root-position stack built straight up from the bass note's octave.
+    const base = rootMidi(root, 3);
+    const notes = qualityIntervals(quality).map((i) => base + (i % 12 === i ? i : i % 12));
+    return { notes: notes.sort((a, b) => a - b), bass };
+  }
+
+  if (style === "closed") {
+    const notes = pitchClasses
+      .map((pc) => closestOctaveNote(pc, reference))
+      .sort((a, b) => a - b);
+    return { notes, bass };
+  }
+
+  if (style === "drop2") {
+    const closed = pitchClasses
+      .map((pc) => closestOctaveNote(pc, reference))
+      .sort((a, b) => a - b);
+    if (closed.length < 3) return { notes: closed, bass };
+    const idx = closed.length - 2;
+    const dropped = [...closed];
+    dropped[idx] -= 12;
+    return { notes: dropped.sort((a, b) => a - b), bass };
+  }
+
+  if (style === "open") {
+    // Spread voicing: alternate notes pushed up/down an octave from closed position
+    // for a wider, more open sound (roughly: keep 1 & 3 low, spread 2 & 4 up).
+    const closed = pitchClasses
+      .map((pc) => closestOctaveNote(pc, reference))
+      .sort((a, b) => a - b);
+    const spread = closed.map((n, i) => (i % 2 === 1 ? n + 12 : n));
+    return { notes: spread.sort((a, b) => a - b), bass };
+  }
+
+  if (style === "block") {
+    // Block/"shout" style: closed voicing doubled with the root an octave below,
+    // giving a fuller, more percussive chord.
+    const closed = pitchClasses
+      .map((pc) => closestOctaveNote(pc, reference))
+      .sort((a, b) => a - b);
+    const lowRoot = closestOctaveNote(rootPc, reference - 12);
+    return { notes: [lowRoot, ...closed].sort((a, b) => a - b), bass };
+  }
+
+  // fallback
+  return { notes: pitchClasses.map((pc) => closestOctaveNote(pc, reference)), bass };
+}
+
+const VOICING_STYLES: { id: VoicingStyle; label: string }[] = [
+  { id: "closed", label: "Closed" },
+  { id: "open", label: "Open" },
+  { id: "drop2", label: "Drop 2" },
+  { id: "block", label: "Block" },
+  { id: "root", label: "Root position" },
 ];
 
-function degreeLabel(d) {
-  return String(d);
+// ============================================================================
+// SONG FLATTENING — turn form + sections into one linear list of {chord, beats}
+// ============================================================================
+
+interface FlatChord {
+  root: string;
+  quality: string;
+  beats: number; // beats this chord occupies within its bar
+  isNewBar: boolean; // true if this chord starts a new bar (for chart rendering & barlines)
+  barIndex: number; // 0-based bar index within the whole flattened song
+  sectionLabel: string;
 }
 
-function midiFromRootAndDegree(rootMidi, degree) {
-  const semis = DEGREE_SEMITONES[degree];
-  return rootMidi + semis;
-}
-
-function noteNameFromMidi(midi) {
-  const name = NOTE_NAMES[((midi % 12) + 12) % 12];
-  const octave = Math.floor(midi / 12) - 1;
-  return { name, octave, full: `${name}${octave}` };
-}
-
-function freqFromMidi(midi) {
-  return 440 * Math.pow(2, (midi - 69) / 12);
-}
-
-/* ---------------------------------------------------------------
-   VOICING ENGINE
-   Randomizes how the chord tones are distributed across octaves —
-   close (root position, tight stack), inverted (a non-root tone
-   becomes the lowest voice), spread (alternating tones lifted an
-   octave for an open sound), and drop2 (the second-from-top voice
-   dropped an octave, a classic jazz piano voicing). The target
-   tone's identity is tracked by its original formula index, so the
-   "answer" always reflects whatever octave it actually sounds at
-   in that particular voicing.
-   --------------------------------------------------------------- */
-
-const VOICING_STYLES = ["close", "inverted", "spread", "drop2"];
-
-function buildVoicedChord(degrees, rootMidi, style, rng) {
-  const base = degrees.map((d, i) => ({
-    midi: midiFromRootAndDegree(rootMidi, d),
-    i,
-  }));
-  let tagged = base.map((t) => ({ ...t }));
-  const n = tagged.length;
-
-  if (style === "inverted" && n > 1) {
-    const inversion = 1 + Math.floor(rng() * (n - 1)); // how many low tones flip up an octave
-    tagged = tagged.map((t, idx) =>
-      idx < inversion ? { ...t, midi: t.midi + 12 } : t,
-    );
-  } else if (style === "spread" && n > 2) {
-    tagged = tagged.map((t, idx) =>
-      idx % 2 === 1 ? { ...t, midi: t.midi + 12 } : t,
-    );
-  } else if (style === "drop2" && n > 2) {
-    const idx = n - 2;
-    tagged[idx] = { ...tagged[idx], midi: tagged[idx].midi - 12 };
-  }
-  // "close" falls through unchanged: straightforward root-position stack.
-
-  tagged.sort((a, b) => a.midi - b.midi);
-  return tagged; // each entry: { midi, i } where i is the index into `degrees`
-}
-
-/* ---------------------------------------------------------------
-   AUDIO ENGINE
-   --------------------------------------------------------------- */
-
-function useAudioEngine() {
-  const ctxRef = useRef(null);
-  const sustainedRef = useRef(null);
-  const getCtx = useCallback(() => {
-    if (!ctxRef.current) {
-      ctxRef.current = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    if (ctxRef.current.state === "suspended") {
-      ctxRef.current.resume();
-    }
-    return ctxRef.current;
-  }, []);
-  const stopSustainedChord = useCallback(
-    (release = 0.8) => {
-      const ctx = getCtx();
-      const active = sustainedRef.current;
-
-      if (!active) return;
-
-      const now = ctx.currentTime;
-
-      active.master.gain.cancelScheduledValues(now);
-      active.master.gain.setValueAtTime(
-        Math.max(active.master.gain.value || 0.0001, 0.0001),
-        now,
-      );
-
-      active.master.gain.exponentialRampToValueAtTime(0.0001, now + release);
-
-      active.oscillators.forEach((osc) => {
-        try {
-          osc.stop(now + release + 0.05);
-        } catch {}
-      });
-
-      sustainedRef.current = null;
-    },
-    [getCtx],
-  );
-  const playSustainedChord = useCallback(
-    (midiNotes, { gain = 0.16 } = {}) => {
-      const ctx = getCtx();
-
-      stopSustainedChord();
-
-      const master = ctx.createGain();
-      master.connect(ctx.destination);
-
-      const oscillators = [];
-
-      master.gain.setValueAtTime(0, ctx.currentTime);
-      master.gain.linearRampToValueAtTime(gain, ctx.currentTime + 0.015);
-
-      master.gain.exponentialRampToValueAtTime(
-        gain * 0.55,
-        ctx.currentTime + 0.25,
-      );
-
-      midiNotes.forEach((midi) => {
-        const freq = freqFromMidi(midi);
-
-        const partials = [
-          { ratio: 1, type: "sine", level: 1.0 },
-          { ratio: 1, type: "triangle", level: 0.35, detune: 4 },
-          { ratio: 2, type: "sine", level: 0.12 },
-          { ratio: 3, type: "sine", level: 0.05 },
-        ];
-
-        partials.forEach((p) => {
-          const osc = ctx.createOscillator();
-
-          osc.type = p.type;
-          osc.frequency.value = freq * p.ratio;
-
-          if (p.detune) {
-            osc.detune.value = p.detune;
-          }
-
-          const g = ctx.createGain();
-          g.gain.value = p.level;
-
-          osc.connect(g);
-          g.connect(master);
-
-          osc.start();
-
-          oscillators.push(osc);
+function flattenSection(label: string, section: SectionDef, numerator: number): FlatChord[] {
+  const out: FlatChord[] = [];
+  let bar = 0;
+  for (const measure of section.measures) {
+    const span = measure.spansBars ?? 1;
+    for (let s = 0; s < span; s++) {
+      measure.chords.forEach((c, idx) => {
+        out.push({
+          root: c.root,
+          quality: c.quality,
+          beats: c.beats,
+          isNewBar: idx === 0,
+          barIndex: bar,
+          sectionLabel: label,
         });
       });
+      bar += 1;
+    }
+  }
+  return out;
+}
 
-      sustainedRef.current = {
-        oscillators,
-        master,
-      };
-    },
-    [getCtx, stopSustainedChord],
-  );
+function flattenSong(song: SongDef): FlatChord[] {
+  const num = song.timeSignature.numerator;
+  const out: FlatChord[] = [];
+  let barOffset = 0;
 
-  // Warm, slightly electric-piano-ish tone: a few detuned sine/triangle
-  // partials with a soft envelope. Easy on the ear for long sessions.
-  const playNote = useCallback(
-    (midi, { duration = 1.4, delay = 0, gain = 0.22, pan = 0 } = {}) => {
-      const ctx = getCtx();
-      const startAt = ctx.currentTime + delay;
-      const freq = freqFromMidi(midi);
-
-      const master = ctx.createGain();
-      master.gain.value = 0;
-      const panner = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
-      if (panner) {
-        panner.pan.value = pan;
-        master.connect(panner);
-        panner.connect(ctx.destination);
-      } else {
-        master.connect(ctx.destination);
-      }
-
-      const partials = [
-        { ratio: 1, type: "sine", level: 1.0 },
-        { ratio: 1, type: "triangle", level: 0.35, detune: 4 },
-        { ratio: 2, type: "sine", level: 0.12 },
-        { ratio: 3, type: "sine", level: 0.05 },
-      ];
-
-      partials.forEach((p) => {
-        const osc = ctx.createOscillator();
-        osc.type = p.type;
-        osc.frequency.value = freq * p.ratio;
-        if (p.detune) osc.detune.value = p.detune;
-        const g = ctx.createGain();
-        g.gain.value = p.level;
-        osc.connect(g);
-        g.connect(master);
-        osc.start(startAt);
-        osc.stop(startAt + duration + 0.1);
-      });
-
-      const peak = gain;
-      master.gain.setValueAtTime(0, startAt);
-      master.gain.linearRampToValueAtTime(peak, startAt + 0.015);
-      master.gain.exponentialRampToValueAtTime(peak * 0.55, startAt + 0.25);
-      master.gain.setValueAtTime(
-        peak * 0.55,
-        startAt + Math.max(0.25, duration - 0.35),
-      );
-      master.gain.exponentialRampToValueAtTime(0.0001, startAt + duration);
-
-      return startAt + duration;
-    },
-    [getCtx],
-  );
-
-  const playChord = useCallback(
-    (midiNotes, { stagger = 0, ...opts } = {}) => {
-      let t = 0;
-      midiNotes.forEach((midi) => {
-        playNote(midi, { ...opts, delay: t });
-        t += stagger;
-      });
-    },
-    [playNote],
-  );
-
-  return {
-    playNote,
-    playChord,
-    playSustainedChord,
-    stopSustainedChord,
-    getCtx,
+  const appendSection = (label: string) => {
+    const section = song.sections[label];
+    if (!section) return;
+    const flat = flattenSection(label, section, num);
+    const repeated = section.repeat ? [...flat, ...flat] : flat;
+    const reindexed = repeated.map((c) => ({ ...c, barIndex: c.barIndex + barOffset }));
+    out.push(...reindexed);
+    const barsInSection = section.measures.reduce((sum, m) => sum + (m.spansBars ?? 1), 0);
+    barOffset += section.repeat ? barsInSection * 2 : barsInSection;
   };
+
+  // Lead-in: Intro, if present and not already explicitly listed in form.
+  if (song.sections["Intro"] && !song.form.includes("Intro")) {
+    appendSection("Intro");
+  }
+
+  song.form.forEach((label) => appendSection(label));
+
+  // Tail: Coda / Tag, if present and not already explicitly listed in form.
+  if (song.sections["Coda"] && !song.form.includes("Coda")) {
+    appendSection("Coda");
+  }
+  if (song.sections["Tag"] && !song.form.includes("Tag")) {
+    appendSection("Tag");
+  }
+
+  return out;
 }
 
-/* ---------------------------------------------------------------
-   UI PRIMITIVES
-   --------------------------------------------------------------- */
+// ============================================================================
+// AUDIO ENGINE
+// ============================================================================
 
-function Knob({ label, value, onChange, options }) {
+type Subdivision = "quarter" | "eighth" | "sixteenth";
+type Articulation = "block" | "staccato";
+
+class AudioEngine {
+  ctx: AudioContext | null = null;
+  masterGain: GainNode | null = null;
+  metroGain: GainNode | null = null;
+  chordGain: GainNode | null = null;
+
+  ensureContext() {
+    if (!this.ctx) {
+      const Ctx = (window.AudioContext || (window as any).webkitAudioContext) as typeof AudioContext;
+      this.ctx = new Ctx();
+      this.masterGain = this.ctx.createGain();
+      this.masterGain.gain.value = 1;
+      this.masterGain.connect(this.ctx.destination);
+
+      this.metroGain = this.ctx.createGain();
+      this.metroGain.gain.value = 0.5;
+      this.metroGain.connect(this.masterGain);
+
+      this.chordGain = this.ctx.createGain();
+      this.chordGain.gain.value = 0.8;
+      this.chordGain.connect(this.masterGain);
+    }
+    if (this.ctx.state === "suspended") this.ctx.resume();
+    return this.ctx;
+  }
+
+  setMetroVolume(v: number) {
+    if (this.metroGain) this.metroGain.gain.value = v;
+  }
+
+  playClick(time: number, accent: boolean) {
+    const ctx = this.ensureContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "square";
+    osc.frequency.value = accent ? 1500 : 1000;
+    gain.gain.setValueAtTime(0.0001, time);
+    gain.gain.exponentialRampToValueAtTime(accent ? 1 : 0.6, time + 0.002);
+    gain.gain.exponentialRampToValueAtTime(0.0001, time + 0.035);
+    osc.connect(gain);
+    gain.connect(this.metroGain!);
+    osc.start(time);
+    osc.stop(time + 0.04);
+  }
+
+  playChord(midiNotes: number[], bassNote: number, time: number, duration: number) {
+    const ctx = this.ensureContext();
+    const attack = 0.015;
+    const release = Math.min(0.25, duration * 0.3);
+    const sustainEnd = Math.max(time + attack, time + duration - release);
+
+    const playVoice = (midi: number, gainScale: number, dest: GainNode) => {
+      const freq = 440 * Math.pow(2, (midi - 69) / 12);
+      const osc = ctx.createOscillator();
+      osc.type = "triangle";
+      osc.frequency.value = freq;
+      const osc2 = ctx.createOscillator();
+      osc2.type = "sine";
+      osc2.frequency.value = freq * 2;
+      const g = ctx.createGain();
+      const g2 = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, time);
+      g.gain.linearRampToValueAtTime(0.22 * gainScale, time + attack);
+      g.gain.setValueAtTime(0.22 * gainScale, sustainEnd);
+      g.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+      g2.gain.setValueAtTime(0.0001, time);
+      g2.gain.linearRampToValueAtTime(0.05 * gainScale, time + attack);
+      g2.gain.setValueAtTime(0.05 * gainScale, sustainEnd);
+      g2.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+      osc.connect(g);
+      g.connect(dest);
+      osc2.connect(g2);
+      g2.connect(dest);
+      osc.start(time);
+      osc.stop(time + duration + 0.05);
+      osc2.start(time);
+      osc2.stop(time + duration + 0.05);
+    };
+
+    midiNotes.forEach((n) => playVoice(n, 1, this.chordGain!));
+    playVoice(bassNote, 1.3, this.chordGain!);
+  }
+}
+
+// ============================================================================
+// SCHEDULING — beat-by-beat playback synced to a lookahead clock
+// ============================================================================
+
+interface ScheduledBeat {
+  time: number;
+  barIndex: number;
+  beatInBar: number; // 0-based
+  isChordStart: boolean;
+  chord?: FlatChord;
+  voicing?: VoicedChord;
+}
+
+const LOOKAHEAD_MS = 25;
+const SCHEDULE_AHEAD_S = 0.15;
+
+// ============================================================================
+// UI HELPER: chord symbol display
+// ============================================================================
+
+function ChordSymbol({ root, quality }: { root: string; quality: string }) {
   return (
-    <div className="flex flex-col gap-1.5">
-      <span className="text-[10px] uppercase tracking-[0.18em] text-amber-200/50 font-medium">
-        {label}
-      </span>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="bg-[#1a1410] border border-amber-900/40 text-amber-50 text-sm rounded-md px-2.5 py-2
-                   focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-500/50
-                   cursor-pointer appearance-none"
-        style={{ minWidth: 0 }}
-      >
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
-    </div>
+    <span className="whitespace-nowrap">
+      {root}
+      <span className="text-[0.85em]">{qualityLabel(quality)}</span>
+    </span>
   );
 }
-
-/* ---------------------------------------------------------------
-   MAIN APP
-   --------------------------------------------------------------- */
 
 export default function ChordProgressionPracticer() {
-  const { playChord, playNote, playSustainedChord, stopSustainedChord } =
-    useAudioEngine();
+  // ---- Library state ----
+  const [songs, setSongs] = useState<SongDef[]>(FALLBACK_SONGS);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
-  const [rootName, setRootName] = useState("random");
-  const [octave, setOctave] = useState(3);
-  const [chordTypeId, setChordTypeId] = useState("domsharp11");
-  const [voicingStyle, setVoicingStyle] = useState("random");
-  const [mode, setMode] = useState("ascending");
-  const [revealed, setRevealed] = useState(false);
-  const [round, setRound] = useState(null);
-  const [streak, setStreak] = useState(0);
-  const [sustainChord, setSustainChord] = useState(false);
-  const chordType = CHORD_TYPES.find((c) => c.id === chordTypeId);
+  useEffect(() => {
+    fetch("./jazz_standards.json")
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("not found"))))
+      .then((data: SongDef[]) => {
+        if (Array.isArray(data) && data.length) setSongs(data);
+      })
+      .catch(() => {
+        setLoadError("Using a small built-in song list \u2014 add jazz_standards.json to load the full set.");
+      });
+  }, []);
 
-  const newRound = useCallback(() => {
-    stopSustainedChord();
-    const degrees = chordType.degrees;
-    const targetIdx = Math.floor(Math.random() * degrees.length);
-    const targetDegree = degrees[targetIdx];
+  // ---- Search / selection state ----
+  const [query, setQuery] = useState("");
+  const [showResults, setShowResults] = useState(false);
+  const [selectedSong, setSelectedSong] = useState<SongDef | null>(null);
 
-    const actualRootName =
-      rootName === "random"
-        ? NOTE_NAMES[Math.floor(Math.random() * NOTE_NAMES.length)]
-        : rootName;
-    const rootMidi = NOTE_NAMES.indexOf(actualRootName) + (octave + 1) * 12;
+  const searchResults = useMemo(() => {
+    if (!query.trim()) return [];
+    const q = query.trim().toLowerCase();
+    return songs.filter((s) => s.title.toLowerCase().includes(q)).slice(0, 8);
+  }, [songs, query]);
 
-    const actualStyle =
-      voicingStyle === "random"
-        ? VOICING_STYLES[Math.floor(Math.random() * VOICING_STYLES.length)]
-        : voicingStyle;
+  // ---- Practice settings (reset to song defaults on song change) ----
+  const [selectedKey, setSelectedKey] = useState<string>("C");
+  const [bpm, setBpm] = useState<number>(120);
+  const [voicingStyle, setVoicingStyle] = useState<VoicingStyle>("closed");
+  const [articulation, setArticulation] = useState<Articulation>("block");
+  const [showChart, setShowChart] = useState(true);
 
-    const tagged = buildVoicedChord(
-      degrees,
-      rootMidi,
-      actualStyle,
-      Math.random,
-    );
-    const voicing = tagged.map((t) => t.midi);
-    const targetMidi = tagged.find((t) => t.i === targetIdx).midi;
+  // ---- Metronome settings ----
+  const [metronomeOn, setMetronomeOn] = useState(true);
+  const [subdivision, setSubdivision] = useState<Subdivision>("quarter");
+  const [accentMode, setAccentMode] = useState<"downbeat" | "all">("downbeat");
+  const [metroVolume, setMetroVolume] = useState(0.5);
 
-    setRound({
-      chordType,
-      rootMidi,
-      rootName: actualRootName,
-      voicingStyleUsed: actualStyle,
-      degrees,
-      voicing,
-      targetIdx,
-      targetDegree,
-      targetMidi,
+  // ---- Playback state ----
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentBar, setCurrentBar] = useState<number>(-1);
+
+  const engineRef = useRef<AudioEngine | null>(null);
+  if (!engineRef.current) engineRef.current = new AudioEngine();
+
+  const schedulerTimerRef = useRef<number | null>(null);
+  const nextBeatTimeRef = useRef(0);
+  const beatCursorRef = useRef(0); // index into flattened-beats timeline
+  const lastVoicingRef = useRef<VoicedChord | null>(null);
+  const playStartedAtBarRef = useRef(0);
+  const visibleBarRef = useRef<number>(-1);
+  const rafRef = useRef<number | null>(null);
+  const beatTimelineRef = useRef<{ time: number; barIndex: number; beatInBar: number }[]>([]);
+
+  function selectSong(song: SongDef) {
+    setSelectedSong(song);
+    setSelectedKey(song.key);
+    setBpm(song.tempo.bpm);
+    setQuery(song.title);
+    setShowResults(false);
+    stopPlayback();
+  }
+
+  function pickRandomKey() {
+    if (!selectedSong) return;
+    const pool = selectedSong.mode === "minor" ? ALL_MINOR_KEYS : ALL_KEYS;
+    const choice = pool[Math.floor(Math.random() * pool.length)];
+    setSelectedKey(choice);
+  }
+
+  // ---- Transposed + flattened chart for the selected song & key ----
+  const flatChords: FlatChord[] = useMemo(() => {
+    if (!selectedSong) return [];
+    return flattenSong(selectedSong);
+  }, [selectedSong]);
+
+  const semitoneShift = useMemo(() => {
+    if (!selectedSong) return 0;
+    return keySemitone(selectedKey) - keySemitone(selectedSong.key);
+  }, [selectedSong, selectedKey]);
+
+  const transposedChords: FlatChord[] = useMemo(() => {
+    return flatChords.map((c) => ({
+      ...c,
+      root: transposeRoot(c.root, semitoneShift, selectedKey),
+    }));
+  }, [flatChords, semitoneShift, selectedKey]);
+
+  // Group transposed chords into bars (for the chart and for the player)
+  const bars: FlatChord[][] = useMemo(() => {
+    const out: FlatChord[][] = [];
+    transposedChords.forEach((c) => {
+      if (!out[c.barIndex]) out[c.barIndex] = [];
+      out[c.barIndex].push(c);
     });
-    setRevealed(false);
-  }, [chordType, rootName, octave, voicingStyle, stopSustainedChord]);
+    return out;
+  }, [transposedChords]);
+
+  const totalBars = bars.length;
+
+  // ---- Stop playback & cleanup ----
+  const stopPlayback = useCallback(() => {
+    setIsPlaying(false);
+    setCurrentBar(-1);
+    if (schedulerTimerRef.current !== null) {
+      window.clearInterval(schedulerTimerRef.current);
+      schedulerTimerRef.current = null;
+    }
+    if (rafRef.current !== null) {
+      window.cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+    lastVoicingRef.current = null;
+  }, []);
 
   useEffect(() => {
-    newRound();
+    // stopping playback whenever the song, key or bpm changes avoids desync
+    stopPlayback();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chordTypeId, rootName, octave, voicingStyle]);
-  useEffect(() => {
-    return () => {
-      stopSustainedChord();
+  }, [selectedSong, selectedKey]);
+
+  // ---- Build a one-pass-through beat timeline (chord onset beats only, for scheduling) ----
+  function buildBeatEvents() {
+    const num = selectedSong!.timeSignature.numerator;
+    const secPerBeat = 60 / bpm;
+    type Event = { beatOffset: number; barIndex: number; beatInBar: number; chord?: FlatChord; isChordStart: boolean };
+    const events: Event[] = [];
+
+    let runningBeat = 0;
+    let lastBar = -1;
+    let beatInBarCursor = 0;
+
+    transposedChords.forEach((c) => {
+      if (c.barIndex !== lastBar) {
+        beatInBarCursor = 0;
+        lastBar = c.barIndex;
+      }
+      events.push({
+        beatOffset: runningBeat,
+        barIndex: c.barIndex,
+        beatInBar: beatInBarCursor,
+        chord: c,
+        isChordStart: true,
+      });
+      runningBeat += c.beats;
+      beatInBarCursor += c.beats;
+    });
+
+    // Also add "click only" beats for every integer beat (for metronome ticks
+    // that fall on beats which aren't chord onsets, e.g. beats 2-4 of a
+    // whole-bar chord).
+    const totalBeats = Math.ceil(runningBeat);
+    const onsetBeats = new Set(events.map((e) => Math.round(e.beatOffset * 1000)));
+    for (let b = 0; b < totalBeats; b++) {
+      const key = Math.round(b * 1000);
+      if (!onsetBeats.has(key)) {
+        // find which bar/beat-in-bar this integer beat belongs to by scanning chords
+        const owner = transposedChords.find(
+          (c, i) =>
+            b >= 0 &&
+            events.some(
+              (e) => Math.abs(e.beatOffset - Math.floor(b)) < 0.001 === false
+            )
+        );
+        events.push({ beatOffset: b, barIndex: -1, beatInBar: b % num, isChordStart: false });
+      }
+    }
+
+    events.sort((a, b) => a.beatOffset - b.beatOffset);
+    return { events, secPerBeat, totalBeats };
+  }
+
+  // ---- Scheduler ----
+  function startPlayback() {
+    if (!selectedSong || bars.length === 0) return;
+    const engine = engineRef.current!;
+    const ctx = engine.ensureContext();
+    engine.setMetroVolume(metronomeOn ? metroVolume : 0);
+
+    const num = selectedSong.timeSignature.numerator;
+    const secPerBeat = 60 / bpm;
+
+    // Flatten to a clean per-bar, per-beat structure for reliable scheduling.
+    // For each bar, figure out the beat onsets (chord starts) within it.
+    type BeatSlot = { beatInBar: number; chord: FlatChord | null };
+    const barSlots: BeatSlot[][] = bars.map((barChords) => {
+      const slots: BeatSlot[] = [];
+      let cursor = 0;
+      barChords.forEach((c) => {
+        slots.push({ beatInBar: cursor, chord: c });
+        cursor += c.beats;
+      });
+      return slots;
+    });
+
+    lastVoicingRef.current = null;
+    setIsPlaying(true);
+
+    const startTime = ctx.currentTime + 0.1;
+    let barIdx = 0;
+    let withinBarSlotIdx = 0;
+    let nextEventTime = startTime;
+
+    // subdivision ticks per beat for metronome
+    const subDivCount = subdivision === "quarter" ? 1 : subdivision === "eighth" ? 2 : 4;
+
+    // Precompute a flat queue of {time, barIndex, beatInBar, chord|null, isClick, accent}
+    type QueueItem = {
+      time: number;
+      barIndex: number;
+      beatInBar: number;
+      chord: FlatChord | null;
+      isDownbeat: boolean;
     };
-  }, [stopSustainedChord]);
-  const handlePlayChord = () => {
-    if (!round) return;
+    const queue: QueueItem[] = [];
 
-    if (sustainChord) {
-      playSustainedChord(round.voicing, {
-        gain: 0.16,
-      });
-      return;
+    let t = startTime;
+    barSlots.forEach((slots, bIdx) => {
+      for (let beat = 0; beat < num; beat++) {
+        const slot = slots.find((s) => Math.abs(s.beatInBar - beat) < 0.001);
+        for (let sub = 0; sub < subDivCount; sub++) {
+          const subTime = t + (sub * secPerBeat) / subDivCount;
+          queue.push({
+            time: subTime,
+            barIndex: bIdx,
+            beatInBar: beat,
+            chord: sub === 0 ? slot?.chord ?? null : null,
+            isDownbeat: beat === 0 && sub === 0,
+          });
+        }
+        t += secPerBeat;
+      }
+    });
+
+    // Schedule audio for every item up front (Web Audio handles future-scheduled
+    // precisely; we don't need a rolling lookahead for a bounded song length).
+    let voicing: VoicedChord | null = null;
+    queue.forEach((item) => {
+      if (metronomeOn) {
+        const isBeatTick = subDivCount === 1 || true; // tick on every queued subdivision per settings below
+        const shouldTick =
+          accentMode === "all" || item.beatInBar === 0 ? true : false;
+        // For "downbeat" mode: only click on beat 1 of each bar (sub === 0 handled by isDownbeat for accenting,
+        // but if accentMode is downbeat-only we still want quarter-note pulse just accented on beat 1 — simplest
+        // faithful interpretation of the spec: "only beat one or all beats/subbeats".
+        if (accentMode === "all") {
+          engine.playClick(item.time, item.isDownbeat);
+        } else if (item.isDownbeat) {
+          engine.playClick(item.time, true);
+        }
+      }
+      if (item.chord) {
+        voicing = generateVoicing(item.chord.root, item.chord.quality, voicingStyle, voicing);
+        const barDurationBeats = item.chord.beats;
+        const fullDuration = barDurationBeats * secPerBeat;
+        const duration = articulation === "staccato" ? Math.min(fullDuration * 0.45, fullDuration) : fullDuration;
+        engine.playChord(voicing.notes, voicing.bass, item.time, duration);
+      }
+    });
+
+    const songEndTime = t;
+
+    // Visual sync via RAF, comparing ctx.currentTime to queue timestamps.
+    let queueIdx = 0;
+    function tick() {
+      const now = ctx.currentTime;
+      while (queueIdx < queue.length && queue[queueIdx].time <= now) {
+        if (queue[queueIdx].chord || queue[queueIdx].beatInBar === 0) {
+          setCurrentBar(queue[queueIdx].barIndex);
+        }
+        queueIdx++;
+      }
+      if (now >= songEndTime + 0.2) {
+        stopPlayback();
+        return;
+      }
+      rafRef.current = window.requestAnimationFrame(tick);
     }
+    rafRef.current = window.requestAnimationFrame(tick);
+  }
 
-    if (mode === "block") {
-      playChord(round.voicing, {
-        stagger: 0,
-        duration: 2.2,
-        gain: 0.16,
-      });
+  function togglePlay() {
+    if (isPlaying) {
+      stopPlayback();
     } else {
-      playChord(round.voicing, {
-        stagger: 0.34,
-        duration: 1.1,
-        gain: 0.22,
-      });
+      startPlayback();
     }
-  };
+  }
 
-  const handleReveal = () => {
-    if (!round) return;
-    setRevealed(true);
-    playNote(round.targetMidi, { duration: 1.6, gain: 0.26 });
-  };
+  useEffect(() => {
+    if (isPlaying && engineRef.current) {
+      engineRef.current.setMetroVolume(metronomeOn ? metroVolume : 0);
+    }
+  }, [metronomeOn, metroVolume, isPlaying]);
 
-  const handleNext = (wasCorrectSelfReport) => {
-    if (wasCorrectSelfReport === true) setStreak((s) => s + 1);
-    if (wasCorrectSelfReport === false) setStreak(0);
-    newRound();
-  };
+  useEffect(() => stopPlayback, [stopPlayback]);
 
-  const targetNoteName = round ? noteNameFromMidi(round.targetMidi) : null;
+  // ---- Key options for the dropdown, matching the song's mode ----
+  const keyOptions = selectedSong?.mode === "minor" ? ALL_MINOR_KEYS : ALL_KEYS;
 
-  const ordinalSuffix = (d) => {
-    const s = String(d);
-    if (s.endsWith("11") || s.endsWith("12") || s.endsWith("13")) return "th";
-    if (s.endsWith("1")) return "st";
-    if (s.endsWith("2")) return "nd";
-    if (s.endsWith("3")) return "rd";
-    return "th";
-  };
+  // ============================================================================
+  // RENDER
+  // ============================================================================
 
   return (
-    <div
-      className="min-h-screen w-full bg-[#120d0a] text-amber-50 flex items-start justify-center px-4 py-8 sm:py-12"
-      style={{ fontFamily: "'Iowan Old Style', Georgia, serif" }}
-    >
-      <div className="w-full max-w-md">
-        <div className="mb-7 text-center">
-          <div className="text-[11px] uppercase tracking-[0.3em] text-amber-400/60 mb-1.5">
-            By Ear
+    <div className="min-h-screen w-full bg-[#1C1B1A] text-[#F2EDE4] font-sans">
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+        .font-display { font-family: 'Fraunces', serif; }
+        .font-sans { font-family: 'Inter', system-ui, sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .bar-glow {
+          box-shadow: 0 0 0 2px #D4A24C, 0 0 18px rgba(212,162,76,0.35);
+        }
+        @media (prefers-reduced-motion: reduce) {
+          * { transition: none !important; animation: none !important; }
+        }
+        input[type="range"] {
+          -webkit-appearance: none;
+          height: 4px;
+          border-radius: 2px;
+          background: #4a4744;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          width: 14px; height: 14px; border-radius: 50%;
+          background: #D4A24C; cursor: pointer;
+          margin-top: -5px;
+        }
+        input[type="range"]::-moz-range-thumb {
+          width: 14px; height: 14px; border-radius: 50%;
+          background: #D4A24C; cursor: pointer; border: none;
+        }
+      `}</style>
+
+      {/* ============== HEADER / SEARCH ============== */}
+      <header className="border-b border-[#3A3836] px-4 sm:px-6 py-4 sticky top-0 bg-[#1C1B1A]/95 backdrop-blur z-30">
+        <div className="max-w-5xl mx-auto flex flex-col gap-3">
+          <div className="flex items-baseline justify-between gap-3">
+            <h1 className="font-display text-2xl sm:text-3xl tracking-tight text-[#F2EDE4]">
+              Chord<span className="text-[#D4A24C]">Shed</span>
+            </h1>
+            <span className="text-xs font-mono text-[#8A8580] hidden sm:inline">practice changes, any key, any tempo</span>
           </div>
-          <h1 className="text-2xl font-semibold text-amber-50 tracking-tight">
-            Chord Tone Trainer
-          </h1>
-          <p className="text-sm text-amber-200/40 mt-1">
-            Hear the chord. Name the degree. Check the pitch.
-          </p>
-        </div>
 
-        <div className="flex items-center justify-center gap-2 mb-6">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div
-              key={i}
-              className={`h-1 w-5 rounded-full transition-colors duration-300 ${
-                i < streak % 8 && streak > 0
-                  ? "bg-amber-400"
-                  : "bg-amber-900/40"
-              }`}
-            />
-          ))}
-          <span className="text-xs text-amber-300/50 ml-2 tabular-nums">
-            {streak}
-          </span>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3 mb-3">
-          <Knob
-            label="Root"
-            value={rootName}
-            onChange={setRootName}
-            options={[
-              { value: "random", label: "Random" },
-              ...NOTE_NAMES.map((n) => ({ value: n, label: n })),
-            ]}
-          />
-          <Knob
-            label="Octave"
-            value={octave}
-            onChange={(v) => setOctave(Number(v))}
-            options={[2, 3, 4, 5].map((o) => ({ value: o, label: `C${o}+` }))}
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-3 mb-5">
-          <Knob
-            label="Voicing"
-            value={voicingStyle}
-            onChange={setVoicingStyle}
-            options={[
-              { value: "random", label: "Random" },
-              { value: "close", label: "Close" },
-              { value: "inverted", label: "Inverted" },
-              { value: "spread", label: "Spread" },
-              { value: "drop2", label: "Drop 2" },
-            ]}
-          />
-          <Knob
-            label="Playback"
-            value={mode}
-            onChange={setMode}
-            options={[
-              { value: "ascending", label: "Arpeggio" },
-              { value: "block", label: "Block" },
-            ]}
-          />
-        </div>
-        <div className="mb-5 flex items-center">
-          <label className="flex items-center gap-2 text-sm text-amber-200/70 cursor-pointer">
+          <div className="relative">
             <input
-              type="checkbox"
-              checked={sustainChord}
+              type="text"
+              value={query}
               onChange={(e) => {
-                setSustainChord(e.target.checked);
-
-                if (!e.target.checked) {
-                  stopSustainedChord();
-                }
+                setQuery(e.target.value);
+                setShowResults(true);
               }}
-              className="accent-amber-500"
+              onFocus={() => setShowResults(true)}
+              placeholder="Search a jazz standard\u2026"
+              className="w-full bg-[#272524] border border-[#4a4744] focus:border-[#D4A24C] focus:outline-none rounded-lg px-4 py-3 text-[#F2EDE4] placeholder-[#8A8580] text-base"
+              aria-label="Search jazz standards"
             />
-            Sustain chord
-          </label>
-        </div>
-
-        <div className="mb-2">
-          <Knob
-            label="Chord type"
-            value={chordTypeId}
-            onChange={setChordTypeId}
-            options={CHORD_TYPES.map((c) => ({
-              value: c.id,
-              label: rootName === "random" ? c.label : `${rootName}${c.label}`,
-            }))}
-          />
-        </div>
-
-        <div className="relative rounded-2xl border border-amber-900/30 bg-gradient-to-b from-[#1c140f] to-[#160f0b] p-6 sm:p-7 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
-          <div className="text-center mb-6">
-            <div className="text-[10px] uppercase tracking-[0.25em] text-amber-400/50 mb-1">
-              Now sounding
-            </div>
-            <div className="text-3xl font-semibold text-amber-50">
-              {round ? round.rootName : rootName}
-              {chordType.label}
-            </div>
-            {round && (
-              <div className="text-[11px] text-amber-200/30 mt-1 capitalize">
-                {round.voicingStyleUsed} voicing
-              </div>
+            {showResults && searchResults.length > 0 && (
+              <ul className="absolute mt-1 w-full bg-[#272524] border border-[#4a4744] rounded-lg overflow-hidden shadow-2xl z-40 max-h-72 overflow-y-auto">
+                {searchResults.map((s) => (
+                  <li key={s.title}>
+                    <button
+                      onClick={() => selectSong(s)}
+                      className="w-full text-left px-4 py-2.5 hover:bg-[#3A3836] transition-colors flex items-baseline justify-between gap-2"
+                    >
+                      <span className="text-[#F2EDE4]">{s.title}</span>
+                      <span className="text-xs font-mono text-[#8A8580] shrink-0">
+                        {s.key} \u00B7 {s.tempo.bpm} bpm
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
-
-          <button
-            onClick={handlePlayChord}
-            className="w-full py-3.5 rounded-xl bg-amber-500 text-[#1a1208] font-semibold text-sm
-                       tracking-wide hover:bg-amber-400 active:scale-[0.98] transition-all duration-150
-                       shadow-[0_4px_14px_rgba(245,158,11,0.25)]"
-          >
-            ▸ Play the chord
-          </button>
-
-          <div className="mt-7 text-center">
-            <div className="text-[10px] uppercase tracking-[0.25em] text-amber-400/50 mb-2">
-              Your turn
-            </div>
-            <div className="text-xl text-amber-50">
-              Play or sing the{" "}
-              <span className="font-semibold text-amber-300">
-                {round ? degreeLabel(round.targetDegree) : "…"}
-              </span>
-              {round ? ordinalSuffix(round.targetDegree) : ""}
-            </div>
-            <div className="text-xs text-amber-200/35 mt-1.5">
-              by ear, before checking
-            </div>
-          </div>
-
-          <div className="mt-6 flex gap-3">
-            <button
-              onClick={handleReveal}
-              className="flex-1 py-3 rounded-xl border border-amber-500/40 text-amber-200 font-medium text-sm
-                         hover:bg-amber-500/10 active:scale-[0.98] transition-all duration-150"
-            >
-              ♪ Check my answer
-            </button>
-          </div>
-
-          {revealed && targetNoteName && (
-            <div className="mt-5 text-center animate-[fadeIn_0.3s_ease-out]">
-              <div className="inline-flex flex-col items-center gap-2 px-5 py-3 rounded-xl bg-amber-950/40 border border-amber-800/30">
-                <span className="text-xs text-amber-200/50">
-                  That was the {degreeLabel(round.targetDegree)} — concert pitch
-                </span>
-                <span className="text-2xl font-semibold text-amber-300">
-                  {targetNoteName.name}
-                  <span className="text-amber-200/40 text-base ml-0.5">
-                    {targetNoteName.octave}
-                  </span>
-                </span>
-              </div>
-
-              <div className="flex gap-3 mt-5">
-                <button
-                  onClick={() => handleNext(false)}
-                  className="flex-1 py-2.5 rounded-lg border border-amber-900/40 text-amber-200/60 text-sm
-                             hover:bg-amber-900/20 active:scale-[0.98] transition-all"
-                >
-                  Missed it
-                </button>
-                <button
-                  onClick={() => handleNext(true)}
-                  className="flex-1 py-2.5 rounded-lg bg-amber-600/90 text-[#1a1208] font-medium text-sm
-                             hover:bg-amber-500 active:scale-[0.98] transition-all"
-                >
-                  Got it →
-                </button>
-              </div>
-            </div>
-          )}
-
-          {!revealed && (
-            <button
-              onClick={newRound}
-              className="w-full mt-5 py-2 text-xs text-amber-200/30 hover:text-amber-200/60 transition-colors"
-            >
-              skip — new chord
-            </button>
+          {loadError && (
+            <p className="text-xs text-[#C99A56] font-mono">{loadError}</p>
           )}
         </div>
+      </header>
 
-        <p className="text-center text-[11px] text-amber-200/25 mt-6 leading-relaxed">
-          Degrees are counted against the chord's own formula — the requested
-          tone is always a real chord member, including altered 9ths, 11ths and
-          13ths.
-        </p>
-      </div>
+      {!selectedSong ? (
+        <div className="max-w-5xl mx-auto px-6 py-20 text-center text-[#8A8580]">
+          <p className="font-display text-xl text-[#F2EDE4] mb-2">Pick a standard to get started.</p>
+          <p className="text-sm">Search above, or try one of: {songs.slice(0, 5).map((s) => s.title).join(", ")}</p>
+        </div>
+      ) : (
+        <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6 flex flex-col gap-6">
+          {/* ============== SONG TITLE + KEY/TEMPO CONTROLS ============== */}
+          <section className="flex flex-col gap-4">
+            <div>
+              <h2 className="font-display text-3xl sm:text-4xl text-[#F2EDE4]">
+                {selectedSong.title}{" "}
+                <span className="text-[#D4A24C] text-2xl sm:text-3xl">({selectedSong.key})</span>
+              </h2>
+              {selectedSong.composer && (
+                <p className="text-sm text-[#8A8580] mt-1">{selectedSong.composer}</p>
+              )}
+            </div>
 
-      <style>{`
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
-      `}</style>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {/* Key selector */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">Key</label>
+                <div className="flex gap-1.5">
+                  <select
+                    value={selectedKey}
+                    onChange={(e) => setSelectedKey(e.target.value)}
+                    className="flex-1 bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
+                  >
+                    {keyOptions.map((k) => (
+                      <option key={k} value={k}>
+                        {k}
+                        {k === selectedSong.key ? " (orig.)" : ""}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={pickRandomKey}
+                    title="Random key"
+                    className="px-2.5 py-2 bg-[#3A3836] hover:bg-[#4a4744] rounded-md text-sm transition-colors"
+                  >
+                    \u{1F3B2}
+                  </button>
+                </div>
+              </div>
+
+              {/* Tempo */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">Tempo (bpm)</label>
+                <input
+                  type="number"
+                  min={30}
+                  max={400}
+                  value={bpm}
+                  onChange={(e) => setBpm(Math.max(30, Math.min(400, Number(e.target.value) || 0)))}
+                  className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none font-mono"
+                />
+              </div>
+
+              {/* Voicing style */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">Voicing</label>
+                <select
+                  value={voicingStyle}
+                  onChange={(e) => setVoicingStyle(e.target.value as VoicingStyle)}
+                  className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
+                >
+                  {VOICING_STYLES.map((v) => (
+                    <option key={v.id} value={v.id}>
+                      {v.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Articulation */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">Articulation</label>
+                <select
+                  value={articulation}
+                  onChange={(e) => setArticulation(e.target.value as Articulation)}
+                  className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
+                >
+                  <option value="block">Block (sustain)</option>
+                  <option value="staccato">Staccato</option>
+                </select>
+              </div>
+            </div>
+          </section>
+
+          {/* ============== METRONOME PANEL ============== */}
+          <section className="bg-[#252320] border border-[#3A3836] rounded-xl p-4 flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <h3 className="font-mono text-xs uppercase tracking-wide text-[#8A8580]">Metronome</h3>
+              <button
+                role="switch"
+                aria-checked={metronomeOn}
+                onClick={() => setMetronomeOn((v) => !v)}
+                className={`w-11 h-6 rounded-full transition-colors relative ${
+                  metronomeOn ? "bg-[#5B7065]" : "bg-[#4a4744]"
+                }`}
+              >
+                <span
+                  className={`absolute top-0.5 left-0.5 w-5 h-5 bg-[#F2EDE4] rounded-full transition-transform ${
+                    metronomeOn ? "translate-x-5" : ""
+                  }`}
+                />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs text-[#8A8580]">Subdivision</label>
+                <div className="flex bg-[#1C1B1A] rounded-md p-1 gap-1">
+                  {(["quarter", "eighth", "sixteenth"] as Subdivision[]).map((sd) => (
+                    <button
+                      key={sd}
+                      onClick={() => setSubdivision(sd)}
+                      className={`flex-1 text-xs py-1.5 rounded-md transition-colors capitalize ${
+                        subdivision === sd ? "bg-[#D4A24C] text-[#1C1B1A] font-semibold" : "text-[#8A8580] hover:text-[#F2EDE4]"
+                      }`}
+                    >
+                      {sd === "quarter" ? "\u2669" : sd === "eighth" ? "\u266A" : "\u266C"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs text-[#8A8580]">Click on</label>
+                <div className="flex bg-[#1C1B1A] rounded-md p-1 gap-1">
+                  <button
+                    onClick={() => setAccentMode("downbeat")}
+                    className={`flex-1 text-xs py-1.5 rounded-md transition-colors ${
+                      accentMode === "downbeat" ? "bg-[#D4A24C] text-[#1C1B1A] font-semibold" : "text-[#8A8580] hover:text-[#F2EDE4]"
+                    }`}
+                  >
+                    Beat 1 only
+                  </button>
+                  <button
+                    onClick={() => setAccentMode("all")}
+                    className={`flex-1 text-xs py-1.5 rounded-md transition-colors ${
+                      accentMode === "all" ? "bg-[#D4A24C] text-[#1C1B1A] font-semibold" : "text-[#8A8580] hover:text-[#F2EDE4]"
+                    }`}
+                  >
+                    All beats
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1.5 col-span-2 sm:col-span-1">
+                <label className="text-xs text-[#8A8580]">Volume</label>
+                <input
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.01}
+                  value={metroVolume}
+                  onChange={(e) => setMetroVolume(Number(e.target.value))}
+                  className="w-full mt-2"
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* ============== CHORD CHART ============== */}
+          <section className="flex flex-col gap-2">
+            <div className="flex items-center justify-between">
+              <h3 className="font-mono text-xs uppercase tracking-wide text-[#8A8580]">Chord chart</h3>
+              <button
+                onClick={() => setShowChart((v) => !v)}
+                className="text-xs font-mono text-[#8A8580] hover:text-[#D4A24C] transition-colors underline"
+              >
+                {showChart ? "Hide (play by ear)" : "Show chart"}
+              </button>
+            </div>
+
+            {showChart && (
+              <div className="bg-[#252320] border border-[#3A3836] rounded-xl p-3 sm:p-5">
+                <div className="grid gap-1.5" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))" }}>
+                  {bars.map((barChords, i) => (
+                    <div
+                      key={i}
+                      className={`font-mono text-sm sm:text-base border border-[#4a4744] rounded-md px-2.5 py-2.5 flex items-center justify-center gap-1.5 flex-wrap transition-all duration-150 ${
+                        currentBar === i ? "bar-glow bg-[#3A3836]" : "bg-[#1f1d1b]"
+                      }`}
+                    >
+                      {barChords.map((c, j) => (
+                        <React.Fragment key={j}>
+                          {j > 0 && <span className="text-[#8A8580]">\u00B7</span>}
+                          <ChordSymbol root={c.root} quality={c.quality} />
+                        </React.Fragment>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
+        </main>
+      )}
+
+      {/* ============== TRANSPORT (fixed) ============== */}
+      {selectedSong && (
+        <div className="sticky bottom-0 border-t border-[#3A3836] bg-[#1C1B1A]/95 backdrop-blur px-4 sm:px-6 py-4">
+          <div className="max-w-5xl mx-auto flex items-center justify-center gap-4">
+            <button
+              onClick={togglePlay}
+              className={`px-8 py-3 rounded-full font-semibold text-base transition-colors flex items-center gap-2 ${
+                isPlaying ? "bg-[#8B3A3A] hover:bg-[#9c4444] text-[#F2EDE4]" : "bg-[#D4A24C] hover:bg-[#e0b15e] text-[#1C1B1A]"
+              }`}
+            >
+              {isPlaying ? "\u25A0 Stop" : "\u25B6 Play changes"}
+            </button>
+            <span className="text-xs font-mono text-[#8A8580]">
+              {bpm} bpm \u00B7 {selectedSong.timeSignature.numerator}/{selectedSong.timeSignature.denominator}
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
