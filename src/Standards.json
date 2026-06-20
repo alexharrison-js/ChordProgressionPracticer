@@ -1,0 +1,588 @@
+{
+  "standards": [
+    {
+      "id": "all_the_things_you_are",
+      "title": "All the Things You Are",
+      "metadata": {
+        "canonicalKey": { "rootPc": 8, "displayName": "Ab", "mode": "major" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "range": [120, 200] },
+        "form": ["A", "A", "B", "A"],
+        "type": "standard",
+        "concepts": ["tonicization", "cycle_of_fifths"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "anthropology",
+      "title": "Anthropology",
+      "metadata": {
+        "canonicalKey": { "rootPc": 0, "displayName": "C", "mode": "major" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "realBook": 240, "range": [200, 300] },
+        "form": ["A", "A", "B", "A"],
+        "type": "rhythm_changes",
+        "concepts": ["bebop", "rhythm_changes"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "autumn_leaves",
+      "title": "Autumn Leaves",
+      "metadata": {
+        "canonicalKey": { "rootPc": 7, "displayName": "G", "mode": "minor" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "realBook": 140, "range": [100, 220] },
+        "form": ["A", "A", "B", "A"],
+        "type": "standard_ballad",
+        "concepts": ["ii_v_i", "minor_tonicization"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "blue_bossa",
+      "title": "Blue Bossa",
+      "metadata": {
+        "canonicalKey": { "rootPc": 1, "displayName": "Db", "mode": "major" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "realBook": 130, "range": [100, 180] },
+        "form": ["A", "A", "B", "A"],
+        "type": "bossa_nova",
+        "concepts": ["latin_jazz", "minor_ii_v"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "blue_monk",
+      "title": "Blue Monk",
+      "metadata": {
+        "canonicalKey": { "rootPc": 0, "displayName": "C", "mode": "blues" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "realBook": 120, "range": [80, 160] },
+        "form": ["12_bar_blues"],
+        "type": "monk_blues",
+        "concepts": ["blues", "monk_harmony"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "body_and_soul",
+      "title": "Body and Soul",
+      "metadata": {
+        "canonicalKey": { "rootPc": 3, "displayName": "Eb", "mode": "major" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "range": [60, 120] },
+        "form": ["A", "A", "B", "A"],
+        "type": "ballad",
+        "concepts": ["chromaticism", "ballad_harmony"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "but_not_for_me",
+      "title": "But Not for Me",
+      "metadata": {
+        "canonicalKey": { "rootPc": 7, "displayName": "G", "mode": "major" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "range": [120, 200] },
+        "form": ["A", "A", "B", "A"],
+        "type": "standard",
+        "concepts": ["great_american_songbook"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "cherokee",
+      "title": "Cherokee",
+      "metadata": {
+        "canonicalKey": { "rootPc": 5, "displayName": "F", "mode": "major" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "realBook": 280, "range": [200, 320] },
+        "form": ["A", "A", "B", "A"],
+        "type": "rhythm_changes_derivative",
+        "concepts": ["bebop", "high_tempo_changes"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "confirmation",
+      "title": "Confirmation",
+      "metadata": {
+        "canonicalKey": { "rootPc": 0, "displayName": "C", "mode": "major" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "realBook": 240, "range": [180, 300] },
+        "form": ["A", "A", "B", "A"],
+        "type": "bebop",
+        "concepts": ["bebop_language", "chromatic_enclosures"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "doxy",
+      "title": "Doxy",
+      "metadata": {
+        "canonicalKey": { "rootPc": 7, "displayName": "G", "mode": "major" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "range": [120, 180] },
+        "form": ["A", "A", "B", "A"],
+        "type": "jazz_standard",
+        "concepts": ["modal_mix"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "footprints",
+      "title": "Footprints",
+      "metadata": {
+        "canonicalKey": { "rootPc": 0, "displayName": "C", "mode": "minor_modal" },
+        "timeSignature": { "numerator": 6, "denominator": 4 },
+        "tempo": { "realBook": 170, "range": [120, 200] },
+        "form": ["A", "A", "B", "A"],
+        "type": "modal_jazz",
+        "concepts": ["minor_modal", "wayne_shorter"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "four",
+      "title": "Four",
+      "metadata": {
+        "canonicalKey": { "rootPc": 0, "displayName": "C", "mode": "major" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "realBook": 220, "range": [180, 280] },
+        "form": ["A", "A", "B", "A"],
+        "type": "bebop",
+        "concepts": ["rhythm_changes_variation"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "giant_steps",
+      "title": "Giant Steps",
+      "metadata": {
+        "canonicalKey": { "rootPc": 11, "displayName": "B", "mode": "major" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "realBook": 260, "range": [200, 320] },
+        "form": ["A", "A", "B", "A"],
+        "type": "coltrane_changes",
+        "concepts": ["coltrane_changes", "rapid_modulation"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "i_cant_get_started",
+      "title": "I Can't Get Started",
+      "metadata": {
+        "canonicalKey": { "rootPc": 2, "displayName": "D", "mode": "major" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "range": [60, 120] },
+        "form": ["A", "A", "B", "A"],
+        "type": "ballad",
+        "concepts": ["standard_ballad"]
+      },
+      "charts": {}
+    },
+        {
+      "id": "a_night_in_tunisia",
+      "title": "A Night in Tunisia",
+      "metadata": {
+        "canonicalKey": { "rootPc": 2, "displayName": "D", "mode": "minor" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "realBook": 220, "range": [160, 300] },
+        "form": ["A", "A", "B", "A"],
+        "type": "bebop_latin",
+        "concepts": ["phrygian_color", "dominant_motion"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "anthropology",
+      "title": "Anthropology",
+      "metadata": {
+        "canonicalKey": { "rootPc": 0, "displayName": "C", "mode": "major" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "realBook": 240, "range": [200, 320] },
+        "form": ["A", "A", "B", "A"],
+        "type": "rhythm_changes",
+        "concepts": ["bebop", "rhythm_changes"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "autumn_leaves",
+      "title": "Autumn Leaves",
+      "metadata": {
+        "canonicalKey": { "rootPc": 7, "displayName": "G", "mode": "minor" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "realBook": 140, "range": [100, 220] },
+        "form": ["A", "A", "B", "A"],
+        "type": "standard_ballad",
+        "concepts": ["ii_v_i", "minor_tonicization"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "donna_lee",
+      "title": "Donna Lee",
+      "metadata": {
+        "canonicalKey": { "rootPc": 0, "displayName": "C", "mode": "major" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "realBook": 260, "range": [200, 320] },
+        "form": ["A", "A", "B", "A"],
+        "type": "bebop",
+        "concepts": ["charlie_parker", "fast_changes"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "giant_steps",
+      "title": "Giant Steps",
+      "metadata": {
+        "canonicalKey": { "rootPc": 11, "displayName": "B", "mode": "major" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "realBook": 260, "range": [200, 320] },
+        "form": ["A", "A", "B", "A"],
+        "type": "coltrane_changes",
+        "concepts": ["coltrane_changes", "rapid_modulation"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "isotope",
+      "title": "Isotope",
+      "metadata": {
+        "canonicalKey": { "rootPc": 5, "displayName": "F", "mode": "minor" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "range": [140, 220] },
+        "form": ["A", "A", "B", "A"],
+        "type": "modern_jazz",
+        "concepts": ["wayne_shorter_adjacent", "post_bop_language"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "i_mean_you",
+      "title": "I Mean You",
+      "metadata": {
+        "canonicalKey": { "rootPc": 0, "displayName": "C", "mode": "major" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "realBook": 200, "range": [160, 260] },
+        "form": ["A", "A", "B", "A"],
+        "type": "thelonious_monk",
+        "concepts": ["monk_harmony", "angular_melody"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "just_friends",
+      "title": "Just Friends",
+      "metadata": {
+        "canonicalKey": { "rootPc": 0, "displayName": "C", "mode": "major" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "realBook": 200, "range": [140, 260] },
+        "form": ["A", "A", "B", "A"],
+        "type": "standard",
+        "concepts": ["cycle_of_fifths", "bebop_standard"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "ladybird",
+      "title": "Lady Bird",
+      "metadata": {
+        "canonicalKey": { "rootPc": 0, "displayName": "C", "mode": "major" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "range": [160, 240] },
+        "form": ["A", "A", "B", "A"],
+        "type": "tadd_dameron",
+        "concepts": ["tritone_subs", "cycle_of_fifths"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "mr_pc",
+      "title": "Mr. P.C.",
+      "metadata": {
+        "canonicalKey": { "rootPc": 0, "displayName": "C", "mode": "minor" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "realBook": 240, "range": [180, 300] },
+        "form": ["A", "A", "B", "A"],
+        "type": "coltrane_blues",
+        "concepts": ["minor_blues", "modal_dominant_motion"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "oleo",
+      "title": "Oleo",
+      "metadata": {
+        "canonicalKey": { "rootPc": 0, "displayName": "C", "mode": "major" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "realBook": 250, "range": [200, 320] },
+        "form": ["A", "A", "B", "A"],
+        "type": "rhythm_changes",
+        "concepts": ["swing_bebop", "rhythm_changes"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "ornithology",
+      "title": "Ornithology",
+      "metadata": {
+        "canonicalKey": { "rootPc": 0, "displayName": "C", "mode": "major" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "realBook": 240, "range": [180, 320] },
+        "form": ["A", "A", "B", "A"],
+        "type": "bebop",
+        "concepts": ["charlie_parker", "bebop_language"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "rhythm_changes",
+      "title": "Rhythm Changes",
+      "metadata": {
+        "canonicalKey": { "rootPc": 0, "displayName": "C", "mode": "major" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "realBook": 260, "range": [180, 320] },
+        "form": ["A", "A", "B", "A"],
+        "type": "harmonic_template",
+        "concepts": ["bridge_cycle_of_dominants", "bebop_foundation"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "stella_by_starlight",
+      "title": "Stella by Starlight",
+      "metadata": {
+        "canonicalKey": { "rootPc": 7, "displayName": "G", "mode": "minor" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "range": [80, 160] },
+        "form": ["A", "A", "B", "A"],
+        "type": "advanced_standard",
+        "concepts": ["chromatic_harmony", "substitutions"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "solar",
+      "title": "Solar",
+      "metadata": {
+        "canonicalKey": { "rootPc": 0, "displayName": "C", "mode": "minor" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "range": [120, 200] },
+        "form": ["A", "A", "B", "A"],
+        "type": "modern_standard",
+        "concepts": ["miles_davis", "modal_tension"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "so_far_so_good",
+      "title": "So Far So Good",
+      "metadata": {
+        "canonicalKey": { "rootPc": 2, "displayName": "D", "mode": "major" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "range": [160, 240] },
+        "form": ["A", "A", "B", "A"],
+        "type": "bebop_standard",
+        "concepts": ["bebop_changes"]
+      },
+      "charts": {}
+    },
+        {
+      "id": "all_blues",
+      "title": "All Blues",
+      "metadata": {
+        "canonicalKey": { "rootPc": 5, "displayName": "F", "mode": "mixolydian" },
+        "timeSignature": { "numerator": 6, "denominator": 4 },
+        "tempo": { "realBook": 120, "range": [80, 160] },
+        "form": ["12_bar_blues"],
+        "type": "modal_blues",
+        "concepts": ["miles_davis", "modal_jazz", "static_harmony"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "footprints",
+      "title": "Footprints",
+      "metadata": {
+        "canonicalKey": { "rootPc": 0, "displayName": "C", "mode": "minor_modal" },
+        "timeSignature": { "numerator": 6, "denominator": 4 },
+        "tempo": { "realBook": 170, "range": [120, 200] },
+        "form": ["A", "A", "B", "A"],
+        "type": "wayne_shorter",
+        "concepts": ["modal_interchange", "minor_dorian"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "impressions",
+      "title": "Impressions",
+      "metadata": {
+        "canonicalKey": { "rootPc": 0, "displayName": "C", "mode": "minor_modal" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "realBook": 240, "range": [180, 320] },
+        "form": ["A", "A", "B", "A"],
+        "type": "modal",
+        "concepts": ["so_what_variation", "dorian_vamp"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "maiden_voyage",
+      "title": "Maiden Voyage",
+      "metadata": {
+        "canonicalKey": { "rootPc": 0, "displayName": "C", "mode": "modal" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "realBook": 140, "range": [100, 180] },
+        "form": ["A", "A", "A", "A"],
+        "type": "herbie_hancock_modal",
+        "concepts": ["quartal_harmony", "static_vamps"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "so_what",
+      "title": "So What",
+      "metadata": {
+        "canonicalKey": { "rootPc": 0, "displayName": "D", "mode": "dorian" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "realBook": 140, "range": [100, 180] },
+        "form": ["A", "A", "B", "A"],
+        "type": "modal_jazz",
+        "concepts": ["dorian_vamp", "miles_davis"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "take_five",
+      "title": "Take Five",
+      "metadata": {
+        "canonicalKey": { "rootPc": 9, "displayName": "A", "mode": "minor" },
+        "timeSignature": { "numerator": 5, "denominator": 4 },
+        "tempo": { "realBook": 170, "range": [120, 220] },
+        "form": ["A", "A", "B", "A"],
+        "type": "odd_meter",
+        "concepts": ["brubeck", "5_4_groove"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "round_midnight",
+      "title": "'Round Midnight",
+      "metadata": {
+        "canonicalKey": { "rootPc": 0, "displayName": "C", "mode": "minor" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "realBook": 60, "range": [40, 100] },
+        "form": ["A", "A", "B", "A"],
+        "type": "monk_ballad",
+        "concepts": ["chromatic_voice_leading", "monk_harmony"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "st_thomas",
+      "title": "St. Thomas",
+      "metadata": {
+        "canonicalKey": { "rootPc": 0, "displayName": "C", "mode": "major" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "realBook": 200, "range": [160, 240] },
+        "form": ["A", "A", "B", "A"],
+        "type": "calypso_jazz",
+        "concepts": ["sonny_rollins", "latin_rhythm"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "stolen_moments",
+      "title": "Stolen Moments",
+      "metadata": {
+        "canonicalKey": { "rootPc": 0, "displayName": "C", "mode": "minor_modal" },
+        "timeSignature": { "numerator": 3, "denominator": 4 },
+        "tempo": { "realBook": 120, "range": [80, 160] },
+        "form": ["A", "A", "B", "A"],
+        "type": "oliver_nelson",
+        "concepts": ["minor_vamps", "modern_jazz"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "wave",
+      "title": "Wave",
+      "metadata": {
+        "canonicalKey": { "rootPc": 0, "displayName": "C", "mode": "major" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "realBook": 140, "range": [100, 180] },
+        "form": ["A", "A", "B", "A"],
+        "type": "bossa_nova",
+        "concepts": ["jobim", "latin_jazz"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "without_a_song",
+      "title": "Without a Song",
+      "metadata": {
+        "canonicalKey": { "rootPc": 7, "displayName": "G", "mode": "major" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "range": [100, 160] },
+        "form": ["A", "A", "B", "A"],
+        "type": "ballad_standard",
+        "concepts": ["great_american_songbook"]
+      },
+      "charts": {}
+    },
+
+    {
+      "id": "you_and_the_night_and_the_music",
+      "title": "You and the Night and the Music",
+      "metadata": {
+        "canonicalKey": { "rootPc": 7, "displayName": "G", "mode": "minor" },
+        "timeSignature": { "numerator": 4, "denominator": 4 },
+        "tempo": { "realBook": 220, "range": [160, 300] },
+        "form": ["A", "A", "B", "A"],
+        "type": "up_tempo_standard",
+        "concepts": ["cycle_of_fifths", "bebop_energy"]
+      },
+      "charts": {}
+    },
+    

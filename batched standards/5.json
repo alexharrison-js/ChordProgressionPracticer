@@ -1,0 +1,2388 @@
+[
+  {
+    "title": "I'll Never Smile Again",
+    "composer": "Ruth Lowe",
+    "key": "Eb",
+    "mode": "major",
+    "timeSignature": {
+      "numerator": 4,
+      "denominator": 4
+    },
+    "tempo": {
+      "bpm": 120,
+      "source": "default estimate"
+    },
+    "verified": false,
+    "form": ["A", "A2"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "Eb",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "-7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "Bb",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Eb",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "Ab",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "G",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "C",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          }
+        ]
+      },
+      "A2": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "-7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Bb",
+                "quality": "7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Eb",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "-7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "Bb",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Eb",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          }
+        ]
+      }
+    }
+  },
+  {
+    "title": "I'll Remember April",
+    "composer": "Gene de Paul",
+    "key": "G",
+    "mode": "major",
+    "timeSignature": {
+      "numerator": 4,
+      "denominator": 4
+    },
+    "tempo": {
+      "bpm": 200,
+      "source": "typical jam/uptempo performance"
+    },
+    "verified": false,
+    "form": ["A", "A2", "B"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "G",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 4
+          },
+          {
+            "chords": [
+              {
+                "root": "E",
+                "quality": "-7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 4
+          }
+        ]
+      },
+      "A2": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "A",
+                "quality": "-7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "D",
+                "quality": "7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "G",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 4
+          }
+        ]
+      },
+      "B": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "G",
+                "quality": "-7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "-7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "D",
+                "quality": "-7b5",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "G",
+                "quality": "7b9",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "-7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "D",
+                "quality": "-7b5",
+                "beats": 2
+              },
+              {
+                "root": "G",
+                "quality": "7b9",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "B",
+                "quality": "-7b5",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "E",
+                "quality": "7b9",
+                "beats": 4
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "title": "I've Got You Under My Skin",
+    "composer": "Cole Porter",
+    "key": "C",
+    "mode": "major",
+    "timeSignature": {
+      "numerator": 4,
+      "denominator": 4
+    },
+    "tempo": {
+      "bpm": 130,
+      "source": "typical real book/jam tempo"
+    },
+    "verified": false,
+    "form": ["A", "A2", "B"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "D",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "G",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "E",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "A",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "D",
+                "quality": "-7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "G",
+                "quality": "7",
+                "beats": 4
+              }
+            ]
+          }
+        ]
+      },
+      "A2": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "D",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "G",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "Eb",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "Ab",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "D",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "G",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ]
+          }
+        ]
+      },
+      "B": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "D",
+                "quality": "-7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "G",
+                "quality": "7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "A",
+                "quality": "7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "D",
+                "quality": "-7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "G",
+                "quality": "7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Impressions",
+    "composer": "John Coltrane",
+    "key": "Dm",
+    "mode": "minor",
+    "timeSignature": {
+      "numerator": 4,
+      "denominator": 4
+    },
+    "tempo": {
+      "bpm": 220,
+      "source": "typical performance tempo"
+    },
+    "verified": true,
+    "notes": "AABA form using So What changes (D- and Eb-).",
+    "form": ["A", "A", "B", "A"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "D",
+                "quality": "-7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 8
+          }
+        ]
+      },
+      "B": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "Eb",
+                "quality": "-7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 8
+          }
+        ]
+      }
+    }
+  },
+  {
+    "title": "In A Sentimental Mood",
+    "composer": "Duke Ellington",
+    "key": "F",
+    "mode": "major",
+    "timeSignature": {
+      "numerator": 4,
+      "denominator": 4
+    },
+    "tempo": {
+      "bpm": 110,
+      "source": "typical performance tempo"
+    },
+    "verified": false,
+    "form": ["A", "A2", "B"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "Bb",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "E",
+                "quality": "-7b5",
+                "beats": 2
+              },
+              {
+                "root": "A",
+                "quality": "7b9",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "D",
+                "quality": "-7",
+                "beats": 4
+              }
+            ]
+          }
+        ]
+      },
+      "A2": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "G",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "C",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "maj7",
+                "beats": 2
+              },
+              {
+                "root": "D",
+                "quality": "-7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "G",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "C",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ]
+          }
+        ]
+      },
+      "B": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "-7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Bb",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Eb",
+                "quality": "7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Ab",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "D",
+                "quality": "-7b5",
+                "beats": 2
+              },
+              {
+                "root": "G",
+                "quality": "7b9",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "F",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Bb",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "title": "In Walked Bud",
+    "composer": "Thelonious Monk",
+    "key": "C",
+    "mode": "major",
+    "timeSignature": {
+      "numerator": 4,
+      "denominator": 4
+    },
+    "tempo": {
+      "bpm": 160,
+      "source": "typical performance tempo"
+    },
+    "verified": false,
+    "notes": "Contrafact on 'Blue Skies' changes.",
+    "form": ["A", "A2", "B"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "6",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "6",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "D",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "G",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "6",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "6",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "6",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "D",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "G",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "6",
+                "beats": 4
+              }
+            ]
+          }
+        ]
+      },
+      "A2": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "6",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "6",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "D",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "G",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "6",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "6",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "6",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "D",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "G",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "6",
+                "beats": 4
+              }
+            ]
+          }
+        ]
+      },
+      "B": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 4
+          },
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "-6",
+                "beats": 4
+              }
+            ],
+            "spansBars": 4
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "6",
+                "beats": 4
+              }
+            ],
+            "spansBars": 4
+          },
+          {
+            "chords": [
+              {
+                "root": "D",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "G",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "6",
+                "beats": 4
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Infant Eyes",
+    "composer": "Wayne Shorter",
+    "key": "Eb",
+    "mode": "major",
+    "timeSignature": {
+      "numerator": 3,
+      "denominator": 4
+    },
+    "tempo": {
+      "bpm": 70,
+      "source": "Speak No Evil recording estimate"
+    },
+    "verified": false,
+    "form": ["A", "B"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "Eb",
+                "quality": "maj9",
+                "beats": 3
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "Db",
+                "quality": "maj9",
+                "beats": 3
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "-9",
+                "beats": 3
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "Eb",
+                "quality": "maj9",
+                "beats": 3
+              }
+            ],
+            "spansBars": 2
+          }
+        ]
+      },
+      "B": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "-7",
+                "beats": 3
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "Bb",
+                "quality": "-7",
+                "beats": 3
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "Ab",
+                "quality": "maj9",
+                "beats": 3
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "Eb",
+                "quality": "maj9",
+                "beats": 3
+              }
+            ],
+            "spansBars": 2
+          }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Inner Urge",
+    "composer": "Joe Henderson",
+    "key": "F#",
+    "mode": "major",
+    "timeSignature": {
+      "numerator": 4,
+      "denominator": 4
+    },
+    "tempo": {
+      "bpm": 220,
+      "source": "original 1966 recording estimate"
+    },
+    "verified": false,
+    "form": ["A"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "F#",
+                "quality": "-7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "E",
+                "quality": "-7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "D",
+                "quality": "-7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "C#",
+                "quality": "-7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "B",
+                "quality": "-7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "Bb",
+                "quality": "7alt",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Interplay",
+    "composer": "Bill Evans",
+    "key": "F",
+    "mode": "major",
+    "timeSignature": {
+      "numerator": 4,
+      "denominator": 4
+    },
+    "tempo": {
+      "bpm": 120,
+      "source": "default estimate"
+    },
+    "verified": false,
+    "notes": "Blues-form based tune; changes are a best-effort approximation, not independently confirmed.",
+    "form": ["A"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Eb",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "Ab",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "D",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "G",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "F",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Bb",
+                "quality": "7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Bb",
+                "quality": "-7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "D",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "G",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "-7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "7",
+                "beats": 2
+              },
+              {
+                "root": "D",
+                "quality": "-7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "G",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "C",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Invitation",
+    "composer": "Bronis\u0142aw Kaper",
+    "key": "Cm",
+    "mode": "minor",
+    "timeSignature": {
+      "numerator": 4,
+      "denominator": 4
+    },
+    "tempo": {
+      "bpm": 150,
+      "source": "typical real book/jam tempo"
+    },
+    "verified": false,
+    "form": ["A", "B"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "-7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 4
+          },
+          {
+            "chords": [
+              {
+                "root": "Ab",
+                "quality": "-7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "Db",
+                "quality": "7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "-7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 4
+          }
+        ]
+      },
+      "B": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "Eb",
+                "quality": "-7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "Ab",
+                "quality": "7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "Db",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "G",
+                "quality": "7alt",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "-7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 4
+          }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Isotope",
+    "composer": "Joe Henderson",
+    "key": "Bb",
+    "mode": "minor",
+    "timeSignature": {
+      "numerator": 4,
+      "denominator": 4
+    },
+    "tempo": {
+      "bpm": 120,
+      "source": "default estimate"
+    },
+    "verified": false,
+    "notes": "12-bar blues-based form with chromatic substitutions.",
+    "form": ["A"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "Bb",
+                "quality": "-7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "B",
+                "quality": "-7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Bb",
+                "quality": "-7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Bb",
+                "quality": "-7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Eb",
+                "quality": "-7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Eb",
+                "quality": "-7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Bb",
+                "quality": "-7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Bb",
+                "quality": "-7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "G",
+                "quality": "-7b5",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "7b9",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "Bb",
+                "quality": "7b9",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Bb",
+                "quality": "-7",
+                "beats": 4
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "title": "It Could Happen To You",
+    "composer": "Jimmy Van Heusen",
+    "key": "F",
+    "mode": "major",
+    "timeSignature": {
+      "numerator": 4,
+      "denominator": 4
+    },
+    "tempo": {
+      "bpm": 140,
+      "source": "typical real book/jam tempo"
+    },
+    "verified": false,
+    "form": ["A", "A2", "B"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "G",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "C",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "Bb",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Eb",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "A",
+                "quality": "-7b5",
+                "beats": 2
+              },
+              {
+                "root": "D",
+                "quality": "7b9",
+                "beats": 2
+              }
+            ]
+          }
+        ]
+      },
+      "A2": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "G",
+                "quality": "-7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "G",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "C",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ]
+          }
+        ]
+      },
+      "B": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "D",
+                "quality": "-7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "G",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "C",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "Bb",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Eb",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "A",
+                "quality": "-7b5",
+                "beats": 2
+              },
+              {
+                "root": "D",
+                "quality": "7b9",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "G",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "C",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "title": "It's You Or No One",
+    "composer": "Jule Styne",
+    "key": "Eb",
+    "mode": "major",
+    "timeSignature": {
+      "numerator": 4,
+      "denominator": 4
+    },
+    "tempo": {
+      "bpm": 200,
+      "source": "typical uptempo jam tempo"
+    },
+    "verified": false,
+    "form": ["A", "A2", "B"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "Eb",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "Bb",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Eb",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "-7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "7",
+                "beats": 4
+              }
+            ]
+          }
+        ]
+      },
+      "A2": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "Bb",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "F",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Bb",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          }
+        ]
+      },
+      "B": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "G",
+                "quality": "-7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "-7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Bb",
+                "quality": "7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Eb",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "Bb",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Joy Spring",
+    "composer": "Clifford Brown",
+    "key": "F",
+    "mode": "major",
+    "timeSignature": {
+      "numerator": 4,
+      "denominator": 4
+    },
+    "tempo": {
+      "bpm": 220,
+      "source": "typical performance tempo"
+    },
+    "verified": true,
+    "form": ["A", "A2", "B"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "G",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "C",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Ab",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "Db",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Gb",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "G",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "C",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "maj7",
+                "beats": 2
+              },
+              {
+                "root": "D",
+                "quality": "-7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "G",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "C",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          }
+        ]
+      },
+      "A2": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "G",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "C",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "F",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Ab",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "Db",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Gb",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "B",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "E",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Eb",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ]
+          }
+        ]
+      },
+      "B": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              {
+                "root": "Eb",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "Ab",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Db",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "D",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "G",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "C",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "F",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "Bb",
+                "quality": "maj7",
+                "beats": 4
+              }
+            ]
+          },
+          {
+            "chords": [
+              {
+                "root": "G",
+                "quality": "-7",
+                "beats": 2
+              },
+              {
+                "root": "C",
+                "quality": "7",
+                "beats": 2
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+]

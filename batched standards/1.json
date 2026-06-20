@@ -1,0 +1,910 @@
+[
+  {
+    "title": "26-2",
+    "composer": "John Coltrane",
+    "key": "Eb",
+    "mode": "major",
+    "timeSignature": { "numerator": 4, "denominator": 4 },
+    "tempo": {
+      "bpm": 280,
+      "source": "estimate based on recording (Coltrane's Sound, 1964)"
+    },
+    "verified": false,
+    "notes": "Contrafact on 'Confirmation' chord changes using Coltrane 'Giant Steps'-style substitutions. Changes shown are the commonly transcribed version.",
+    "form": ["A", "B"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              { "root": "Eb", "quality": "maj7", "beats": 2 },
+              { "root": "G", "quality": "7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "C", "quality": "maj7", "beats": 2 },
+              { "root": "Eb", "quality": "7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "Ab", "quality": "maj7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "D", "quality": "-7", "beats": 2 },
+              { "root": "G", "quality": "7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "C", "quality": "maj7", "beats": 2 },
+              { "root": "Eb", "quality": "7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "Ab", "quality": "maj7", "beats": 2 },
+              { "root": "B", "quality": "7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "E", "quality": "maj7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "F", "quality": "-7", "beats": 2 },
+              { "root": "Bb", "quality": "7", "beats": 2 }
+            ]
+          }
+        ]
+      },
+      "B": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "Eb", "quality": "maj7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "Am", "quality": "-7", "beats": 2 },
+              { "root": "D", "quality": "7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "G", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "C", "quality": "maj7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "F", "quality": "-7", "beats": 2 },
+              { "root": "Bb", "quality": "7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "Eb", "quality": "maj7", "beats": 4 }] }
+        ]
+      }
+    }
+  },
+  {
+    "title": "A Night In Tunisia",
+    "composer": "Dizzy Gillespie",
+    "key": "Dm",
+    "mode": "minor",
+    "timeSignature": { "numerator": 4, "denominator": 4 },
+    "tempo": { "bpm": 220, "source": "typical performance tempo" },
+    "verified": true,
+    "form": ["Intro", "A", "A", "B", "A"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [{ "root": "Bb", "quality": "7#5", "beats": 4 }],
+            "spansBars": 2
+          },
+          {
+            "chords": [{ "root": "D", "quality": "-7", "beats": 4 }],
+            "spansBars": 2
+          },
+          { "chords": [{ "root": "Eb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "D", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "A", "quality": "7b9", "beats": 4 }] },
+          {
+            "chords": [{ "root": "D", "quality": "-7", "beats": 4 }],
+            "spansBars": 2
+          }
+        ]
+      },
+      "B": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "G", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "C", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "F", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "Bb", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "E", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "A", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "D", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "A", "quality": "7b9", "beats": 4 }] }
+        ]
+      },
+      "Intro": {
+        "measures": [
+          {
+            "chords": [{ "root": "D", "quality": "-7", "beats": 4 }],
+            "spansBars": 4
+          },
+          {
+            "chords": [{ "root": "Eb", "quality": "7#11", "beats": 4 }],
+            "spansBars": 2
+          }
+        ]
+      }
+    }
+  },
+  {
+    "title": "All Blues",
+    "composer": "Miles Davis",
+    "key": "G",
+    "mode": "major",
+    "timeSignature": { "numerator": 6, "denominator": 4 },
+    "tempo": { "bpm": 138, "source": "Kind of Blue recording" },
+    "verified": true,
+    "notes": "12-bar blues in 6/4 (often felt/notated as 6/8 swing feel). Beats given as 6 per bar.",
+    "form": ["A"],
+    "sections": {
+      "A": {
+        "repeat": true,
+        "measures": [
+          { "chords": [{ "root": "G", "quality": "7", "beats": 6 }] },
+          { "chords": [{ "root": "G", "quality": "7", "beats": 6 }] },
+          { "chords": [{ "root": "G", "quality": "7", "beats": 6 }] },
+          { "chords": [{ "root": "C", "quality": "7", "beats": 6 }] },
+          { "chords": [{ "root": "G", "quality": "7", "beats": 6 }] },
+          { "chords": [{ "root": "G", "quality": "7", "beats": 6 }] },
+          { "chords": [{ "root": "D", "quality": "-7", "beats": 6 }] },
+          { "chords": [{ "root": "Eb", "quality": "9#11", "beats": 6 }] },
+          { "chords": [{ "root": "D", "quality": "-7", "beats": 6 }] },
+          { "chords": [{ "root": "G", "quality": "7", "beats": 6 }] },
+          {
+            "chords": [
+              { "root": "G", "quality": "7", "beats": 3 },
+              { "root": "F", "quality": "7", "beats": 3 }
+            ]
+          },
+          { "chords": [{ "root": "G", "quality": "7", "beats": 6 }] }
+        ]
+      }
+    }
+  },
+  {
+    "title": "All Of Me",
+    "composer": "Gerald Marks & Seymour Simons",
+    "key": "C",
+    "mode": "major",
+    "timeSignature": { "numerator": 4, "denominator": 4 },
+    "tempo": { "bpm": 130, "source": "typical real book/jam tempo" },
+    "verified": true,
+    "form": ["A", "B"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [{ "root": "C", "quality": "maj7", "beats": 4 }],
+            "spansBars": 2
+          },
+          {
+            "chords": [{ "root": "E", "quality": "7", "beats": 4 }],
+            "spansBars": 2
+          },
+          {
+            "chords": [{ "root": "A", "quality": "7", "beats": 4 }],
+            "spansBars": 2
+          },
+          {
+            "chords": [{ "root": "D", "quality": "-7", "beats": 4 }],
+            "spansBars": 2
+          },
+          { "chords": [{ "root": "E", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "A", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "D", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "D", "quality": "-7", "beats": 4 }] }
+        ]
+      },
+      "B": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "F", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "F", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "C", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "A", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "D", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "G", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "C", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "C", "quality": "maj7", "beats": 4 }] }
+        ]
+      }
+    }
+  },
+  {
+    "title": "All The Things You Are",
+    "composer": "Jerome Kern",
+    "key": "Ab",
+    "mode": "major",
+    "timeSignature": { "numerator": 4, "denominator": 4 },
+    "tempo": { "bpm": 160, "source": "typical real book/jam tempo" },
+    "verified": true,
+    "form": ["A", "A2", "B", "C"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "F", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "Bb", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "Eb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Ab", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "Db", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "G", "quality": "7", "beats": 4 }] },
+          {
+            "chords": [{ "root": "C", "quality": "maj7", "beats": 4 }],
+            "spansBars": 2
+          }
+        ]
+      },
+      "A2": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "C", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "F", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "Bb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Eb", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "Ab", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "Ab", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "Db", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Gb", "quality": "maj7", "beats": 4 }] }
+        ]
+      },
+      "B": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "G", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "C", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "F", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "F", "quality": "maj7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "G", "quality": "-7", "beats": 2 },
+              { "root": "Gb", "quality": "-7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "F", "quality": "-7", "beats": 2 },
+              { "root": "E", "quality": "-7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "Eb", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "Ab", "quality": "7", "beats": 4 }] }
+        ]
+      },
+      "C": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "Db", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "G", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "C", "quality": "maj7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "C", "quality": "maj7", "beats": 2 },
+              { "root": "Bdim", "quality": "7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "Bb", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "Eb", "quality": "7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "Ab", "quality": "maj7", "beats": 2 },
+              { "root": "F", "quality": "-7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "Bb", "quality": "-7", "beats": 2 },
+              { "root": "Eb", "quality": "7", "beats": 2 }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Alone Together",
+    "composer": "Arthur Schwartz",
+    "key": "Dm",
+    "mode": "minor",
+    "timeSignature": { "numerator": 4, "denominator": 4 },
+    "tempo": { "bpm": 160, "source": "typical real book/jam tempo" },
+    "verified": false,
+    "form": ["A", "A2", "B", "C"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [{ "root": "D", "quality": "-7", "beats": 4 }],
+            "spansBars": 2
+          },
+          { "chords": [{ "root": "E", "quality": "-7b5", "beats": 4 }] },
+          { "chords": [{ "root": "A", "quality": "7b9", "beats": 4 }] },
+          {
+            "chords": [{ "root": "D", "quality": "-7", "beats": 4 }],
+            "spansBars": 2
+          },
+          { "chords": [{ "root": "Bb", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "A", "quality": "7", "beats": 4 }] }
+        ]
+      },
+      "A2": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [{ "root": "D", "quality": "-7", "beats": 4 }],
+            "spansBars": 2
+          },
+          { "chords": [{ "root": "E", "quality": "-7b5", "beats": 4 }] },
+          { "chords": [{ "root": "A", "quality": "7b9", "beats": 4 }] },
+          { "chords": [{ "root": "D", "quality": "-", "beats": 4 }] },
+          { "chords": [{ "root": "G", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "C", "quality": "7", "beats": 4 }] }
+        ]
+      },
+      "B": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "F", "quality": "maj7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "E", "quality": "-7b5", "beats": 2 },
+              { "root": "A", "quality": "7b9", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "D", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "G", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "C", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "F", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "Bb", "quality": "maj7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "E", "quality": "-7b5", "beats": 2 },
+              { "root": "A", "quality": "7b9", "beats": 2 }
+            ]
+          }
+        ]
+      },
+      "C": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [{ "root": "D", "quality": "-7", "beats": 4 }],
+            "spansBars": 2
+          },
+          { "chords": [{ "root": "E", "quality": "-7b5", "beats": 4 }] },
+          { "chords": [{ "root": "A", "quality": "7b9", "beats": 4 }] },
+          { "chords": [{ "root": "D", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "Bb", "quality": "7#11", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "A", "quality": "7b9", "beats": 2 },
+              { "root": "D", "quality": "-", "beats": 2 }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Anthropology",
+    "composer": "Charlie Parker & Dizzy Gillespie",
+    "key": "Bb",
+    "mode": "major",
+    "timeSignature": { "numerator": 4, "denominator": 4 },
+    "tempo": { "bpm": 260, "source": "typical bebop performance tempo" },
+    "verified": true,
+    "notes": "Rhythm changes contrafact, 32-bar AABA.",
+    "form": ["A", "A", "B", "A"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              { "root": "Bb", "quality": "maj7", "beats": 2 },
+              { "root": "G", "quality": "-7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "C", "quality": "-7", "beats": 2 },
+              { "root": "F", "quality": "7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "Bb", "quality": "maj7", "beats": 2 },
+              { "root": "G", "quality": "-7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "C", "quality": "-7", "beats": 2 },
+              { "root": "F", "quality": "7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "F", "quality": "-7", "beats": 2 },
+              { "root": "Bb", "quality": "7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "Eb", "quality": "maj7", "beats": 2 },
+              { "root": "Ab", "quality": "7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "D", "quality": "-7", "beats": 2 },
+              { "root": "G", "quality": "7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "C", "quality": "-7", "beats": 2 },
+              { "root": "F", "quality": "7", "beats": 2 }
+            ]
+          }
+        ]
+      },
+      "B": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "D", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "D", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "G", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "G", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "C", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "C", "quality": "7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "F", "quality": "7", "beats": 2 },
+              { "root": "F", "quality": "7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "F", "quality": "7", "beats": 4 }] }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Au Privave",
+    "composer": "Charlie Parker",
+    "key": "F",
+    "mode": "major",
+    "timeSignature": { "numerator": 4, "denominator": 4 },
+    "tempo": { "bpm": 190, "source": "typical bebop performance tempo" },
+    "verified": true,
+    "notes": "12-bar bebop blues (Bird blues changes).",
+    "form": ["A"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "F", "quality": "7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "Eb", "quality": "-7", "beats": 2 },
+              { "root": "Ab", "quality": "7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "D", "quality": "-7", "beats": 2 },
+              { "root": "G", "quality": "7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "C", "quality": "-7", "beats": 2 },
+              { "root": "F", "quality": "7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "Bb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Bb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "F", "quality": "7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "D", "quality": "-7", "beats": 2 },
+              { "root": "G", "quality": "7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "C", "quality": "-7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "F", "quality": "7", "beats": 2 },
+              { "root": "D", "quality": "-7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "G", "quality": "-7", "beats": 2 },
+              { "root": "C", "quality": "7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "F", "quality": "7", "beats": 2 },
+              { "root": "C", "quality": "7", "beats": 2 }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Autumn Leaves",
+    "composer": "Joseph Kosma",
+    "key": "Gm",
+    "mode": "minor",
+    "timeSignature": { "numerator": 4, "denominator": 4 },
+    "tempo": { "bpm": 130, "source": "typical real book/jam tempo" },
+    "verified": true,
+    "notes": "Often played starting in Bb major (relative major) then resolving to G minor; shown here per common New Real Book lead sheet starting in Bb major.",
+    "form": ["A", "B"],
+    "sections": {
+      "A": {
+        "repeat": true,
+        "measures": [
+          { "chords": [{ "root": "C", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "F", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Bb", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "Eb", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "A", "quality": "-7b5", "beats": 4 }] },
+          { "chords": [{ "root": "D", "quality": "7b9", "beats": 4 }] },
+          { "chords": [{ "root": "G", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "G", "quality": "-7", "beats": 4 }] }
+        ]
+      },
+      "B": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "A", "quality": "-7b5", "beats": 4 }] },
+          { "chords": [{ "root": "D", "quality": "7b9", "beats": 4 }] },
+          { "chords": [{ "root": "G", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "G", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "A", "quality": "-7b5", "beats": 4 }] },
+          { "chords": [{ "root": "D", "quality": "7b9", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "G", "quality": "-7", "beats": 2 },
+              { "root": "C", "quality": "7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "F", "quality": "maj7", "beats": 2 },
+              { "root": "A", "quality": "-7b5", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "D", "quality": "7b9", "beats": 4 }] }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Bag's Groove",
+    "composer": "Milt Jackson",
+    "key": "F",
+    "mode": "major",
+    "timeSignature": { "numerator": 4, "denominator": 4 },
+    "tempo": { "bpm": 130, "source": "typical performance/jam tempo" },
+    "verified": true,
+    "notes": "Standard 12-bar blues.",
+    "form": ["A"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "F", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Bb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "F", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "F", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Bb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Bb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "F", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "D", "quality": "-7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "G", "quality": "-7", "beats": 2 },
+              { "root": "C", "quality": "7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "F", "quality": "7", "beats": 2 },
+              { "root": "D", "quality": "-7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "G", "quality": "-7", "beats": 2 },
+              { "root": "C", "quality": "7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "F", "quality": "7", "beats": 4 }] }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Beautiful Love",
+    "composer": "Wayne King, Victor Young, Egbert Van Alstyne",
+    "key": "Dm",
+    "mode": "minor",
+    "timeSignature": { "numerator": 4, "denominator": 4 },
+    "tempo": { "bpm": 140, "source": "typical real book/jam tempo" },
+    "verified": false,
+    "form": ["A", "B"],
+    "sections": {
+      "A": {
+        "repeat": true,
+        "measures": [
+          { "chords": [{ "root": "D", "quality": "-7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "E", "quality": "-7b5", "beats": 2 },
+              { "root": "A", "quality": "7b9", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "G", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "C", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Bb", "quality": "maj7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "E", "quality": "-7b5", "beats": 2 },
+              { "root": "A", "quality": "7b9", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "D", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "D", "quality": "-7", "beats": 4 }] }
+        ]
+      },
+      "B": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "G", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "C", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "F", "quality": "maj7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "B", "quality": "-7b5", "beats": 2 },
+              { "root": "E", "quality": "7b9", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "A", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "D", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "G", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "C", "quality": "7", "beats": 4 }] }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Billie's Bounce",
+    "composer": "Charlie Parker",
+    "key": "F",
+    "mode": "major",
+    "timeSignature": { "numerator": 4, "denominator": 4 },
+    "tempo": { "bpm": 200, "source": "original 1945 recording tempo estimate" },
+    "verified": true,
+    "notes": "12-bar bebop blues.",
+    "form": ["A"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "F", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Bb", "quality": "7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "F", "quality": "7", "beats": 2 },
+              { "root": "D", "quality": "-7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "G", "quality": "-7", "beats": 2 },
+              { "root": "C", "quality": "7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "Bb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Bb", "quality": "7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "F", "quality": "7", "beats": 2 },
+              { "root": "D", "quality": "-7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "G", "quality": "-7", "beats": 2 },
+              { "root": "C", "quality": "7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "F", "quality": "7", "beats": 2 },
+              { "root": "D", "quality": "-7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "G", "quality": "-7", "beats": 2 },
+              { "root": "C", "quality": "7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "F", "quality": "7", "beats": 2 },
+              { "root": "D", "quality": "-7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "G", "quality": "-7", "beats": 2 },
+              { "root": "C", "quality": "7", "beats": 2 }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Bloomdido",
+    "composer": "Charlie Parker",
+    "key": "Bb",
+    "mode": "major",
+    "timeSignature": { "numerator": 4, "denominator": 4 },
+    "tempo": { "bpm": 220, "source": "original 1950 recording tempo estimate" },
+    "verified": true,
+    "notes": "12-bar bebop blues.",
+    "form": ["A"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "Bb", "quality": "7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "Eb", "quality": "7", "beats": 2 },
+              { "root": "Eo", "quality": "7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "Bb", "quality": "7", "beats": 2 },
+              { "root": "G", "quality": "-7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "C", "quality": "-7", "beats": 2 },
+              { "root": "F", "quality": "7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "Eb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Eb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Bb", "quality": "7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "G", "quality": "-7", "beats": 2 },
+              { "root": "C", "quality": "7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "F", "quality": "7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "Bb", "quality": "7", "beats": 2 },
+              { "root": "G", "quality": "-7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "C", "quality": "-7", "beats": 2 },
+              { "root": "F", "quality": "7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "Bb", "quality": "7", "beats": 4 }] }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Blue Bossa",
+    "composer": "Kenny Dorham",
+    "key": "Cm",
+    "mode": "minor",
+    "timeSignature": { "numerator": 4, "denominator": 4 },
+    "tempo": {
+      "bpm": 180,
+      "source": "typical real book/jam tempo (bossa nova)"
+    },
+    "verified": true,
+    "form": ["A", "B"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [{ "root": "C", "quality": "-7", "beats": 4 }],
+            "spansBars": 2
+          },
+          {
+            "chords": [{ "root": "F", "quality": "-7", "beats": 4 }],
+            "spansBars": 2
+          },
+          {
+            "chords": [{ "root": "Db", "quality": "maj7", "beats": 4 }],
+            "spansBars": 2
+          },
+          {
+            "chords": [{ "root": "G", "quality": "7b9", "beats": 4 }],
+            "spansBars": 2
+          }
+        ]
+      },
+      "B": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "C", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "D", "quality": "-7b5", "beats": 4 }] },
+          { "chords": [{ "root": "G", "quality": "7b9", "beats": 4 }] },
+          {
+            "chords": [{ "root": "C", "quality": "-7", "beats": 4 }],
+            "spansBars": 2
+          }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Blue Monk",
+    "composer": "Thelonious Monk",
+    "key": "Bb",
+    "mode": "major",
+    "timeSignature": { "numerator": 4, "denominator": 4 },
+    "tempo": { "bpm": 130, "source": "typical performance tempo" },
+    "verified": true,
+    "notes": "Standard 12-bar blues.",
+    "form": ["A"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "Bb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Eb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Bb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Bb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Eb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Eb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Bb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Bb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "F", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Eb", "quality": "7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "Bb", "quality": "7", "beats": 2 },
+              { "root": "F", "quality": "7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "Bb", "quality": "7", "beats": 4 }] }
+        ]
+      }
+    }
+  }
+]

@@ -1,0 +1,556 @@
+[
+  {
+    "title": "Dolphin Dance",
+    "composer": "Herbie Hancock",
+    "key": "Eb",
+    "mode": "major",
+    "timeSignature": { "numerator": 4, "denominator": 4 },
+    "tempo": { "bpm": 130, "source": "Maiden Voyage recording estimate" },
+    "verified": false,
+    "form": ["A", "B"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "Eb", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "F", "quality": "9", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "Eb", "quality": "maj7", "beats": 2 },
+              { "root": "Ab", "quality": "maj7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "G", "quality": "-7", "beats": 2 },
+              { "root": "C", "quality": "7sus", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "F", "quality": "maj7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "E", "quality": "-7", "beats": 2 },
+              { "root": "Eb", "quality": "maj7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "D", "quality": "-7", "beats": 2 },
+              { "root": "Db", "quality": "maj7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "C", "quality": "-7", "beats": 4 }] }
+        ]
+      },
+      "B": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              { "root": "Bb", "quality": "-7", "beats": 2 },
+              { "root": "Eb", "quality": "7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "Ab", "quality": "maj7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "G", "quality": "-7", "beats": 2 },
+              { "root": "C", "quality": "7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "F", "quality": "maj7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "E", "quality": "-7b5", "beats": 2 },
+              { "root": "A", "quality": "7b9", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "D", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "G", "quality": "7sus", "beats": 4 }] },
+          { "chords": [{ "root": "C", "quality": "maj7", "beats": 4 }] }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Donna Lee",
+    "composer": "Charlie Parker (attr. / Miles Davis)",
+    "key": "Ab",
+    "mode": "major",
+    "timeSignature": { "numerator": 4, "denominator": 4 },
+    "tempo": { "bpm": 230, "source": "typical bebop performance tempo" },
+    "verified": true,
+    "form": ["A", "A2"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "Ab", "quality": "maj7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "F", "quality": "-7", "beats": 2 },
+              { "root": "Bb", "quality": "-7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "Eb", "quality": "7", "beats": 2 },
+              { "root": "Ab", "quality": "maj7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "G", "quality": "-7", "beats": 2 },
+              { "root": "C", "quality": "7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "F", "quality": "-7", "beats": 2 },
+              { "root": "Bb", "quality": "7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "Eb", "quality": "7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "Ab", "quality": "maj7", "beats": 2 },
+              { "root": "F", "quality": "-7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "Bb", "quality": "-7", "beats": 2 },
+              { "root": "Eb", "quality": "7", "beats": 2 }
+            ]
+          }
+        ]
+      },
+      "A2": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "Ab", "quality": "maj7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "F", "quality": "-7", "beats": 2 },
+              { "root": "Bb", "quality": "-7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "Eb", "quality": "7", "beats": 2 },
+              { "root": "Ab", "quality": "maj7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "Db", "quality": "maj7", "beats": 2 },
+              { "root": "D", "quality": "-7b5", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "C", "quality": "-7", "beats": 2 },
+              { "root": "F", "quality": "7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "Bb", "quality": "-7", "beats": 2 },
+              { "root": "Eb", "quality": "7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "Ab", "quality": "maj7", "beats": 2 },
+              { "root": "F", "quality": "-7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "Bb", "quality": "-7", "beats": 2 },
+              { "root": "Eb", "quality": "7", "beats": 2 }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Doxy",
+    "composer": "Sonny Rollins",
+    "key": "Bb",
+    "mode": "major",
+    "timeSignature": { "numerator": 4, "denominator": 4 },
+    "tempo": { "bpm": 150, "source": "typical performance tempo" },
+    "verified": true,
+    "notes": "12-bar blues, calypso/bop feel.",
+    "form": ["A"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "Bb", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "Bb", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "Eb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Eb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Bb", "quality": "maj7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "G", "quality": "-7", "beats": 2 },
+              { "root": "C", "quality": "7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "F", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Eb", "quality": "7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "Bb", "quality": "maj7", "beats": 2 },
+              { "root": "G", "quality": "-7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "C", "quality": "-7", "beats": 2 },
+              { "root": "F", "quality": "7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "Bb", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "Bb", "quality": "maj7", "beats": 4 }] }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Epistrophy",
+    "composer": "Thelonious Monk",
+    "key": "C",
+    "mode": "major",
+    "timeSignature": { "numerator": 4, "denominator": 4 },
+    "tempo": { "bpm": 130, "source": "typical performance tempo" },
+    "verified": true,
+    "form": ["A", "A", "B"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [
+              { "root": "C", "quality": "7", "beats": 2 },
+              { "root": "Db", "quality": "7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "C", "quality": "7", "beats": 2 },
+              { "root": "Db", "quality": "7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "D", "quality": "7", "beats": 2 },
+              { "root": "Eb", "quality": "7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "D", "quality": "7", "beats": 2 },
+              { "root": "Eb", "quality": "7", "beats": 2 }
+            ]
+          }
+        ]
+      },
+      "B": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "F", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "F", "quality": "7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "C", "quality": "7", "beats": 2 },
+              { "root": "Db", "quality": "7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "C", "quality": "7", "beats": 2 },
+              { "root": "Db", "quality": "7", "beats": 2 }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Equinox",
+    "composer": "John Coltrane",
+    "key": "Cm",
+    "mode": "minor",
+    "timeSignature": { "numerator": 4, "denominator": 4 },
+    "tempo": { "bpm": 100, "source": "original recording estimate" },
+    "verified": true,
+    "notes": "12-bar minor blues.",
+    "form": ["A"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "C", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "F", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "C", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "C", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "F", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "F", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "Db", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Db", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Ab", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "G", "quality": "7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "C", "quality": "-7", "beats": 2 },
+              { "root": "G", "quality": "7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "C", "quality": "-7", "beats": 4 }] }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Everything Happens To Me",
+    "composer": "Matt Dennis",
+    "key": "Eb",
+    "mode": "major",
+    "timeSignature": { "numerator": 4, "denominator": 4 },
+    "tempo": { "bpm": 120, "source": "default estimate" },
+    "verified": false,
+    "form": ["A", "B"],
+    "sections": {
+      "A": {
+        "repeat": true,
+        "measures": [
+          { "chords": [{ "root": "Eb", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "C", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "F", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "Bb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Eb", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "Ab", "quality": "maj7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "D", "quality": "-7b5", "beats": 2 },
+              { "root": "G", "quality": "7b9", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "C", "quality": "-7", "beats": 4 }] }
+        ]
+      },
+      "B": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "F", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "Bb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Eb", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "Eb", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "F", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "Bb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Eb", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "Eb", "quality": "maj7", "beats": 4 }] }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Fee-Fi-Fo-Fum",
+    "composer": "Wayne Shorter",
+    "key": "Ebm",
+    "mode": "minor",
+    "timeSignature": { "numerator": 4, "denominator": 4 },
+    "tempo": { "bpm": 130, "source": "Speak No Evil recording estimate" },
+    "verified": false,
+    "form": ["A", "B"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [{ "root": "Eb", "quality": "-7", "beats": 4 }],
+            "spansBars": 2
+          },
+          {
+            "chords": [{ "root": "Db", "quality": "-7", "beats": 4 }],
+            "spansBars": 2
+          },
+          {
+            "chords": [{ "root": "B", "quality": "-7", "beats": 4 }],
+            "spansBars": 2
+          },
+          {
+            "chords": [{ "root": "A", "quality": "7alt", "beats": 4 }],
+            "spansBars": 2
+          }
+        ]
+      },
+      "B": {
+        "repeat": false,
+        "measures": [
+          {
+            "chords": [{ "root": "Eb", "quality": "-7", "beats": 4 }],
+            "spansBars": 4
+          },
+          { "chords": [{ "root": "F", "quality": "-7", "beats": 4 }] },
+          { "chords": [{ "root": "Bb", "quality": "7alt", "beats": 4 }] },
+          {
+            "chords": [{ "root": "Eb", "quality": "-7", "beats": 4 }],
+            "spansBars": 2
+          }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Folks Who Live On A Hill",
+    "composer": "Jerome Kern",
+    "key": "Eb",
+    "mode": "major",
+    "timeSignature": { "numerator": 4, "denominator": 4 },
+    "tempo": { "bpm": 120, "source": "default estimate" },
+    "verified": false,
+    "form": ["A", "B"],
+    "sections": {
+      "A": {
+        "repeat": true,
+        "measures": [
+          {
+            "chords": [{ "root": "Eb", "quality": "maj7", "beats": 4 }],
+            "spansBars": 2
+          },
+          {
+            "chords": [
+              { "root": "F", "quality": "-7", "beats": 2 },
+              { "root": "Bb", "quality": "7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "Eb", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "C", "quality": "-7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "F", "quality": "-7", "beats": 2 },
+              { "root": "Bb", "quality": "7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "Eb", "quality": "maj7", "beats": 4 }] }
+        ]
+      },
+      "B": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "Ab", "quality": "maj7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "D", "quality": "-7b5", "beats": 2 },
+              { "root": "G", "quality": "7b9", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "C", "quality": "-7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "F", "quality": "-7", "beats": 2 },
+              { "root": "Bb", "quality": "7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "Eb", "quality": "maj7", "beats": 4 }] },
+          { "chords": [{ "root": "Eb", "quality": "maj7", "beats": 4 }] }
+        ]
+      }
+    }
+  },
+  {
+    "title": "Footprints",
+    "composer": "Wayne Shorter",
+    "key": "Cm",
+    "mode": "minor",
+    "timeSignature": { "numerator": 6, "denominator": 4 },
+    "tempo": { "bpm": 130, "source": "Adam's Apple recording estimate" },
+    "verified": true,
+    "notes": "12-bar minor blues form in 6/4 (sometimes notated 3/4 felt in 2).",
+    "form": ["A"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "C", "quality": "-7", "beats": 6 }] },
+          { "chords": [{ "root": "C", "quality": "-7", "beats": 6 }] },
+          { "chords": [{ "root": "C", "quality": "-7", "beats": 6 }] },
+          { "chords": [{ "root": "F", "quality": "-7", "beats": 6 }] },
+          { "chords": [{ "root": "C", "quality": "-7", "beats": 6 }] },
+          { "chords": [{ "root": "C", "quality": "-7", "beats": 6 }] },
+          { "chords": [{ "root": "D", "quality": "7alt", "beats": 6 }] },
+          { "chords": [{ "root": "D", "quality": "7alt", "beats": 6 }] },
+          { "chords": [{ "root": "C", "quality": "-7", "beats": 6 }] },
+          { "chords": [{ "root": "Bb", "quality": "-7", "beats": 6 }] },
+          {
+            "chords": [
+              { "root": "Ab", "quality": "-7", "beats": 3 },
+              { "root": "G", "quality": "7alt", "beats": 3 }
+            ]
+          },
+          { "chords": [{ "root": "C", "quality": "-7", "beats": 6 }] }
+        ]
+      }
+    }
+  },
+  {
+    "title": "For Regulars Only",
+    "composer": "Lee Morgan",
+    "key": "Bb",
+    "mode": "major",
+    "timeSignature": { "numerator": 4, "denominator": 4 },
+    "tempo": { "bpm": 120, "source": "default estimate" },
+    "verified": false,
+    "notes": "Bebop-style head from The Sidewinder sessions; changes not independently confirmed against New Real Book.",
+    "form": ["A"],
+    "sections": {
+      "A": {
+        "repeat": false,
+        "measures": [
+          { "chords": [{ "root": "Bb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Eb", "quality": "7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "Bb", "quality": "7", "beats": 2 },
+              { "root": "D", "quality": "-7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "G", "quality": "-7", "beats": 2 },
+              { "root": "C", "quality": "7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "Eb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Eb", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Bb", "quality": "7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "G", "quality": "-7", "beats": 2 },
+              { "root": "C", "quality": "7", "beats": 2 }
+            ]
+          },
+          { "chords": [{ "root": "F", "quality": "7", "beats": 4 }] },
+          { "chords": [{ "root": "Eb", "quality": "7", "beats": 4 }] },
+          {
+            "chords": [
+              { "root": "Bb", "quality": "7", "beats": 2 },
+              { "root": "G", "quality": "-7", "beats": 2 }
+            ]
+          },
+          {
+            "chords": [
+              { "root": "C", "quality": "-7", "beats": 2 },
+              { "root": "F", "quality": "7", "beats": 2 }
+            ]
+          }
+        ]
+      }
+    }
+  }
+]
