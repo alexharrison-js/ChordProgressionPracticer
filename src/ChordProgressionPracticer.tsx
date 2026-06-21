@@ -500,6 +500,7 @@ class AudioEngine {
   masterGain = null;
   metroGain = null;
   chordGain = null;
+  activeNodes = new Set(); // tracks every oscillator currently scheduled/playing
 
   ensureContext() {
     if (!this.ctx) {
@@ -525,6 +526,26 @@ class AudioEngine {
     if (this.metroGain) this.metroGain.gain.value = v;
   }
 
+  // Immediately silences and disconnects every oscillator this engine has
+  // scheduled, whether it has started yet or is still in the future. Safe
+  // to call even if some oscillators have already finished naturally.
+  stopAll() {
+    const ctx = this.ctx;
+    this.activeNodes.forEach((osc) => {
+      try {
+        osc.stop(ctx ? ctx.currentTime : 0);
+      } catch (e) {
+        // stop() throws if already stopped — safe to ignore
+      }
+      try {
+        osc.disconnect();
+      } catch (e) {
+        // already disconnected — safe to ignore
+      }
+    });
+    this.activeNodes.clear();
+  }
+
   playClick(time, accent) {
     const ctx = this.ensureContext();
     const osc = ctx.createOscillator();
@@ -538,6 +559,8 @@ class AudioEngine {
     gain.connect(this.metroGain);
     osc.start(time);
     osc.stop(time + 0.04);
+    this.activeNodes.add(osc);
+    osc.onended = () => this.activeNodes.delete(osc);
   }
 
   playChord(midiNotes, bassNote, time, duration) {
@@ -572,6 +595,10 @@ class AudioEngine {
       osc.stop(time + duration + 0.05);
       osc2.start(time);
       osc2.stop(time + duration + 0.05);
+      this.activeNodes.add(osc);
+      this.activeNodes.add(osc2);
+      osc.onended = () => this.activeNodes.delete(osc);
+      osc2.onended = () => this.activeNodes.delete(osc2);
     };
 
     midiNotes.forEach((n) => playVoice(n, 1, this.chordGain));
@@ -649,14 +676,9 @@ export default function ChordProgressionPracticer() {
   const engineRef = useRef(null);
   if (!engineRef.current) engineRef.current = new AudioEngine();
 
-  const schedulerTimerRef = useRef(null);
-  const nextBeatTimeRef = useRef(0);
-  const beatCursorRef = useRef(0); // index into flattened-beats timeline
   const lastVoicingRef = useRef(null);
-  const playStartedAtBarRef = useRef(0);
-  const visibleBarRef = useRef(-1);
   const rafRef = useRef(null);
-  const beatTimelineRef = useRef([]);
+  const playGenRef = useRef(0); // bumped on every start/stop so stale loop-scheduling closures become no-ops
 
   function selectSong(song) {
     setSelectedSong(song);
@@ -706,24 +728,25 @@ export default function ChordProgressionPracticer() {
 
   // ---- Stop playback & cleanup ----
   const stopPlayback = useCallback(() => {
+    playGenRef.current += 1; // invalidate any in-flight scheduling/RAF closures from this point on
     setIsPlaying(false);
     setCurrentBar(-1);
-    if (schedulerTimerRef.current !== null) {
-      window.clearInterval(schedulerTimerRef.current);
-      schedulerTimerRef.current = null;
-    }
     if (rafRef.current !== null) {
       window.cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
+    }
+    if (engineRef.current) {
+      engineRef.current.stopAll(); // actually silences every scheduled/playing oscillator
     }
     lastVoicingRef.current = null;
   }, []);
 
   useEffect(() => {
-    // stopping playback whenever the song, key or bpm changes avoids desync
+    // Changing song, key, or tempo stops playback; the user presses Play again
+    // to hear the new settings (avoids the old and new versions overlapping).
     stopPlayback();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSong, selectedKey]);
+  }, [selectedSong, selectedKey, bpm]);
 
   // ---- Scheduler ----
   function startPlayback() {
@@ -732,11 +755,19 @@ export default function ChordProgressionPracticer() {
     const ctx = engine.ensureContext();
     engine.setMetroVolume(metronomeOn ? metroVolume : 0);
 
+    // Stop anything left over from a previous session and start a fresh
+    // generation. Any closures captured by an older generation will see
+    // their myGen !== playGenRef.current and bail out without scheduling
+    // or silencing anything new — this is what prevents overlapping audio
+    // when the user stops and restarts (e.g. after changing key).
+    engine.stopAll();
+    playGenRef.current += 1;
+    const myGen = playGenRef.current;
+
     const num = selectedSong.timeSignature.numerator;
     const secPerBeat = 60 / bpm;
 
     // Flatten to a clean per-bar, per-beat structure for reliable scheduling.
-    // For each bar, figure out the beat onsets (chord starts) within it.
     // BeatSlot shape: { beatInBar, chord }
     const barSlots = bars.map((barChords) => {
       const slots = [];
@@ -748,82 +779,121 @@ export default function ChordProgressionPracticer() {
       return slots;
     });
 
-    lastVoicingRef.current = null;
-    setIsPlaying(true);
-
-    const startTime = ctx.currentTime + 0.1;
-
-    // subdivision ticks per beat for metronome
     const subDivCount =
       subdivision === "quarter" ? 1 : subdivision === "eighth" ? 2 : 4;
 
-    // Precompute a flat queue of {time, barIndex, beatInBar, chord|null, isDownbeat}
-    const queue = [];
-
-    let t = startTime;
-    barSlots.forEach((slots, bIdx) => {
-      for (let beat = 0; beat < num; beat++) {
-        const slot = slots.find((s) => Math.abs(s.beatInBar - beat) < 0.001);
-        for (let sub = 0; sub < subDivCount; sub++) {
-          const subTime = t + (sub * secPerBeat) / subDivCount;
-          queue.push({
-            time: subTime,
-            barIndex: bIdx,
-            beatInBar: beat,
-            chord: sub === 0 ? (slot?.chord ?? null) : null,
-            isDownbeat: beat === 0 && sub === 0,
-          });
+    // Builds one full pass through the song as a flat queue of timed events,
+    // starting at `fromTime`. Returns the queue plus the time the pass ends
+    // (i.e. where the next pass should begin, for seamless looping).
+    function buildPassQueue(fromTime) {
+      const passQueue = [];
+      let t = fromTime;
+      barSlots.forEach((slots, bIdx) => {
+        for (let beat = 0; beat < num; beat++) {
+          const slot = slots.find((s) => Math.abs(s.beatInBar - beat) < 0.001);
+          for (let sub = 0; sub < subDivCount; sub++) {
+            const subTime = t + (sub * secPerBeat) / subDivCount;
+            passQueue.push({
+              time: subTime,
+              barIndex: bIdx,
+              beatInBar: beat,
+              chord: sub === 0 ? (slot?.chord ?? null) : null,
+              isDownbeat: beat === 0 && sub === 0,
+            });
+          }
+          t += secPerBeat;
         }
-        t += secPerBeat;
-      }
-    });
+      });
+      return { passQueue, endTime: t };
+    }
 
-    // Schedule audio for every item up front (Web Audio handles future-scheduled
-    // precisely; we don't need a rolling lookahead for a bounded song length).
-    let voicing = null;
-    queue.forEach((item) => {
-      if (metronomeOn) {
-        // "downbeat" mode: only click on beat 1 of each bar.
-        // "all" mode: click on every beat (and every subdivision tick).
-        if (accentMode === "all") {
-          engine.playClick(item.time, item.isDownbeat);
-        } else if (item.isDownbeat) {
-          engine.playClick(item.time, true);
+    // Schedules audio (clicks + chords) for every item in a pass's queue.
+    // `voicingRef` carries the last-played voicing across passes so the
+    // loop's seam still voice-leads smoothly instead of jumping back to a
+    // cold root-position chord every time it repeats.
+    function scheduleQueue(passQueue) {
+      passQueue.forEach((item) => {
+        if (metronomeOn) {
+          if (accentMode === "all") {
+            engine.playClick(item.time, item.isDownbeat);
+          } else if (item.isDownbeat) {
+            engine.playClick(item.time, true);
+          }
         }
-      }
-      if (item.chord) {
-        voicing = generateVoicing(
-          item.chord.root,
-          item.chord.quality,
-          voicingStyle,
-          voicing,
-        );
-        const barDurationBeats = item.chord.beats;
-        const fullDuration = barDurationBeats * secPerBeat;
-        const duration =
-          articulation === "staccato"
-            ? Math.min(fullDuration * 0.45, fullDuration)
-            : fullDuration;
-        engine.playChord(voicing.notes, voicing.bass, item.time, duration);
-      }
-    });
+        if (item.chord) {
+          lastVoicingRef.current = generateVoicing(
+            item.chord.root,
+            item.chord.quality,
+            voicingStyle,
+            lastVoicingRef.current,
+          );
+          const fullDuration = item.chord.beats * secPerBeat;
+          const duration =
+            articulation === "staccato"
+              ? Math.min(fullDuration * 0.45, fullDuration)
+              : fullDuration;
+          engine.playChord(
+            lastVoicingRef.current.notes,
+            lastVoicingRef.current.bass,
+            item.time,
+            duration,
+          );
+        }
+      });
+    }
 
-    const songEndTime = t;
+    lastVoicingRef.current = null;
+    setIsPlaying(true);
 
-    // Visual sync via RAF, comparing ctx.currentTime to queue timestamps.
+    const firstStart = ctx.currentTime + 0.1;
+    let { passQueue: currentQueue, endTime: currentEndTime } =
+      buildPassQueue(firstStart);
+    scheduleQueue(currentQueue);
+
+    // Holds the next lap's queue once it's been scheduled, until playback
+    // time actually reaches the loop boundary and we swap it in as "current"
+    // (so the RAF loop keeps reading from the right queue/index).
+    const pendingSwap = { queue: null, endTime: 0 };
     let queueIdx = 0;
+
+    // Visual sync + loop-continuation via RAF, comparing ctx.currentTime to
+    // queue timestamps. Schedules the next pass shortly before the current
+    // one ends, so playback continues seamlessly until stopPlayback() runs.
     function tick() {
+      if (myGen !== playGenRef.current) return; // a stop (or a newer start) happened — abandon this loop
+
       const now = ctx.currentTime;
-      while (queueIdx < queue.length && queue[queueIdx].time <= now) {
-        if (queue[queueIdx].chord || queue[queueIdx].beatInBar === 0) {
-          setCurrentBar(queue[queueIdx].barIndex);
+      while (
+        queueIdx < currentQueue.length &&
+        currentQueue[queueIdx].time <= now
+      ) {
+        if (
+          currentQueue[queueIdx].chord ||
+          currentQueue[queueIdx].beatInBar === 0
+        ) {
+          setCurrentBar(currentQueue[queueIdx].barIndex);
         }
         queueIdx++;
       }
-      if (now >= songEndTime + 0.2) {
-        stopPlayback();
-        return;
+
+      // Schedule the next lap once we're within 1 second of the current
+      // lap's end, so there's no audible gap at the loop boundary.
+      if (!pendingSwap.queue && currentEndTime - now < 1) {
+        const next = buildPassQueue(currentEndTime);
+        scheduleQueue(next.passQueue);
+        pendingSwap.queue = next.passQueue;
+        pendingSwap.endTime = next.endTime;
       }
+
+      // Once playback actually reaches the boundary, swap the pending lap
+      // in as "current" so the loop above keeps tracking the right bars.
+      if (pendingSwap.queue && now >= currentEndTime) {
+        currentQueue = pendingSwap.queue;
+        currentEndTime = pendingSwap.endTime;
+        queueIdx = 0;
+        pendingSwap.queue = null;
+      }
+
       rafRef.current = window.requestAnimationFrame(tick);
     }
     rafRef.current = window.requestAnimationFrame(tick);
