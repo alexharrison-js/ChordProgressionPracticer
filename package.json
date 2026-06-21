@@ -1,9 +1,9 @@
 {
-  "name": "ear-training",
+  "name": "jazz-shed",
   "private": true,
   "version": "0.0.1",
   "type": "module",
-  "homepage": "https://alexharrison-js.github.io/ear-training/",
+  "homepage": "https://alexharrison-js.github.io/jazz-shed/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
