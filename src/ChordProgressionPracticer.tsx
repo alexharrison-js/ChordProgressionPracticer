@@ -434,13 +434,33 @@ function closestOctaveNote(pitchClass, referenceMidi) {
 
 // Playable register bounds for the voicing engine (roughly piano's middle
 // 4 octaves — comfortably within any instrument/synth's usable range).
-// closestOctaveNote always keeps notes within one octave of `reference`,
-// so clamping `reference` itself is enough to keep everything in range.
 const VOICING_RANGE_MIN = 48; // C3
 const VOICING_RANGE_MAX = 84; // C6
+const VOICING_CENTER = 65; // F above middle C — comfortable mid-register anchor
+
+// How strongly each new chord's reference point is pulled back toward
+// VOICING_CENTER, on top of pure voice-leading against the previous chord.
+// Pure nearest-note voice-leading (pull = 0) is musically "correct" in the
+// short term, but over many chord changes it can settle into a stable
+// cycle that sits well away from a comfortable register — particularly on
+// progressions with sustained descending or ascending root motion (long
+// ii-V chains, cycle-of-fifths bridges, etc.) — and once that cycle
+// stabilizes, every subsequent chord keeps reinforcing it. A gentle pull
+// breaks that feedback loop without making consecutive chords feel like
+// they're snapping to a grid; it's subtle enough that genuine voice-leading
+// motion (e.g. a half-step resolution) is barely affected; it's only the
+// long-run accumulated drift that gets reliably canceled out.
+const VOICING_CENTER_PULL = 0.22;
 
 function clampReference(ref) {
   return Math.max(VOICING_RANGE_MIN, Math.min(VOICING_RANGE_MAX, ref));
+}
+
+function pullTowardCenter(naturalReference) {
+  const blended =
+    naturalReference * (1 - VOICING_CENTER_PULL) +
+    VOICING_CENTER * VOICING_CENTER_PULL;
+  return clampReference(blended);
 }
 
 // Generates a voicing for a chord, optionally voice-led from the previous voicing.
@@ -464,8 +484,10 @@ function generateVoicing(root, quality, style, prevVoicing, centerMidi = 65) {
   // Reference point to voice-lead against: average of the previous chord's
   // CLOSED-equivalent notes (tracked separately from whatever was actually
   // played), or a comfortable center register if this is the first chord.
-  // Clamped so a long song can never walk the register out of range.
-  const reference = clampReference(
+  // Pulled gently toward a fixed center (see VOICING_CENTER_PULL above) so
+  // a long song's accumulated voice-leading can't settle into a stuck-low
+  // (or stuck-high) attractor cycle, then clamped as a hard backstop.
+  const reference = pullTowardCenter(
     prevVoicing && prevVoicing.closedNotes && prevVoicing.closedNotes.length
       ? prevVoicing.closedNotes.reduce((a, b) => a + b, 0) /
           prevVoicing.closedNotes.length
@@ -844,11 +866,37 @@ export default function ChordProgressionPracticer() {
   const [query, setQuery] = useState("");
   const [showResults, setShowResults] = useState(false);
   const [selectedSong, setSelectedSong] = useState(null);
+  const searchContainerRef = useRef(null);
+
+  useEffect(() => {
+    function handleOutsideClick(e) {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(e.target)
+      ) {
+        setShowResults(false);
+      }
+    }
+    function handleEscape(e) {
+      if (e.key === "Escape") setShowResults(false);
+    }
+    document.addEventListener("mousedown", handleOutsideClick);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
 
   const searchResults = useMemo(() => {
-    if (!query.trim()) return [];
     const q = query.trim().toLowerCase();
-    return songs.filter((s) => s.title.toLowerCase().includes(q)).slice(0, 8);
+    if (!q) {
+      // Empty query (e.g. just clicked into the box) — show every song,
+      // alphabetized, so the user can browse the full catalog instead of
+      // only ever seeing results once they start typing.
+      return [...songs].sort((a, b) => a.title.localeCompare(b.title));
+    }
+    return songs.filter((s) => s.title.toLowerCase().includes(q)).slice(0, 30);
   }, [songs, query]);
 
   // ---- Practice settings (reset to song defaults on song change) ----
@@ -1225,7 +1273,7 @@ export default function ChordProgressionPracticer() {
             </span>
           </div>
 
-          <div className="relative">
+          <div className="relative" ref={searchContainerRef}>
             <input
               type="text"
               value={query}
@@ -1233,11 +1281,36 @@ export default function ChordProgressionPracticer() {
                 setQuery(e.target.value);
                 setShowResults(true);
               }}
-              onFocus={() => setShowResults(true)}
-              placeholder="Search a jazz standard\u2026"
-              className="w-full bg-[#272524] border border-[#4a4744] focus:border-[#D4A24C] focus:outline-none rounded-lg px-4 py-3 text-[#F2EDE4] placeholder-[#8A8580] text-base"
+              onFocus={() => {
+                // If the box currently just shows the selected song's title
+                // verbatim (i.e. the user hasn't typed anything new since
+                // picking it), clear it so refocusing browses the full list
+                // again rather than re-filtering down to that one song.
+                if (selectedSong && query === selectedSong.title) setQuery("");
+                setShowResults(true);
+              }}
+              placeholder="Search or click to browse all standards\u2026"
+              className="w-full bg-[#272524] border border-[#4a4744] focus:border-[#D4A24C] focus:outline-none rounded-lg pl-4 pr-10 py-3 text-[#F2EDE4] placeholder-[#8A8580] text-base"
               aria-label="Search jazz standards"
             />
+            <button
+              type="button"
+              onClick={() => {
+                setShowResults((v) => {
+                  const opening = !v;
+                  if (opening) setQuery(""); // browsing via the chevron always shows the full list
+                  return opening;
+                });
+              }}
+              aria-label="Toggle song list"
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-[#8A8580] hover:text-[#D4A24C] transition-colors"
+            >
+              <span
+                className={`inline-block transition-transform ${showResults ? "rotate-180" : ""}`}
+              >
+                ▾
+              </span>
+            </button>
             {showResults && searchResults.length > 0 && (
               <ul className="absolute mt-1 w-full bg-[#272524] border border-[#4a4744] rounded-lg overflow-hidden shadow-2xl z-40 max-h-72 overflow-y-auto">
                 {searchResults.map((s) => (
