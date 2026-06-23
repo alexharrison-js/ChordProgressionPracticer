@@ -261,6 +261,41 @@ function transposeRoot(root, semitoneShift, targetKey) {
     : SEMITONE_TO_SHARP[newSemitone];
 }
 
+// ============================================================================
+// TRANSPOSING INSTRUMENT DISPLAY
+// ============================================================================
+// This is purely cosmetic — it changes what's shown in the chord chart for
+// players of Bb or Eb instruments, who read a different written pitch than
+// the concert (sounding) pitch. It never touches the audio engine, which
+// always plays the true concert-pitch voicings regardless of this setting.
+//
+// Standard transposing-instrument intervals (semitones to ADD to a concert
+// pitch to get the written pitch a transposing-instrument player should
+// read): Bb instruments (trumpet, tenor/soprano sax, clarinet) read a major
+// 2nd above concert, so +2. Eb instruments (alto/bari sax) read a major 6th
+// above concert (mod 12, equivalent to a minor 3rd below), so +9.
+const INSTRUMENT_SHIFT = { C: 0, Bb: 2, Eb: 9 };
+const INSTRUMENT_LABELS = {
+  C: "Concert C",
+  Bb: "B\u266D Instrument",
+  Eb: "E\u266D Instrument",
+};
+
+// Applies the instrument's display shift on top of an already-transposed
+// concert-pitch root. `concertTargetKey` is only used to pick sharp vs flat
+// spelling for the concert pitch itself; we derive the instrument's own
+// spelling preference by shifting that key the same amount.
+function transposeForInstrument(root, instrument, concertTargetKey) {
+  const shift = INSTRUMENT_SHIFT[instrument] ?? 0;
+  if (shift === 0) return root;
+  const displayKey = transposeRoot(
+    keyRoot(concertTargetKey),
+    shift,
+    concertTargetKey,
+  );
+  return transposeRoot(root, shift, displayKey);
+}
+
 // Chord quality -> interval set (semitones from root). Covers the qualities
 // present in jazz_standards.json. Falls back to dominant 7 for anything unknown.
 const QUALITY_INTERVALS = {
@@ -284,6 +319,36 @@ const QUALITY_INTERVALS = {
   dim7: [0, 3, 6, 9],
   o7: [0, 3, 6, 9],
   o: [0, 3, 6],
+  // Added when importing the Jazz-Chord-Progressions-Corpus source of truth —
+  // these cover every quality string that corpus's chord symbols produce.
+  "": [], // "NC" / no-chord rest tokens carry an empty quality; isRest should
+  // be checked before this is ever used for synthesis, but an empty
+  // interval list is a safe no-op fallback regardless.
+  "-#5": [0, 3, 8],
+  "-11": [0, 3, 7, 10, 14, 17],
+  "-69": [0, 3, 7, 9, 14],
+  "-maj7": [0, 3, 7, 11],
+  "13": [0, 4, 7, 10, 14, 17],
+  "13#11": [0, 4, 7, 10, 14, 18],
+  "13b9": [0, 4, 7, 10, 13, 17],
+  "7#5#9": [0, 4, 8, 10, 15],
+  "7#5b9": [0, 4, 8, 10, 13],
+  "7#9": [0, 4, 7, 10, 15],
+  "7#9#11": [0, 4, 7, 10, 15, 18],
+  "7+": [0, 4, 8, 10],
+  "7b5": [0, 4, 6, 10],
+  "7b9#11": [0, 4, 7, 10, 13, 18],
+  "7b9b5": [0, 4, 6, 10, 13],
+  "7sus4": [0, 5, 7, 10],
+  "9sus": [0, 5, 7, 10, 14],
+  "9sus4": [0, 5, 7, 10, 14],
+  aug: [0, 4, 8],
+  dim: [0, 3, 6],
+  maj: [0, 4, 7],
+  maj6: [0, 4, 7, 9],
+  maj69: [0, 4, 7, 9, 14],
+  "maj7#11": [0, 4, 7, 11, 18],
+  "maj7#5": [0, 4, 8, 11],
 };
 
 function qualityIntervals(quality) {
@@ -313,6 +378,33 @@ function qualityLabel(quality) {
     dim7: "dim7",
     o7: "dim7",
     o: "dim",
+    // Added when importing the Jazz-Chord-Progressions-Corpus source of truth.
+    "": "", // NC / rest — rendered specially by the chart, not via this label
+    "-#5": "m#5",
+    "-11": "m11",
+    "-69": "m6/9",
+    "-maj7": "m(maj7)",
+    "13": "13",
+    "13#11": "13#11",
+    "13b9": "13\u266D9",
+    "7#5#9": "7#5#9",
+    "7#5b9": "7#5\u266D9",
+    "7#9": "7#9",
+    "7#9#11": "7#9#11",
+    "7+": "7#5",
+    "7b5": "7\u266D5",
+    "7b9#11": "7\u266D9#11",
+    "7b9b5": "7\u266D9\u266D5",
+    "7sus4": "7sus4",
+    "9sus": "9sus",
+    "9sus4": "9sus4",
+    aug: "aug",
+    dim: "dim",
+    maj: "", // bare major triad shown as just the root
+    maj6: "6",
+    maj69: "6/9",
+    "maj7#11": "maj7#11",
+    "maj7#5": "maj7#5",
   };
   return MAP[quality] ?? quality;
 }
@@ -340,7 +432,26 @@ function closestOctaveNote(pitchClass, referenceMidi) {
 
 // VoicedChord shape: { notes: number[] (MIDI notes), bass: number (MIDI bass note) }
 
+// Playable register bounds for the voicing engine (roughly piano's middle
+// 4 octaves — comfortably within any instrument/synth's usable range).
+// closestOctaveNote always keeps notes within one octave of `reference`,
+// so clamping `reference` itself is enough to keep everything in range.
+const VOICING_RANGE_MIN = 48; // C3
+const VOICING_RANGE_MAX = 84; // C6
+
+function clampReference(ref) {
+  return Math.max(VOICING_RANGE_MIN, Math.min(VOICING_RANGE_MAX, ref));
+}
+
 // Generates a voicing for a chord, optionally voice-led from the previous voicing.
+//
+// IMPORTANT: the "reference" used to voice-lead the *next* chord is always
+// derived from the closed-position pitch classes, never from a style's
+// spread/dropped notes. Earlier, "open" and "drop2" fed their already
+//-transformed (permanently shifted up/down) notes back in as the next
+// chord's reference, which compounded every chord change and made voicings
+// drift out of any usable register within a few bars. Each style below is
+// now a one-time transform of a closed voicing computed fresh each call.
 function generateVoicing(root, quality, style, prevVoicing, centerMidi = 65) {
   const rootPc = NOTE_TO_SEMITONE[root] ?? 0;
   const pitchClasses = [
@@ -350,12 +461,20 @@ function generateVoicing(root, quality, style, prevVoicing, centerMidi = 65) {
   ];
   const bass = rootMidi(root, 2);
 
-  // Reference point to voice-lead against: average of the previous chord's notes,
-  // or a comfortable center register if this is the first chord.
-  const reference =
-    prevVoicing && prevVoicing.notes.length
-      ? prevVoicing.notes.reduce((a, b) => a + b, 0) / prevVoicing.notes.length
-      : centerMidi;
+  // Reference point to voice-lead against: average of the previous chord's
+  // CLOSED-equivalent notes (tracked separately from whatever was actually
+  // played), or a comfortable center register if this is the first chord.
+  // Clamped so a long song can never walk the register out of range.
+  const reference = clampReference(
+    prevVoicing && prevVoicing.closedNotes && prevVoicing.closedNotes.length
+      ? prevVoicing.closedNotes.reduce((a, b) => a + b, 0) /
+          prevVoicing.closedNotes.length
+      : centerMidi,
+  );
+
+  const closed = pitchClasses
+    .map((pc) => closestOctaveNote(pc, reference))
+    .sort((a, b) => a - b);
 
   if (style === "root") {
     // Root-position stack built straight up from the bass note's octave.
@@ -363,52 +482,42 @@ function generateVoicing(root, quality, style, prevVoicing, centerMidi = 65) {
     const notes = qualityIntervals(quality).map(
       (i) => base + (i % 12 === i ? i : i % 12),
     );
-    return { notes: notes.sort((a, b) => a - b), bass };
+    const sorted = notes.sort((a, b) => a - b);
+    return { notes: sorted, closedNotes: closed, bass };
   }
 
   if (style === "closed") {
-    const notes = pitchClasses
-      .map((pc) => closestOctaveNote(pc, reference))
-      .sort((a, b) => a - b);
-    return { notes, bass };
+    return { notes: closed, closedNotes: closed, bass };
   }
 
   if (style === "drop2") {
-    const closed = pitchClasses
-      .map((pc) => closestOctaveNote(pc, reference))
-      .sort((a, b) => a - b);
-    if (closed.length < 3) return { notes: closed, bass };
+    if (closed.length < 3) return { notes: closed, closedNotes: closed, bass };
     const idx = closed.length - 2;
     const dropped = [...closed];
     dropped[idx] -= 12;
-    return { notes: dropped.sort((a, b) => a - b), bass };
+    return { notes: dropped.sort((a, b) => a - b), closedNotes: closed, bass };
   }
 
   if (style === "open") {
-    // Spread voicing: alternate notes pushed up/down an octave from closed position
-    // for a wider, more open sound (roughly: keep 1 & 3 low, spread 2 & 4 up).
-    const closed = pitchClasses
-      .map((pc) => closestOctaveNote(pc, reference))
-      .sort((a, b) => a - b);
+    // Spread voicing: alternate notes pushed up an octave from closed
+    // position for a wider, more open sound.
     const spread = closed.map((n, i) => (i % 2 === 1 ? n + 12 : n));
-    return { notes: spread.sort((a, b) => a - b), bass };
+    return { notes: spread.sort((a, b) => a - b), closedNotes: closed, bass };
   }
 
   if (style === "block") {
-    // Block/"shout" style: closed voicing doubled with the root an octave below,
-    // giving a fuller, more percussive chord.
-    const closed = pitchClasses
-      .map((pc) => closestOctaveNote(pc, reference))
-      .sort((a, b) => a - b);
+    // Block/"shout" style: closed voicing doubled with the root an octave
+    // below, giving a fuller, more percussive chord.
     const lowRoot = closestOctaveNote(rootPc, reference - 12);
-    return { notes: [lowRoot, ...closed].sort((a, b) => a - b), bass };
+    return {
+      notes: [lowRoot, ...closed].sort((a, b) => a - b),
+      closedNotes: closed,
+      bass,
+    };
   }
 
   // fallback
-  return {
-    notes: pitchClasses.map((pc) => closestOctaveNote(pc, reference)),
-    bass,
-  };
+  return { notes: closed, closedNotes: closed, bass };
 }
 
 const VOICING_STYLES = [
@@ -448,44 +557,58 @@ function flattenSection(label, section, numerator) {
   return out;
 }
 
+// Flattens a song into three separate buffers:
+//   - intro: plays once, before looping starts (empty array if none)
+//   - core: the main form, this is what loops indefinitely during practice
+//   - outro: Tag/Coda material (empty array if none) — not used by the
+//     looping practice player, since there's no natural point to play a
+//     one-time ending while looping forever, but kept available here in
+//     case a future "play once" mode wants it.
 function flattenSong(song) {
   const num = song.timeSignature.numerator;
-  const out = [];
-  let barOffset = 0;
 
-  const appendSection = (label) => {
+  const appendSection = (label, barOffsetRef) => {
     const section = song.sections[label];
-    if (!section) return;
+    if (!section) return [];
     const flat = flattenSection(label, section, num);
     const repeated = section.repeat ? [...flat, ...flat] : flat;
     const reindexed = repeated.map((c) => ({
       ...c,
-      barIndex: c.barIndex + barOffset,
+      barIndex: c.barIndex + barOffsetRef.value,
     }));
-    out.push(...reindexed);
     const barsInSection = section.measures.reduce(
       (sum, m) => sum + (m.spansBars ?? 1),
       0,
     );
-    barOffset += section.repeat ? barsInSection * 2 : barsInSection;
+    barOffsetRef.value += section.repeat ? barsInSection * 2 : barsInSection;
+    return reindexed;
   };
 
-  // Lead-in: Intro, if present and not already explicitly listed in form.
+  let intro = [];
   if (song.sections["Intro"] && !song.form.includes("Intro")) {
-    appendSection("Intro");
+    const ref = { value: 0 };
+    intro = appendSection("Intro", ref);
   }
 
-  song.form.forEach((label) => appendSection(label));
+  // The main form always starts its own bar numbering at 0, independent of
+  // the intro — the intro is a separate one-time buffer, not part of the
+  // repeating bar count the chart/loop cares about.
+  const coreRef = { value: 0 };
+  const core = [];
+  song.form.forEach((label) => {
+    core.push(...appendSection(label, coreRef));
+  });
 
-  // Tail: Coda / Tag, if present and not already explicitly listed in form.
+  let outro = [];
+  const outroRef = { value: 0 };
   if (song.sections["Coda"] && !song.form.includes("Coda")) {
-    appendSection("Coda");
+    outro.push(...appendSection("Coda", outroRef));
   }
   if (song.sections["Tag"] && !song.form.includes("Tag")) {
-    appendSection("Tag");
+    outro.push(...appendSection("Tag", outroRef));
   }
 
-  return out;
+  return { intro, core, outro };
 }
 
 // ============================================================================
@@ -563,46 +686,112 @@ class AudioEngine {
     osc.onended = () => this.activeNodes.delete(osc);
   }
 
-  playChord(midiNotes, bassNote, time, duration) {
-    const ctx = this.ensureContext();
-    const attack = 0.015;
-    const release = Math.min(0.25, duration * 0.3);
-    const sustainEnd = Math.max(time + attack, time + duration - release);
+  // Plays one note with the requested timbre. `dest` is the gain node to
+  // route into (the shared chord bus). All three timbres are built purely
+  // from oscillators/envelopes — no sample loading, so the whole component
+  // stays a single self-contained file with no external audio assets.
+  _playVoice(midi, gainScale, dest, time, duration, timbre) {
+    const ctx = this.ctx;
+    const freq = 440 * Math.pow(2, (midi - 69) / 12);
+    const attack =
+      timbre === "piano" ? 0.006 : timbre === "epiano" ? 0.008 : 0.015;
+    const stopAt = time + duration + 0.08;
 
-    const playVoice = (midi, gainScale, dest) => {
-      const freq = 440 * Math.pow(2, (midi - 69) / 12);
+    const makeOsc = (type, freqMult, detuneCents = 0) => {
       const osc = ctx.createOscillator();
-      osc.type = "triangle";
-      osc.frequency.value = freq;
-      const osc2 = ctx.createOscillator();
-      osc2.type = "sine";
-      osc2.frequency.value = freq * 2;
-      const g = ctx.createGain();
-      const g2 = ctx.createGain();
-      g.gain.setValueAtTime(0.0001, time);
-      g.gain.linearRampToValueAtTime(0.22 * gainScale, time + attack);
-      g.gain.setValueAtTime(0.22 * gainScale, sustainEnd);
-      g.gain.exponentialRampToValueAtTime(0.0001, time + duration);
-      g2.gain.setValueAtTime(0.0001, time);
-      g2.gain.linearRampToValueAtTime(0.05 * gainScale, time + attack);
-      g2.gain.setValueAtTime(0.05 * gainScale, sustainEnd);
-      g2.gain.exponentialRampToValueAtTime(0.0001, time + duration);
-      osc.connect(g);
-      g.connect(dest);
-      osc2.connect(g2);
-      g2.connect(dest);
-      osc.start(time);
-      osc.stop(time + duration + 0.05);
-      osc2.start(time);
-      osc2.stop(time + duration + 0.05);
+      osc.type = type;
+      osc.frequency.value = freq * freqMult;
+      if (detuneCents) osc.detune.value = detuneCents;
       this.activeNodes.add(osc);
-      this.activeNodes.add(osc2);
       osc.onended = () => this.activeNodes.delete(osc);
-      osc2.onended = () => this.activeNodes.delete(osc2);
+      return osc;
     };
 
-    midiNotes.forEach((n) => playVoice(n, 1, this.chordGain));
-    playVoice(bassNote, 1.3, this.chordGain);
+    const connectWithEnvelope = (osc, peakGain, decayShape) => {
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, time);
+      g.gain.linearRampToValueAtTime(peakGain * gainScale, time + attack);
+      decayShape(g, peakGain * gainScale);
+      osc.connect(g);
+      g.connect(dest);
+      osc.start(time);
+      osc.stop(stopAt);
+    };
+
+    if (timbre === "piano") {
+      // Acoustic-piano approximation: a fundamental that decays continuously
+      // (no flat sustain plateau, like a real struck string), plus two
+      // higher partials that decay much faster than the fundamental — this
+      // is what gives a struck piano note its bright, fast-fading attack
+      // before settling into a purer tone.
+      const fundamental = makeOsc("triangle", 1);
+      connectWithEnvelope(fundamental, 0.5, (g, peak) => {
+        g.gain.setTargetAtTime(0.0001, time + attack, duration * 0.45);
+      });
+
+      const partial2 = makeOsc("sine", 2.0);
+      connectWithEnvelope(partial2, 0.16, (g, peak) => {
+        g.gain.setTargetAtTime(0.0001, time + attack, duration * 0.18);
+      });
+
+      const partial3 = makeOsc("sine", 3.01); // slightly sharp, like real piano inharmonicity
+      connectWithEnvelope(partial3, 0.07, (g, peak) => {
+        g.gain.setTargetAtTime(0.0001, time + attack, duration * 0.08);
+      });
+      return;
+    }
+
+    if (timbre === "epiano") {
+      // Electric-piano approximation: a clean, round sine-dominant
+      // fundamental (the defining EP trait — much purer than acoustic
+      // piano), plus a brief slightly-detuned higher partial right at the
+      // attack for the characteristic Rhodes/Wurlitzer "bell" or "bark",
+      // which fades out quickly and leaves only the round fundamental.
+      const fundamental = makeOsc("sine", 1);
+      connectWithEnvelope(fundamental, 0.5, (g, peak) => {
+        g.gain.setTargetAtTime(0.0001, time + attack, duration * 0.6);
+      });
+
+      const bark = makeOsc("sine", 4.0, 8); // slightly detuned 4th partial = the "tine" bite
+      connectWithEnvelope(bark, 0.12, (g, peak) => {
+        g.gain.setTargetAtTime(0.0001, time + attack, 0.05); // fast — just colors the attack
+      });
+      return;
+    }
+
+    // "synth" — the original triangle+sine pad sound, kept as a clear,
+    // simple option for pure theory practice.
+    const osc = makeOsc("triangle", 1);
+    const g = ctx.createGain();
+    const release = Math.min(0.25, duration * 0.3);
+    const sustainEnd = Math.max(time + attack, time + duration - release);
+    g.gain.setValueAtTime(0.0001, time);
+    g.gain.linearRampToValueAtTime(0.22 * gainScale, time + attack);
+    g.gain.setValueAtTime(0.22 * gainScale, sustainEnd);
+    g.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+    osc.connect(g);
+    g.connect(dest);
+    osc.start(time);
+    osc.stop(stopAt);
+
+    const osc2 = makeOsc("sine", 2);
+    const g2 = ctx.createGain();
+    g2.gain.setValueAtTime(0.0001, time);
+    g2.gain.linearRampToValueAtTime(0.05 * gainScale, time + attack);
+    g2.gain.setValueAtTime(0.05 * gainScale, sustainEnd);
+    g2.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+    osc2.connect(g2);
+    g2.connect(dest);
+    osc2.start(time);
+    osc2.stop(stopAt);
+  }
+
+  playChord(midiNotes, bassNote, time, duration, timbre = "piano") {
+    this.ensureContext();
+    midiNotes.forEach((n) =>
+      this._playVoice(n, 1, this.chordGain, time, duration, timbre),
+    );
+    this._playVoice(bassNote, 1.3, this.chordGain, time, duration, timbre);
   }
 }
 
@@ -618,11 +807,17 @@ const SCHEDULE_AHEAD_S = 0.15;
 // UI HELPER: chord symbol display
 // ============================================================================
 
-function ChordSymbol({ root, quality }) {
+function ChordSymbol({ root, quality, isRest, bassNote }) {
+  if (isRest || root === "NC") {
+    return <span className="whitespace-nowrap text-[#8A8580]">—</span>; // em dash = no chord / rest
+  }
   return (
     <span className="whitespace-nowrap">
       {root}
       <span className="text-[0.85em]">{qualityLabel(quality)}</span>
+      {bassNote && (
+        <span className="text-[0.8em] text-[#8A8580]">/{bassNote}</span>
+      )}
     </span>
   );
 }
@@ -661,7 +856,9 @@ export default function ChordProgressionPracticer() {
   const [bpm, setBpm] = useState(120);
   const [voicingStyle, setVoicingStyle] = useState("closed");
   const [articulation, setArticulation] = useState("block");
+  const [timbre, setTimbre] = useState("piano");
   const [showChart, setShowChart] = useState(true);
+  const [displayInstrument, setDisplayInstrument] = useState("C"); // cosmetic only — never affects audio
 
   // ---- Metronome settings ----
   const [metronomeOn, setMetronomeOn] = useState(true);
@@ -683,7 +880,11 @@ export default function ChordProgressionPracticer() {
   function selectSong(song) {
     setSelectedSong(song);
     setSelectedKey(song.key);
-    setBpm(song.tempo.bpm);
+    // tempo.bpm may be the literal string "unknown" for songs imported from
+    // sources that don't specify a tempo — fall back to a sensible default
+    // rather than feeding a non-numeric value into beat-duration math.
+    const bpmValue = typeof song.tempo?.bpm === "number" ? song.tempo.bpm : 120;
+    setBpm(bpmValue);
     setQuery(song.title);
     setShowResults(false);
     stopPlayback();
@@ -697,8 +898,12 @@ export default function ChordProgressionPracticer() {
   }
 
   // ---- Transposed + flattened chart for the selected song & key ----
-  const flatChords = useMemo(() => {
-    if (!selectedSong) return [];
+  // flattenSong now returns three separate buffers: intro/outro play once
+  // (shown in the chart for reference, but not part of the practice loop),
+  // and core is the main form, which is both displayed and the only part
+  // that actually loops during playback.
+  const flatSong = useMemo(() => {
+    if (!selectedSong) return { intro: [], core: [], outro: [] };
     return flattenSong(selectedSong);
   }, [selectedSong]);
 
@@ -707,24 +912,78 @@ export default function ChordProgressionPracticer() {
     return keySemitone(selectedKey) - keySemitone(selectedSong.key);
   }, [selectedSong, selectedKey]);
 
-  const transposedChords = useMemo(() => {
-    return flatChords.map((c) => ({
-      ...c,
-      root: transposeRoot(c.root, semitoneShift, selectedKey),
-    }));
-  }, [flatChords, semitoneShift, selectedKey]);
+  const transposeAll = useCallback(
+    (chords) =>
+      chords.map((c) => ({
+        ...c,
+        root: transposeRoot(c.root, semitoneShift, selectedKey),
+      })),
+    [semitoneShift, selectedKey],
+  );
 
-  // Group transposed chords into bars (for the chart and for the player)
-  const bars = useMemo(() => {
+  const transposedIntro = useMemo(
+    () => transposeAll(flatSong.intro),
+    [flatSong.intro, transposeAll],
+  );
+  const transposedCore = useMemo(
+    () => transposeAll(flatSong.core),
+    [flatSong.core, transposeAll],
+  );
+  const transposedOutro = useMemo(
+    () => transposeAll(flatSong.outro),
+    [flatSong.outro, transposeAll],
+  );
+
+  // Groups a flat chord list into per-bar arrays (for the chart and for the player).
+  function groupIntoBars(chords) {
     const out = [];
-    transposedChords.forEach((c) => {
+    chords.forEach((c) => {
       if (!out[c.barIndex]) out[c.barIndex] = [];
       out[c.barIndex].push(c);
     });
     return out;
-  }, [transposedChords]);
+  }
+
+  const introBars = useMemo(
+    () => groupIntoBars(transposedIntro),
+    [transposedIntro],
+  );
+  const bars = useMemo(() => groupIntoBars(transposedCore), [transposedCore]); // the looping core — what actually plays
+  const outroBars = useMemo(
+    () => groupIntoBars(transposedOutro),
+    [transposedOutro],
+  );
 
   const totalBars = bars.length;
+
+  // ---- Display-only instrument transposition (chart text, never audio) ----
+  // Takes the already key-transposed concert-pitch bars and applies the
+  // selected transposing-instrument's interval on top, purely for what's
+  // shown in the chord chart. The audio engine always reads from `bars` /
+  // `introBars` / `outroBars` above (concert pitch), never from these.
+  const applyInstrumentDisplay = useCallback(
+    (groupedBars) =>
+      groupedBars.map((bar) =>
+        bar.map((c) => ({
+          ...c,
+          root: transposeForInstrument(c.root, displayInstrument, selectedKey),
+        })),
+      ),
+    [displayInstrument, selectedKey],
+  );
+
+  const displayIntroBars = useMemo(
+    () => applyInstrumentDisplay(introBars),
+    [introBars, applyInstrumentDisplay],
+  );
+  const displayBars = useMemo(
+    () => applyInstrumentDisplay(bars),
+    [bars, applyInstrumentDisplay],
+  );
+  const displayOutroBars = useMemo(
+    () => applyInstrumentDisplay(outroBars),
+    [outroBars, applyInstrumentDisplay],
+  );
 
   // ---- Stop playback & cleanup ----
   const stopPlayback = useCallback(() => {
@@ -820,7 +1079,7 @@ export default function ChordProgressionPracticer() {
             engine.playClick(item.time, true);
           }
         }
-        if (item.chord) {
+        if (item.chord && !item.chord.isRest) {
           lastVoicingRef.current = generateVoicing(
             item.chord.root,
             item.chord.quality,
@@ -837,6 +1096,7 @@ export default function ChordProgressionPracticer() {
             lastVoicingRef.current.bass,
             item.time,
             duration,
+            timbre,
           );
         }
       });
@@ -988,7 +1248,10 @@ export default function ChordProgressionPracticer() {
                     >
                       <span className="text-[#F2EDE4]">{s.title}</span>
                       <span className="text-xs font-mono text-[#8A8580] shrink-0">
-                        {s.key} · {s.tempo.bpm} bpm
+                        {s.key} ·{" "}
+                        {typeof s.tempo?.bpm === "number"
+                          ? `${s.tempo.bpm} bpm`
+                          : "tempo unknown"}
                       </span>
                     </button>
                   </li>
@@ -1033,7 +1296,7 @@ export default function ChordProgressionPracticer() {
               )}
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
               {/* Key selector */}
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
@@ -1111,6 +1374,22 @@ export default function ChordProgressionPracticer() {
                 >
                   <option value="block">Block (sustain)</option>
                   <option value="staccato">Staccato</option>
+                </select>
+              </div>
+
+              {/* Sound / timbre */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
+                  Sound
+                </label>
+                <select
+                  value={timbre}
+                  onChange={(e) => setTimbre(e.target.value)}
+                  className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
+                >
+                  <option value="piano">Piano</option>
+                  <option value="epiano">Electric Piano</option>
+                  <option value="synth">Synth</option>
                 </select>
               </div>
             </div>
@@ -1205,45 +1484,162 @@ export default function ChordProgressionPracticer() {
 
           {/* ============== CHORD CHART ============== */}
           <section className="flex flex-col gap-2">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
               <h3 className="font-mono text-xs uppercase tracking-wide text-[#8A8580]">
                 Chord chart
               </h3>
-              <button
-                onClick={() => setShowChart((v) => !v)}
-                className="text-xs font-mono text-[#8A8580] hover:text-[#D4A24C] transition-colors underline"
-              >
-                {showChart ? "Hide (play by ear)" : "Show chart"}
-              </button>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] uppercase tracking-wide text-[#8A8580] font-mono">
+                    Reading as
+                  </span>
+                  <div className="flex bg-[#1C1B1A] rounded-md p-1 gap-1">
+                    {["C", "Bb", "Eb"].map((inst) => (
+                      <button
+                        key={inst}
+                        onClick={() => setDisplayInstrument(inst)}
+                        title={INSTRUMENT_LABELS[inst]}
+                        className={`text-xs px-2.5 py-1 rounded-md transition-colors font-mono ${
+                          displayInstrument === inst
+                            ? "bg-[#D4A24C] text-[#1C1B1A] font-semibold"
+                            : "text-[#8A8580] hover:text-[#F2EDE4]"
+                        }`}
+                      >
+                        {inst === "C"
+                          ? "C"
+                          : inst === "Bb"
+                            ? "B\u266D"
+                            : "E\u266D"}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowChart((v) => !v)}
+                  className="text-xs font-mono text-[#8A8580] hover:text-[#D4A24C] transition-colors underline"
+                >
+                  {showChart ? "Hide (play by ear)" : "Show chart"}
+                </button>
+              </div>
             </div>
+            {displayInstrument !== "C" && (
+              <p className="text-[10px] text-[#8A8580] font-mono -mt-1">
+                Showing transposed for {INSTRUMENT_LABELS[displayInstrument]} —
+                sounding pitch is unaffected.
+              </p>
+            )}
 
             {showChart && (
-              <div className="bg-[#252320] border border-[#3A3836] rounded-xl p-3 sm:p-5">
-                <div
-                  className="grid gap-1.5"
-                  style={{
-                    gridTemplateColumns:
-                      "repeat(auto-fill, minmax(150px, 1fr))",
-                  }}
-                >
-                  {bars.map((barChords, i) => (
+              <div className="bg-[#252320] border border-[#3A3836] rounded-xl p-3 sm:p-5 flex flex-col gap-4">
+                {introBars.length > 0 && (
+                  <div className="flex flex-col gap-1.5">
+                    <span className="text-[10px] uppercase tracking-wider text-[#8A8580] font-mono">
+                      Intro &middot; plays once
+                    </span>
                     <div
-                      key={i}
-                      className={`font-mono text-sm sm:text-base border border-[#4a4744] rounded-md px-2.5 py-2.5 flex items-center justify-center gap-1.5 flex-wrap transition-all duration-150 ${
-                        currentBar === i
-                          ? "bar-glow bg-[#3A3836]"
-                          : "bg-[#1f1d1b]"
-                      }`}
+                      className="grid gap-1.5"
+                      style={{
+                        gridTemplateColumns:
+                          "repeat(auto-fill, minmax(150px, 1fr))",
+                      }}
                     >
-                      {barChords.map((c, j) => (
-                        <React.Fragment key={j}>
-                          {j > 0 && <span className="text-[#8A8580]">·</span>}
-                          <ChordSymbol root={c.root} quality={c.quality} />
-                        </React.Fragment>
+                      {displayIntroBars.map((barChords, i) => (
+                        <div
+                          key={i}
+                          className="font-mono text-sm sm:text-base border border-[#4a4744] rounded-md px-2.5 py-2.5 flex items-center justify-center gap-1.5 flex-wrap bg-[#1f1d1b] opacity-70"
+                        >
+                          {barChords.map((c, j) => (
+                            <React.Fragment key={j}>
+                              {j > 0 && (
+                                <span className="text-[#8A8580]">·</span>
+                              )}
+                              <ChordSymbol
+                                root={c.root}
+                                quality={c.quality}
+                                isRest={c.isRest}
+                                bassNote={c.bassNote}
+                              />
+                            </React.Fragment>
+                          ))}
+                        </div>
                       ))}
                     </div>
-                  ))}
+                  </div>
+                )}
+
+                <div className="flex flex-col gap-1.5">
+                  {(introBars.length > 0 || outroBars.length > 0) && (
+                    <span className="text-[10px] uppercase tracking-wider text-[#D4A24C] font-mono">
+                      Form &middot; loops during playback
+                    </span>
+                  )}
+                  <div
+                    className="grid gap-1.5"
+                    style={{
+                      gridTemplateColumns:
+                        "repeat(auto-fill, minmax(150px, 1fr))",
+                    }}
+                  >
+                    {displayBars.map((barChords, i) => (
+                      <div
+                        key={i}
+                        className={`font-mono text-sm sm:text-base border border-[#4a4744] rounded-md px-2.5 py-2.5 flex items-center justify-center gap-1.5 flex-wrap transition-all duration-150 ${
+                          currentBar === i
+                            ? "bar-glow bg-[#3A3836]"
+                            : "bg-[#1f1d1b]"
+                        }`}
+                      >
+                        {barChords.map((c, j) => (
+                          <React.Fragment key={j}>
+                            {j > 0 && <span className="text-[#8A8580]">·</span>}
+                            <ChordSymbol
+                              root={c.root}
+                              quality={c.quality}
+                              isRest={c.isRest}
+                              bassNote={c.bassNote}
+                            />
+                          </React.Fragment>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
                 </div>
+
+                {outroBars.length > 0 && (
+                  <div className="flex flex-col gap-1.5">
+                    <span className="text-[10px] uppercase tracking-wider text-[#8A8580] font-mono">
+                      Tag / Coda &middot; not played while looping
+                    </span>
+                    <div
+                      className="grid gap-1.5"
+                      style={{
+                        gridTemplateColumns:
+                          "repeat(auto-fill, minmax(150px, 1fr))",
+                      }}
+                    >
+                      {displayOutroBars.map((barChords, i) => (
+                        <div
+                          key={i}
+                          className="font-mono text-sm sm:text-base border border-[#4a4744] rounded-md px-2.5 py-2.5 flex items-center justify-center gap-1.5 flex-wrap bg-[#1f1d1b] opacity-70"
+                        >
+                          {barChords.map((c, j) => (
+                            <React.Fragment key={j}>
+                              {j > 0 && (
+                                <span className="text-[#8A8580]">·</span>
+                              )}
+                              <ChordSymbol
+                                root={c.root}
+                                quality={c.quality}
+                                isRest={c.isRest}
+                                bassNote={c.bassNote}
+                              />
+                            </React.Fragment>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </section>
