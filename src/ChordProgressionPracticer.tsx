@@ -826,6 +826,34 @@ const LOOKAHEAD_MS = 25;
 const SCHEDULE_AHEAD_S = 0.15;
 
 // ============================================================================
+// FIT-TO-SCREEN LAYOUT — pick a grid (columns/rows) and font size that lets
+// every bar of the current form fit on screen at once, no scrolling, however
+// small that ends up being. This is recomputed live (via ResizeObserver)
+// whenever the container size or the number of bars changes.
+// ============================================================================
+
+function computeFitLayout(width, height, count) {
+  if (!count || width <= 0 || height <= 0) {
+    return { columns: 1, rows: 1, fontSize: 16 };
+  }
+  const GAP = 6; // approximate gap between cells, in px, matching the grid gap class
+  let best = { columns: 1, rows: count, cellSize: 0 };
+  for (let c = 1; c <= count; c++) {
+    const rows = Math.ceil(count / c);
+    const cellW = (width - GAP * (c - 1)) / c;
+    const cellH = (height - GAP * (rows - 1)) / rows;
+    if (cellW <= 0 || cellH <= 0) continue;
+    // Chord boxes are wider than tall; a cell's usable "size" for font
+    // scaling purposes is bounded by whichever dimension runs out first,
+    // normalized to roughly a 1.7:1 width:height box.
+    const size = Math.min(cellW / 1.7, cellH);
+    if (size > best.cellSize) best = { columns: c, rows, cellSize: size };
+  }
+  const fontSize = Math.max(9, Math.min(64, best.cellSize * 0.42));
+  return { columns: best.columns, rows: best.rows, fontSize };
+}
+
+// ============================================================================
 // UI HELPER: chord symbol display
 // ============================================================================
 
@@ -902,6 +930,13 @@ export default function ChordProgressionPracticer() {
   // ---- Practice settings (reset to song defaults on song change) ----
   const [selectedKey, setSelectedKey] = useState("C");
   const [bpm, setBpm] = useState(120);
+  // Tempo input is tracked as free-form text separately from the committed
+  // numeric `bpm` used by playback. This lets the user type "1", "19",
+  // "190" one digit at a time without each keystroke being clamped and
+  // re-rendered back into the field (which is what caused the old
+  // "auto-fills with a different number while typing" bug). The typed
+  // text is only parsed/clamped into `bpm` on blur or Enter.
+  const [bpmInput, setBpmInput] = useState("120");
   const [voicingStyle, setVoicingStyle] = useState("closed");
   const [articulation, setArticulation] = useState("block");
   const [timbre, setTimbre] = useState("piano");
@@ -918,12 +953,25 @@ export default function ChordProgressionPracticer() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentBar, setCurrentBar] = useState(-1);
 
+  // ---- "Just show me the chart" mode for small phone screens ----
+  const [controlsHidden, setControlsHidden] = useState(false);
+
   const engineRef = useRef(null);
   if (!engineRef.current) engineRef.current = new AudioEngine();
 
   const lastVoicingRef = useRef(null);
   const rafRef = useRef(null);
   const playGenRef = useRef(0); // bumped on every start/stop so stale loop-scheduling closures become no-ops
+
+  function commitBpmInput() {
+    const parsed = parseInt(bpmInput, 10);
+    const clamped = Math.max(
+      1,
+      Math.min(500, Number.isFinite(parsed) ? parsed : bpm),
+    );
+    setBpm(clamped);
+    setBpmInput(String(clamped));
+  }
 
   function selectSong(song) {
     setSelectedSong(song);
@@ -933,6 +981,7 @@ export default function ChordProgressionPracticer() {
     // rather than feeding a non-numeric value into beat-duration math.
     const bpmValue = typeof song.tempo?.bpm === "number" ? song.tempo.bpm : 120;
     setBpm(bpmValue);
+    setBpmInput(String(bpmValue));
     setQuery(song.title);
     setShowResults(false);
     stopPlayback();
@@ -1032,6 +1081,33 @@ export default function ChordProgressionPracticer() {
     () => applyInstrumentDisplay(outroBars),
     [outroBars, applyInstrumentDisplay],
   );
+
+  // ---- Fit-to-screen sizing for the core "Form" grid ----
+  // Measures the actual rendered space available for the form grid and
+  // picks a column count + font size so every bar is visible at once,
+  // without scrolling — recomputed on resize/orientation change and
+  // whenever controls are hidden/shown (which changes available height).
+  const formGridContainerRef = useRef(null);
+  const [fitLayout, setFitLayout] = useState({
+    columns: 4,
+    rows: 1,
+    fontSize: 16,
+  });
+
+  useEffect(() => {
+    const el = formGridContainerRef.current;
+    if (!el) return;
+    const recompute = () => {
+      const rect = el.getBoundingClientRect();
+      setFitLayout(
+        computeFitLayout(rect.width, rect.height, displayBars.length),
+      );
+    };
+    recompute();
+    const ro = new ResizeObserver(recompute);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [displayBars.length, controlsHidden, showChart]);
 
   // ---- Stop playback & cleanup ----
   const stopPlayback = useCallback(() => {
@@ -1150,10 +1226,23 @@ export default function ChordProgressionPracticer() {
       });
     }
 
+    // ---- Count-in: one full bar of metronome clicks before the chart's
+    // first chord sounds. This only happens once, right here at the very
+    // start of playback — the seamless loop-continuation logic further
+    // down (buildPassQueue/scheduleQueue for subsequent passes) is
+    // untouched, so repeats of the form do NOT get an extra count-in bar.
+    function scheduleCountIn(fromTime) {
+      for (let beat = 0; beat < num; beat++) {
+        engine.playClick(fromTime + beat * secPerBeat, beat === 0);
+      }
+      return fromTime + num * secPerBeat;
+    }
+
     lastVoicingRef.current = null;
     setIsPlaying(true);
 
-    const firstStart = ctx.currentTime + 0.1;
+    const countInStart = ctx.currentTime + 0.1;
+    const firstStart = scheduleCountIn(countInStart);
     let { passQueue: currentQueue, endTime: currentEndTime } =
       buildPassQueue(firstStart);
     scheduleQueue(currentQueue);
@@ -1261,82 +1350,96 @@ export default function ChordProgressionPracticer() {
         }
       `}</style>
 
-      {/* ============== HEADER / SEARCH ============== */}
-      <header className="border-b border-[#3A3836] px-4 sm:px-6 py-4 sticky top-0 bg-[#1C1B1A]/95 backdrop-blur z-30">
-        <div className="max-w-5xl mx-auto flex flex-col gap-3">
-          <div className="flex items-baseline justify-between gap-3">
-            <h1 className="font-display text-2xl sm:text-3xl tracking-tight text-[#F2EDE4]">
-              Jazz<span className="text-[#D4A24C]">Shed</span>
-            </h1>
-            <span className="text-xs font-mono text-[#8A8580] hidden sm:inline">
-              practice changes, any key, any tempo
-            </span>
-          </div>
+      {/* ============== ALWAYS-ON-SCREEN HIDE/SHOW CONTROLS BUTTON ============== */}
+      {selectedSong && (
+        <button
+          onClick={() => setControlsHidden((v) => !v)}
+          className="fixed top-3 right-3 z-50 flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#272524]/90 border border-[#4a4744] backdrop-blur text-xs font-mono text-[#F2EDE4] shadow-lg hover:border-[#D4A24C] transition-colors"
+          aria-label={controlsHidden ? "Show controls" : "Hide controls"}
+        >
+          <span>{controlsHidden ? "\u25BC" : "\u25B2"}</span>
+          {controlsHidden ? "Show controls" : "Hide controls"}
+        </button>
+      )}
 
-          <div className="relative" ref={searchContainerRef}>
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                setShowResults(true);
-              }}
-              onFocus={() => {
-                // If the box currently just shows the selected song's title
-                // verbatim (i.e. the user hasn't typed anything new since
-                // picking it), clear it so refocusing browses the full list
-                // again rather than re-filtering down to that one song.
-                if (selectedSong && query === selectedSong.title) setQuery("");
-                setShowResults(true);
-              }}
-              placeholder="Search or click to browse all standards\u2026"
-              className="w-full bg-[#272524] border border-[#4a4744] focus:border-[#D4A24C] focus:outline-none rounded-lg pl-4 pr-10 py-3 text-[#F2EDE4] placeholder-[#8A8580] text-base"
-              aria-label="Search jazz standards"
-            />
-            <button
-              type="button"
-              onClick={() => {
-                setShowResults((v) => {
-                  const opening = !v;
-                  if (opening) setQuery(""); // browsing via the chevron always shows the full list
-                  return opening;
-                });
-              }}
-              aria-label="Toggle song list"
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-[#8A8580] hover:text-[#D4A24C] transition-colors"
-            >
-              <span
-                className={`inline-block transition-transform ${showResults ? "rotate-180" : ""}`}
-              >
-                ▾
+      {/* ============== HEADER / SEARCH ============== */}
+      {!controlsHidden && (
+        <header className="border-b border-[#3A3836] px-4 sm:px-6 py-4 sticky top-0 bg-[#1C1B1A]/95 backdrop-blur z-30">
+          <div className="max-w-5xl mx-auto flex flex-col gap-3">
+            <div className="flex items-baseline justify-between gap-3">
+              <h1 className="font-display text-2xl sm:text-3xl tracking-tight text-[#F2EDE4]">
+                Jazz<span className="text-[#D4A24C]">Shed</span>
+              </h1>
+              <span className="text-xs font-mono text-[#8A8580] hidden sm:inline">
+                practice changes, any key, any tempo
               </span>
-            </button>
-            {showResults && searchResults.length > 0 && (
-              <ul className="absolute mt-1 w-full bg-[#272524] border border-[#4a4744] rounded-lg overflow-hidden shadow-2xl z-40 max-h-72 overflow-y-auto">
-                {searchResults.map((s) => (
-                  <li key={s.title}>
-                    <button
-                      onClick={() => selectSong(s)}
-                      className="w-full text-left px-4 py-2.5 hover:bg-[#3A3836] transition-colors flex items-baseline justify-between gap-2"
-                    >
-                      <span className="text-[#F2EDE4]">{s.title}</span>
-                      <span className="text-xs font-mono text-[#8A8580] shrink-0">
-                        {s.key} ·{" "}
-                        {typeof s.tempo?.bpm === "number"
-                          ? `${s.tempo.bpm} bpm`
-                          : "tempo unknown"}
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
+            </div>
+
+            <div className="relative" ref={searchContainerRef}>
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setShowResults(true);
+                }}
+                onFocus={() => {
+                  // If the box currently just shows the selected song's title
+                  // verbatim (i.e. the user hasn't typed anything new since
+                  // picking it), clear it so refocusing browses the full list
+                  // again rather than re-filtering down to that one song.
+                  if (selectedSong && query === selectedSong.title) setQuery("");
+                  setShowResults(true);
+                }}
+                placeholder="Search or click to browse all standards\u2026"
+                className="w-full bg-[#272524] border border-[#4a4744] focus:border-[#D4A24C] focus:outline-none rounded-lg pl-4 pr-10 py-3 text-[#F2EDE4] placeholder-[#8A8580] text-base"
+                aria-label="Search jazz standards"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  setShowResults((v) => {
+                    const opening = !v;
+                    if (opening) setQuery(""); // browsing via the chevron always shows the full list
+                    return opening;
+                  });
+                }}
+                aria-label="Toggle song list"
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-[#8A8580] hover:text-[#D4A24C] transition-colors"
+              >
+                <span
+                  className={`inline-block transition-transform ${showResults ? "rotate-180" : ""}`}
+                >
+                  ▾
+                </span>
+              </button>
+              {showResults && searchResults.length > 0 && (
+                <ul className="absolute mt-1 w-full bg-[#272524] border border-[#4a4744] rounded-lg overflow-hidden shadow-2xl z-40 max-h-72 overflow-y-auto">
+                  {searchResults.map((s) => (
+                    <li key={s.title}>
+                      <button
+                        onClick={() => selectSong(s)}
+                        className="w-full text-left px-4 py-2.5 hover:bg-[#3A3836] transition-colors flex items-baseline justify-between gap-2"
+                      >
+                        <span className="text-[#F2EDE4]">{s.title}</span>
+                        <span className="text-xs font-mono text-[#8A8580] shrink-0">
+                          {s.key} ·{" "}
+                          {typeof s.tempo?.bpm === "number"
+                            ? `${s.tempo.bpm} bpm`
+                            : "tempo unknown"}
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            {loadError && (
+              <p className="text-xs text-[#C99A56] font-mono">{loadError}</p>
             )}
           </div>
-          {loadError && (
-            <p className="text-xs text-[#C99A56] font-mono">{loadError}</p>
-          )}
-        </div>
-      </header>
+        </header>
+      )}
 
       {!selectedSong ? (
         <div className="max-w-5xl mx-auto px-6 py-20 text-center text-[#8A8580]">
@@ -1352,250 +1455,270 @@ export default function ChordProgressionPracticer() {
           </p>
         </div>
       ) : (
-        <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6 flex flex-col gap-6">
+        <main
+          className={`max-w-5xl mx-auto px-4 sm:px-6 flex flex-col gap-6 ${
+            controlsHidden ? "py-3" : "py-6"
+          }`}
+        >
           {/* ============== SONG TITLE + KEY/TEMPO CONTROLS ============== */}
-          <section className="flex flex-col gap-4">
-            <div>
-              <h2 className="font-display text-3xl sm:text-4xl text-[#F2EDE4]">
-                {selectedSong.title}{" "}
-                <span className="text-[#D4A24C] text-2xl sm:text-3xl">
-                  ({selectedSong.key})
-                </span>
-              </h2>
-              {selectedSong.composer && (
-                <p className="text-sm text-[#8A8580] mt-1">
-                  {selectedSong.composer}
-                </p>
-              )}
-            </div>
+          {!controlsHidden && (
+            <section className="flex flex-col gap-4">
+              <div>
+                <h2 className="font-display text-3xl sm:text-4xl text-[#F2EDE4]">
+                  {selectedSong.title}{" "}
+                  <span className="text-[#D4A24C] text-2xl sm:text-3xl">
+                    ({selectedSong.key})
+                  </span>
+                </h2>
+                {selectedSong.composer && (
+                  <p className="text-sm text-[#8A8580] mt-1">
+                    {selectedSong.composer}
+                  </p>
+                )}
+              </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-              {/* Key selector */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
-                  Key
-                </label>
-                <div className="flex gap-1.5">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                {/* Key selector */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
+                    Key
+                  </label>
+                  <div className="flex gap-1.5">
+                    <select
+                      value={selectedKey}
+                      onChange={(e) => setSelectedKey(e.target.value)}
+                      className="flex-1 bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
+                    >
+                      {keyOptions.map((k) => (
+                        <option key={k} value={k}>
+                          {k}
+                          {k === selectedSong.key ? " (orig.)" : ""}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      onClick={pickRandomKey}
+                      title="Random key"
+                      className="px-2.5 py-2 bg-[#3A3836] hover:bg-[#4a4744] rounded-md text-sm transition-colors"
+                    >
+                      🎲
+                    </button>
+                  </div>
+                </div>
+
+                {/* Tempo */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
+                    Tempo (bpm)
+                  </label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={500}
+                    inputMode="numeric"
+                    value={bpmInput}
+                    onChange={(e) => {
+                      // Keep whatever the user typed as free-form text — no
+                      // clamping/parsing here. This is what lets someone
+                      // type "1", then "9", then "0" to reach 190 without
+                      // each keystroke snapping to a different clamped
+                      // value mid-way through typing.
+                      setBpmInput(e.target.value);
+                    }}
+                    onBlur={commitBpmInput}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.currentTarget.blur();
+                      }
+                    }}
+                    className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none font-mono"
+                  />
+                </div>
+
+                {/* Voicing style */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
+                    Voicing
+                  </label>
                   <select
-                    value={selectedKey}
-                    onChange={(e) => setSelectedKey(e.target.value)}
-                    className="flex-1 bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
+                    value={voicingStyle}
+                    onChange={(e) => setVoicingStyle(e.target.value)}
+                    className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
                   >
-                    {keyOptions.map((k) => (
-                      <option key={k} value={k}>
-                        {k}
-                        {k === selectedSong.key ? " (orig.)" : ""}
+                    {VOICING_STYLES.map((v) => (
+                      <option key={v.id} value={v.id}>
+                        {v.label}
                       </option>
                     ))}
                   </select>
-                  <button
-                    onClick={pickRandomKey}
-                    title="Random key"
-                    className="px-2.5 py-2 bg-[#3A3836] hover:bg-[#4a4744] rounded-md text-sm transition-colors"
+                </div>
+
+                {/* Articulation */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
+                    Articulation
+                  </label>
+                  <select
+                    value={articulation}
+                    onChange={(e) => setArticulation(e.target.value)}
+                    className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
                   >
-                    🎲
-                  </button>
+                    <option value="block">Block (sustain)</option>
+                    <option value="staccato">Staccato</option>
+                  </select>
+                </div>
+
+                {/* Sound / timbre */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
+                    Sound
+                  </label>
+                  <select
+                    value={timbre}
+                    onChange={(e) => setTimbre(e.target.value)}
+                    className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
+                  >
+                    <option value="piano">Piano</option>
+                    <option value="epiano">Electric Piano</option>
+                    <option value="synth">Synth</option>
+                  </select>
                 </div>
               </div>
-
-              {/* Tempo */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
-                  Tempo (bpm)
-                </label>
-                <input
-                  type="number"
-                  min={30}
-                  max={400}
-                  value={bpm}
-                  onChange={(e) =>
-                    setBpm(
-                      Math.max(30, Math.min(400, Number(e.target.value) || 0)),
-                    )
-                  }
-                  className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none font-mono"
-                />
-              </div>
-
-              {/* Voicing style */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
-                  Voicing
-                </label>
-                <select
-                  value={voicingStyle}
-                  onChange={(e) => setVoicingStyle(e.target.value)}
-                  className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
-                >
-                  {VOICING_STYLES.map((v) => (
-                    <option key={v.id} value={v.id}>
-                      {v.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Articulation */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
-                  Articulation
-                </label>
-                <select
-                  value={articulation}
-                  onChange={(e) => setArticulation(e.target.value)}
-                  className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
-                >
-                  <option value="block">Block (sustain)</option>
-                  <option value="staccato">Staccato</option>
-                </select>
-              </div>
-
-              {/* Sound / timbre */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
-                  Sound
-                </label>
-                <select
-                  value={timbre}
-                  onChange={(e) => setTimbre(e.target.value)}
-                  className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
-                >
-                  <option value="piano">Piano</option>
-                  <option value="epiano">Electric Piano</option>
-                  <option value="synth">Synth</option>
-                </select>
-              </div>
-            </div>
-          </section>
+            </section>
+          )}
 
           {/* ============== METRONOME PANEL ============== */}
-          <section className="bg-[#252320] border border-[#3A3836] rounded-xl p-4 flex flex-col gap-3">
-            <div className="flex items-center justify-between">
-              <h3 className="font-mono text-xs uppercase tracking-wide text-[#8A8580]">
-                Metronome
-              </h3>
-              <button
-                role="switch"
-                aria-checked={metronomeOn}
-                onClick={() => setMetronomeOn((v) => !v)}
-                className={`w-11 h-6 rounded-full transition-colors relative ${
-                  metronomeOn ? "bg-[#5B7065]" : "bg-[#4a4744]"
-                }`}
-              >
-                <span
-                  className={`absolute top-0.5 left-0.5 w-5 h-5 bg-[#F2EDE4] rounded-full transition-transform ${
-                    metronomeOn ? "translate-x-5" : ""
+          {!controlsHidden && (
+            <section className="bg-[#252320] border border-[#3A3836] rounded-xl p-4 flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <h3 className="font-mono text-xs uppercase tracking-wide text-[#8A8580]">
+                  Metronome
+                </h3>
+                <button
+                  role="switch"
+                  aria-checked={metronomeOn}
+                  onClick={() => setMetronomeOn((v) => !v)}
+                  className={`w-11 h-6 rounded-full transition-colors relative ${
+                    metronomeOn ? "bg-[#5B7065]" : "bg-[#4a4744]"
                   }`}
-                />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs text-[#8A8580]">Subdivision</label>
-                <div className="flex bg-[#1C1B1A] rounded-md p-1 gap-1">
-                  {["quarter", "eighth", "sixteenth"].map((sd) => (
-                    <button
-                      key={sd}
-                      onClick={() => setSubdivision(sd)}
-                      className={`flex-1 text-xs py-1.5 rounded-md transition-colors capitalize ${
-                        subdivision === sd
-                          ? "bg-[#D4A24C] text-[#1C1B1A] font-semibold"
-                          : "text-[#8A8580] hover:text-[#F2EDE4]"
-                      }`}
-                    >
-                      {sd === "quarter"
-                        ? "\u2669"
-                        : sd === "eighth"
-                          ? "\u266A"
-                          : "\u266C"}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs text-[#8A8580]">Click on</label>
-                <div className="flex bg-[#1C1B1A] rounded-md p-1 gap-1">
-                  <button
-                    onClick={() => setAccentMode("downbeat")}
-                    className={`flex-1 text-xs py-1.5 rounded-md transition-colors ${
-                      accentMode === "downbeat"
-                        ? "bg-[#D4A24C] text-[#1C1B1A] font-semibold"
-                        : "text-[#8A8580] hover:text-[#F2EDE4]"
+                >
+                  <span
+                    className={`absolute top-0.5 left-0.5 w-5 h-5 bg-[#F2EDE4] rounded-full transition-transform ${
+                      metronomeOn ? "translate-x-5" : ""
                     }`}
-                  >
-                    Beat 1 only
-                  </button>
-                  <button
-                    onClick={() => setAccentMode("all")}
-                    className={`flex-1 text-xs py-1.5 rounded-md transition-colors ${
-                      accentMode === "all"
-                        ? "bg-[#D4A24C] text-[#1C1B1A] font-semibold"
-                        : "text-[#8A8580] hover:text-[#F2EDE4]"
-                    }`}
-                  >
-                    All beats
-                  </button>
-                </div>
+                  />
+                </button>
               </div>
 
-              <div className="flex flex-col gap-1.5 col-span-2 sm:col-span-1">
-                <label className="text-xs text-[#8A8580]">Volume</label>
-                <input
-                  type="range"
-                  min={0}
-                  max={1}
-                  step={0.01}
-                  value={metroVolume}
-                  onChange={(e) => setMetroVolume(Number(e.target.value))}
-                  className="w-full mt-2"
-                />
-              </div>
-            </div>
-          </section>
-
-          {/* ============== CHORD CHART ============== */}
-          <section className="flex flex-col gap-2">
-            <div className="flex items-center justify-between gap-3 flex-wrap">
-              <h3 className="font-mono text-xs uppercase tracking-wide text-[#8A8580]">
-                Chord chart
-              </h3>
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] uppercase tracking-wide text-[#8A8580] font-mono">
-                    Reading as
-                  </span>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs text-[#8A8580]">Subdivision</label>
                   <div className="flex bg-[#1C1B1A] rounded-md p-1 gap-1">
-                    {["C", "Bb", "Eb"].map((inst) => (
+                    {["quarter", "eighth", "sixteenth"].map((sd) => (
                       <button
-                        key={inst}
-                        onClick={() => setDisplayInstrument(inst)}
-                        title={INSTRUMENT_LABELS[inst]}
-                        className={`text-xs px-2.5 py-1 rounded-md transition-colors font-mono ${
-                          displayInstrument === inst
+                        key={sd}
+                        onClick={() => setSubdivision(sd)}
+                        className={`flex-1 text-xs py-1.5 rounded-md transition-colors capitalize ${
+                          subdivision === sd
                             ? "bg-[#D4A24C] text-[#1C1B1A] font-semibold"
                             : "text-[#8A8580] hover:text-[#F2EDE4]"
                         }`}
                       >
-                        {inst === "C"
-                          ? "C"
-                          : inst === "Bb"
-                            ? "B\u266D"
-                            : "E\u266D"}
+                        {sd === "quarter"
+                          ? "\u2669"
+                          : sd === "eighth"
+                            ? "\u266A"
+                            : "\u266C"}
                       </button>
                     ))}
                   </div>
                 </div>
-                <button
-                  onClick={() => setShowChart((v) => !v)}
-                  className="text-xs font-mono text-[#8A8580] hover:text-[#D4A24C] transition-colors underline"
-                >
-                  {showChart ? "Hide (play by ear)" : "Show chart"}
-                </button>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs text-[#8A8580]">Click on</label>
+                  <div className="flex bg-[#1C1B1A] rounded-md p-1 gap-1">
+                    <button
+                      onClick={() => setAccentMode("downbeat")}
+                      className={`flex-1 text-xs py-1.5 rounded-md transition-colors ${
+                        accentMode === "downbeat"
+                          ? "bg-[#D4A24C] text-[#1C1B1A] font-semibold"
+                          : "text-[#8A8580] hover:text-[#F2EDE4]"
+                      }`}
+                    >
+                      Beat 1 only
+                    </button>
+                    <button
+                      onClick={() => setAccentMode("all")}
+                      className={`flex-1 text-xs py-1.5 rounded-md transition-colors ${
+                        accentMode === "all"
+                          ? "bg-[#D4A24C] text-[#1C1B1A] font-semibold"
+                          : "text-[#8A8580] hover:text-[#F2EDE4]"
+                      }`}
+                    >
+                      All beats
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1.5 col-span-2 sm:col-span-1">
+                  <label className="text-xs text-[#8A8580]">Volume</label>
+                  <input
+                    type="range"
+                    min={0}
+                    max={1}
+                    step={0.01}
+                    value={metroVolume}
+                    onChange={(e) => setMetroVolume(Number(e.target.value))}
+                    className="w-full mt-2"
+                  />
+                </div>
               </div>
-            </div>
-            {displayInstrument !== "C" && (
+            </section>
+          )}
+
+          {/* ============== CHORD CHART ============== */}
+          <section className="flex flex-col gap-2 flex-1 min-h-0">
+            {!controlsHidden && (
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <h3 className="font-mono text-xs uppercase tracking-wide text-[#8A8580]">
+                  Chord chart
+                </h3>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] uppercase tracking-wide text-[#8A8580] font-mono">
+                      Reading as
+                    </span>
+                    <div className="flex bg-[#1C1B1A] rounded-md p-1 gap-1">
+                      {["C", "Bb", "Eb"].map((inst) => (
+                        <button
+                          key={inst}
+                          onClick={() => setDisplayInstrument(inst)}
+                          title={INSTRUMENT_LABELS[inst]}
+                          className={`text-xs px-2.5 py-1 rounded-md transition-colors font-mono ${
+                            displayInstrument === inst
+                              ? "bg-[#D4A24C] text-[#1C1B1A] font-semibold"
+                              : "text-[#8A8580] hover:text-[#F2EDE4]"
+                          }`}
+                        >
+                          {inst === "C"
+                            ? "C"
+                            : inst === "Bb"
+                              ? "B\u266D"
+                              : "E\u266D"}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setShowChart((v) => !v)}
+                    className="text-xs font-mono text-[#8A8580] hover:text-[#D4A24C] transition-colors underline"
+                  >
+                    {showChart ? "Hide (play by ear)" : "Show chart"}
+                  </button>
+                </div>
+              </div>
+            )}
+            {!controlsHidden && displayInstrument !== "C" && (
               <p className="text-[10px] text-[#8A8580] font-mono -mt-1">
                 Showing transposed for {INSTRUMENT_LABELS[displayInstrument]} —
                 sounding pitch is unaffected.
@@ -1603,9 +1726,17 @@ export default function ChordProgressionPracticer() {
             )}
 
             {showChart && (
-              <div className="bg-[#252320] border border-[#3A3836] rounded-xl p-3 sm:p-5 flex flex-col gap-4">
-                {introBars.length > 0 && (
-                  <div className="flex flex-col gap-1.5">
+              <div
+                className="bg-[#252320] border border-[#3A3836] rounded-xl p-3 sm:p-5 flex flex-col gap-4 flex-1 min-h-0"
+                style={{
+                  height: controlsHidden
+                    ? "calc(100dvh - 1.5rem)"
+                    : "calc(100dvh - 22rem)",
+                  minHeight: "220px",
+                }}
+              >
+                {introBars.length > 0 && !controlsHidden && (
+                  <div className="flex flex-col gap-1.5 shrink-0">
                     <span className="text-[10px] uppercase tracking-wider text-[#8A8580] font-mono">
                       Intro &middot; plays once
                     </span>
@@ -1640,23 +1771,28 @@ export default function ChordProgressionPracticer() {
                   </div>
                 )}
 
-                <div className="flex flex-col gap-1.5">
-                  {(introBars.length > 0 || outroBars.length > 0) && (
-                    <span className="text-[10px] uppercase tracking-wider text-[#D4A24C] font-mono">
-                      Form &middot; loops during playback
-                    </span>
-                  )}
+                <div
+                  ref={formGridContainerRef}
+                  className="flex-1 min-h-0 flex flex-col gap-1.5"
+                >
+                  {(introBars.length > 0 || outroBars.length > 0) &&
+                    !controlsHidden && (
+                      <span className="text-[10px] uppercase tracking-wider text-[#D4A24C] font-mono shrink-0">
+                        Form &middot; loops during playback
+                      </span>
+                    )}
                   <div
-                    className="grid gap-1.5"
+                    className="grid gap-1.5 flex-1 min-h-0"
                     style={{
-                      gridTemplateColumns:
-                        "repeat(auto-fill, minmax(150px, 1fr))",
+                      gridTemplateColumns: `repeat(${fitLayout.columns}, 1fr)`,
+                      gridTemplateRows: `repeat(${fitLayout.rows}, 1fr)`,
+                      fontSize: `${fitLayout.fontSize}px`,
                     }}
                   >
                     {displayBars.map((barChords, i) => (
                       <div
                         key={i}
-                        className={`font-mono text-sm sm:text-base border border-[#4a4744] rounded-md px-2.5 py-2.5 flex items-center justify-center gap-1.5 flex-wrap transition-all duration-150 ${
+                        className={`font-mono border border-[#4a4744] rounded-md px-1.5 py-1 flex items-center justify-center gap-1.5 flex-wrap transition-all duration-150 overflow-hidden ${
                           currentBar === i
                             ? "bar-glow bg-[#3A3836]"
                             : "bg-[#1f1d1b]"
@@ -1678,8 +1814,8 @@ export default function ChordProgressionPracticer() {
                   </div>
                 </div>
 
-                {outroBars.length > 0 && (
-                  <div className="flex flex-col gap-1.5">
+                {outroBars.length > 0 && !controlsHidden && (
+                  <div className="flex flex-col gap-1.5 shrink-0">
                     <span className="text-[10px] uppercase tracking-wider text-[#8A8580] font-mono">
                       Tag / Coda &middot; not played while looping
                     </span>
@@ -1720,7 +1856,7 @@ export default function ChordProgressionPracticer() {
       )}
 
       {/* ============== TRANSPORT (fixed) ============== */}
-      {selectedSong && (
+      {selectedSong && !controlsHidden && (
         <div className="sticky bottom-0 border-t border-[#3A3836] bg-[#1C1B1A]/95 backdrop-blur px-4 sm:px-6 py-4">
           <div className="max-w-5xl mx-auto flex items-center justify-center gap-4">
             <button
