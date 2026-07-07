@@ -840,27 +840,37 @@ const SCHEDULE_AHEAD_S = 0.15;
 // The chord grid renders with the `font-mono` class (JetBrains Mono), which
 // is a true monospace font — so a character's rendered width is a reliable,
 // near-constant fraction of the font-size. This lets us predict text width
-// from character count alone instead of measuring the DOM.
-const MONO_CHAR_WIDTH_RATIO = 0.62; // px width per px of font-size, per character
+// from character count alone instead of measuring the DOM. The ratio is set
+// a little generous (rather than the theoretical ~0.6) so estimates err on
+// the side of a slightly-too-small font instead of overflow.
+const MONO_CHAR_WIDTH_RATIO = 0.68; // px width per px of font-size, per character
 const LINE_HEIGHT_RATIO = 1.3; // px line height per px of font-size
 const CELL_PAD_X = 14; // px, combined left+right padding+border inside a cell
 const CELL_PAD_Y = 10; // px, combined top+bottom padding+border inside a cell
-const GRID_GAP = 6; // px, matches the gap-1.5 class used between cells
+const GRID_GAP = 6; // px, matches the gap-1.5 class used between grid cells
+const SYMBOL_GAP = 4; // px, matches the gap-1 class used between chord symbols within a cell
 
-// Estimates how many monospace characters wide a bar's full chord text is,
-// including separators between multiple chords in the same bar.
-function estimateBarChars(barChords) {
-  let total = 0;
+// Estimates a bar's rendered chord text as { chars, fixedPx }: `chars` is
+// the character count that scales with font-size (root + quality symbols +
+// the "·" separators), and `fixedPx` is the flex `gap` spacing between
+// symbols, which is a fixed pixel value that does NOT shrink with font-size
+// — so it has to be subtracted from available width before dividing by
+// per-character width, rather than folded into the character count.
+function estimateBarMetrics(barChords) {
+  let chars = 0;
   barChords.forEach((c, idx) => {
-    if (idx > 0) total += 3; // " · " separator with its surrounding gap
+    if (idx > 0) chars += 1; // the "·" separator character itself
     if (c.isRest || c.root === "NC") {
-      total += 1;
+      chars += 1;
       return;
     }
-    total += (c.root?.length || 1) + qualityLabel(c.quality).length;
-    if (c.bassNote) total += c.bassNote.length + 1;
+    chars += (c.root?.length || 1) + qualityLabel(c.quality).length;
+    if (c.bassNote) chars += c.bassNote.length + 1;
   });
-  return Math.max(total, 1);
+  const n = barChords.length;
+  // n chords + (n-1) separators = (2n-1) flex children = (2n-2) gaps.
+  const fixedPx = Math.max(0, 2 * n - 2) * SYMBOL_GAP;
+  return { chars: Math.max(chars, 1), fixedPx };
 }
 
 function computeFitLayout(width, height, barsChords) {
@@ -868,28 +878,41 @@ function computeFitLayout(width, height, barsChords) {
   if (!count || width <= 0 || height <= 0) {
     return { columns: 1, rows: 1, fontSize: 16 };
   }
-  const maxChars = Math.max(...barsChords.map(estimateBarChars));
+  const metrics = barsChords.map(estimateBarMetrics);
 
-  let best = { columns: 1, rows: count, fontSize: 8 };
+  let best = { columns: 1, rows: count, fontSize: 0 };
   for (let c = 1; c <= count; c++) {
     const rows = Math.ceil(count / c);
     const cellW = (width - GRID_GAP * (c - 1)) / c - CELL_PAD_X;
     const cellH = (height - GRID_GAP * (rows - 1)) / rows - CELL_PAD_Y;
     if (cellW <= 0 || cellH <= 0) continue;
 
-    // Largest font size that lets the widest bar's text fit this cell's
-    // width, and that lets one line of text fit this cell's height.
-    const fontSizeForWidth = cellW / (maxChars * MONO_CHAR_WIDTH_RATIO);
+    // The binding constraint is whichever bar needs the most width relative
+    // to what's available — check every bar's own requirement, not a single
+    // precomputed "widest" one, since fixed gap overhead vs. scaling
+    // character width trade off differently at different font sizes.
+    let minFontSizeForWidth = Infinity;
+    for (const m of metrics) {
+      const availableForChars = cellW - m.fixedPx;
+      const fs =
+        availableForChars <= 0
+          ? 0
+          : availableForChars / (m.chars * MONO_CHAR_WIDTH_RATIO);
+      if (fs < minFontSizeForWidth) minFontSizeForWidth = fs;
+    }
     const fontSizeForHeight = cellH / LINE_HEIGHT_RATIO;
-    const fontSize = Math.min(fontSizeForWidth, fontSizeForHeight);
+    const fontSize = Math.min(minFontSizeForWidth, fontSizeForHeight);
 
     if (fontSize > best.fontSize) best = { columns: c, rows, fontSize };
   }
 
+  // Only cap the upper bound — never force a minimum. A tiny font that
+  // truly fits is the goal; flooring it here would silently reintroduce
+  // overflow/clipping, which is exactly what we're trying to avoid.
   return {
     columns: best.columns,
     rows: best.rows,
-    fontSize: Math.max(7, Math.min(48, best.fontSize)),
+    fontSize: Math.max(1, Math.min(48, best.fontSize)),
   };
 }
 
@@ -1841,7 +1864,7 @@ export default function ChordProgressionPracticer() {
                     // clipped — cells use nowrap + visible overflow as a
                     // safety net in case the estimate runs a touch tight.
                     <div
-                      className="grid gap-1.5 flex-1 min-h-0"
+                      className="grid gap-1.5 flex-1 min-h-0 min-w-0"
                       style={{
                         gridTemplateColumns: `repeat(${fitLayout.columns}, 1fr)`,
                         gridTemplateRows: `repeat(${fitLayout.rows}, 1fr)`,
@@ -1851,7 +1874,7 @@ export default function ChordProgressionPracticer() {
                       {displayBars.map((barChords, i) => (
                         <div
                           key={i}
-                          className={`font-mono border border-[#4a4744] rounded-md px-1 flex items-center justify-center gap-1 flex-nowrap whitespace-nowrap transition-all duration-150 ${
+                          className={`font-mono border border-[#4a4744] rounded-md px-1 flex items-center justify-center gap-1 flex-nowrap whitespace-nowrap min-w-0 min-h-0 transition-all duration-150 ${
                             currentBar === i
                               ? "bar-glow bg-[#3A3836]"
                               : "bg-[#1f1d1b]"
