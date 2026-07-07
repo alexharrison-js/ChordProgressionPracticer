@@ -826,31 +826,71 @@ const LOOKAHEAD_MS = 25;
 const SCHEDULE_AHEAD_S = 0.15;
 
 // ============================================================================
-// FIT-TO-SCREEN LAYOUT — pick a grid (columns/rows) and font size that lets
-// every bar of the current form fit on screen at once, no scrolling, however
-// small that ends up being. This is recomputed live (via ResizeObserver)
-// whenever the container size or the number of bars changes.
+// FIT-TO-SCREEN LAYOUT (used only in "hide controls" phone mode) — picks a
+// grid (columns/rows) and a font size small enough that every bar's FULL
+// chord text (root + quality, all chords in a multi-chord bar) fits inside
+// its cell, and every bar fits within the available viewport with no
+// scrolling. Unlike a naive "shrink based on bar count" approach, this
+// looks at the actual text of the widest bar (e.g. a 2-chord bar like
+// "A-7 · D7" needs more width than a 1-chord bar) so nothing gets clipped.
+// Recomputed live via ResizeObserver whenever the container size or the
+// song's bars change.
 // ============================================================================
 
-function computeFitLayout(width, height, count) {
+// The chord grid renders with the `font-mono` class (JetBrains Mono), which
+// is a true monospace font — so a character's rendered width is a reliable,
+// near-constant fraction of the font-size. This lets us predict text width
+// from character count alone instead of measuring the DOM.
+const MONO_CHAR_WIDTH_RATIO = 0.62; // px width per px of font-size, per character
+const LINE_HEIGHT_RATIO = 1.3; // px line height per px of font-size
+const CELL_PAD_X = 14; // px, combined left+right padding+border inside a cell
+const CELL_PAD_Y = 10; // px, combined top+bottom padding+border inside a cell
+const GRID_GAP = 6; // px, matches the gap-1.5 class used between cells
+
+// Estimates how many monospace characters wide a bar's full chord text is,
+// including separators between multiple chords in the same bar.
+function estimateBarChars(barChords) {
+  let total = 0;
+  barChords.forEach((c, idx) => {
+    if (idx > 0) total += 3; // " · " separator with its surrounding gap
+    if (c.isRest || c.root === "NC") {
+      total += 1;
+      return;
+    }
+    total += (c.root?.length || 1) + qualityLabel(c.quality).length;
+    if (c.bassNote) total += c.bassNote.length + 1;
+  });
+  return Math.max(total, 1);
+}
+
+function computeFitLayout(width, height, barsChords) {
+  const count = barsChords.length;
   if (!count || width <= 0 || height <= 0) {
     return { columns: 1, rows: 1, fontSize: 16 };
   }
-  const GAP = 6; // approximate gap between cells, in px, matching the grid gap class
-  let best = { columns: 1, rows: count, cellSize: 0 };
+  const maxChars = Math.max(...barsChords.map(estimateBarChars));
+
+  let best = { columns: 1, rows: count, fontSize: 8 };
   for (let c = 1; c <= count; c++) {
     const rows = Math.ceil(count / c);
-    const cellW = (width - GAP * (c - 1)) / c;
-    const cellH = (height - GAP * (rows - 1)) / rows;
+    const cellW = (width - GRID_GAP * (c - 1)) / c - CELL_PAD_X;
+    const cellH = (height - GRID_GAP * (rows - 1)) / rows - CELL_PAD_Y;
     if (cellW <= 0 || cellH <= 0) continue;
-    // Chord boxes are wider than tall; a cell's usable "size" for font
-    // scaling purposes is bounded by whichever dimension runs out first,
-    // normalized to roughly a 1.7:1 width:height box.
-    const size = Math.min(cellW / 1.7, cellH);
-    if (size > best.cellSize) best = { columns: c, rows, cellSize: size };
+
+    // Largest font size that lets the widest bar's text fit this cell's
+    // width, and that lets one line of text fit this cell's height.
+    const fontSizeForWidth = cellW / (maxChars * MONO_CHAR_WIDTH_RATIO);
+    const fontSizeForHeight = cellH / LINE_HEIGHT_RATIO;
+    const fontSize = Math.min(fontSizeForWidth, fontSizeForHeight);
+
+    if (fontSize > best.fontSize) best = { columns: c, rows, fontSize };
   }
-  const fontSize = Math.max(9, Math.min(64, best.cellSize * 0.42));
-  return { columns: best.columns, rows: best.rows, fontSize };
+
+  return {
+    columns: best.columns,
+    rows: best.rows,
+    fontSize: Math.max(7, Math.min(48, best.fontSize)),
+  };
 }
 
 // ============================================================================
@@ -1095,19 +1135,22 @@ export default function ChordProgressionPracticer() {
   });
 
   useEffect(() => {
+    // The fit-to-screen shrink logic only applies in "hide controls" phone
+    // mode (see render below) — in the normal view the chart flows
+    // naturally and the page scrolls like any other page, so there's
+    // nothing to measure/compute there.
+    if (!controlsHidden) return;
     const el = formGridContainerRef.current;
     if (!el) return;
     const recompute = () => {
       const rect = el.getBoundingClientRect();
-      setFitLayout(
-        computeFitLayout(rect.width, rect.height, displayBars.length),
-      );
+      setFitLayout(computeFitLayout(rect.width, rect.height, displayBars));
     };
     recompute();
     const ro = new ResizeObserver(recompute);
     ro.observe(el);
     return () => ro.disconnect();
-  }, [displayBars.length, controlsHidden, showChart]);
+  }, [displayBars, controlsHidden, showChart]);
 
   // ---- Stop playback & cleanup ----
   const stopPlayback = useCallback(() => {
@@ -1727,13 +1770,16 @@ export default function ChordProgressionPracticer() {
 
             {showChart && (
               <div
-                className="bg-[#252320] border border-[#3A3836] rounded-xl p-3 sm:p-5 flex flex-col gap-4 flex-1 min-h-0"
-                style={{
-                  height: controlsHidden
-                    ? "calc(100dvh - 1.5rem)"
-                    : "calc(100dvh - 22rem)",
-                  minHeight: "220px",
-                }}
+                className={
+                  controlsHidden
+                    ? "bg-[#252320] border border-[#3A3836] rounded-xl p-3 flex flex-col gap-2 flex-1 min-h-0"
+                    : "bg-[#252320] border border-[#3A3836] rounded-xl p-3 sm:p-5 flex flex-col gap-4"
+                }
+                style={
+                  controlsHidden
+                    ? { height: "calc(100dvh - 1.5rem)" }
+                    : undefined
+                }
               >
                 {introBars.length > 0 && !controlsHidden && (
                   <div className="flex flex-col gap-1.5 shrink-0">
@@ -1773,7 +1819,11 @@ export default function ChordProgressionPracticer() {
 
                 <div
                   ref={formGridContainerRef}
-                  className="flex-1 min-h-0 flex flex-col gap-1.5"
+                  className={
+                    controlsHidden
+                      ? "flex-1 min-h-0 flex flex-col gap-1"
+                      : "flex flex-col gap-1.5"
+                  }
                 >
                   {(introBars.length > 0 || outroBars.length > 0) &&
                     !controlsHidden && (
@@ -1781,37 +1831,86 @@ export default function ChordProgressionPracticer() {
                         Form &middot; loops during playback
                       </span>
                     )}
-                  <div
-                    className="grid gap-1.5 flex-1 min-h-0"
-                    style={{
-                      gridTemplateColumns: `repeat(${fitLayout.columns}, 1fr)`,
-                      gridTemplateRows: `repeat(${fitLayout.rows}, 1fr)`,
-                      fontSize: `${fitLayout.fontSize}px`,
-                    }}
-                  >
-                    {displayBars.map((barChords, i) => (
-                      <div
-                        key={i}
-                        className={`font-mono border border-[#4a4744] rounded-md px-1.5 py-1 flex items-center justify-center gap-1.5 flex-wrap transition-all duration-150 overflow-hidden ${
-                          currentBar === i
-                            ? "bar-glow bg-[#3A3836]"
-                            : "bg-[#1f1d1b]"
-                        }`}
-                      >
-                        {barChords.map((c, j) => (
-                          <React.Fragment key={j}>
-                            {j > 0 && <span className="text-[#8A8580]">·</span>}
-                            <ChordSymbol
-                              root={c.root}
-                              quality={c.quality}
-                              isRest={c.isRest}
-                              bassNote={c.bassNote}
-                            />
-                          </React.Fragment>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
+
+                  {controlsHidden ? (
+                    // ---- Phone "focus mode": pack every bar into the
+                    // viewport with no scrolling. Font size and column
+                    // count are computed from the actual chord text of
+                    // every bar (see computeFitLayout / estimateBarChars),
+                    // so a bar with two chords (e.g. "A-7 · D7") is never
+                    // clipped — cells use nowrap + visible overflow as a
+                    // safety net in case the estimate runs a touch tight.
+                    <div
+                      className="grid gap-1.5 flex-1 min-h-0"
+                      style={{
+                        gridTemplateColumns: `repeat(${fitLayout.columns}, 1fr)`,
+                        gridTemplateRows: `repeat(${fitLayout.rows}, 1fr)`,
+                        fontSize: `${fitLayout.fontSize}px`,
+                      }}
+                    >
+                      {displayBars.map((barChords, i) => (
+                        <div
+                          key={i}
+                          className={`font-mono border border-[#4a4744] rounded-md px-1 flex items-center justify-center gap-1 flex-nowrap whitespace-nowrap transition-all duration-150 ${
+                            currentBar === i
+                              ? "bar-glow bg-[#3A3836]"
+                              : "bg-[#1f1d1b]"
+                          }`}
+                        >
+                          {barChords.map((c, j) => (
+                            <React.Fragment key={j}>
+                              {j > 0 && (
+                                <span className="text-[#8A8580]">·</span>
+                              )}
+                              <ChordSymbol
+                                root={c.root}
+                                quality={c.quality}
+                                isRest={c.isRest}
+                                bassNote={c.bassNote}
+                              />
+                            </React.Fragment>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    // ---- Normal view: natural page flow, no forced
+                    // height, page scrolls if the form is long. Multi-chord
+                    // bars simply wrap to a second line inside their own
+                    // cell rather than ever being clipped.
+                    <div
+                      className="grid gap-1.5"
+                      style={{
+                        gridTemplateColumns:
+                          "repeat(auto-fill, minmax(140px, 1fr))",
+                      }}
+                    >
+                      {displayBars.map((barChords, i) => (
+                        <div
+                          key={i}
+                          className={`font-mono text-sm sm:text-base border border-[#4a4744] rounded-md px-2.5 py-2.5 flex items-center justify-center gap-1.5 flex-wrap transition-all duration-150 ${
+                            currentBar === i
+                              ? "bar-glow bg-[#3A3836]"
+                              : "bg-[#1f1d1b]"
+                          }`}
+                        >
+                          {barChords.map((c, j) => (
+                            <React.Fragment key={j}>
+                              {j > 0 && (
+                                <span className="text-[#8A8580]">·</span>
+                              )}
+                              <ChordSymbol
+                                root={c.root}
+                                quality={c.quality}
+                                isRest={c.isRest}
+                                bassNote={c.bassNote}
+                              />
+                            </React.Fragment>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {outroBars.length > 0 && !controlsHidden && (
