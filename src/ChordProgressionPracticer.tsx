@@ -77,6 +77,8 @@ interface FitLayout {
   columns: number;
   rows: number;
   fontSize: number;
+  needsScroll: boolean;
+  rowHeightPx: number;
 }
 
 // ============================================================================
@@ -1000,6 +1002,12 @@ function estimateBarMetrics(barChords: FlatChord[]): {
   return { chars: Math.max(chars, 1), fixedPx };
 }
 
+// Never render chord text smaller than this. If everything can't fit in the
+// available viewport at this size, the chart scrolls internally instead of
+// continuing to shrink the font — a font small enough to overlap adjacent
+// rows is worse than having to scroll a little.
+const MIN_READABLE_FONT_SIZE = 12; // px
+
 function computeFitLayout(
   width: number,
   height: number,
@@ -1007,11 +1015,25 @@ function computeFitLayout(
 ): FitLayout {
   const count = barsChords.length;
   if (!count || width <= 0 || height <= 0) {
-    return { columns: 1, rows: 1, fontSize: 16 };
+    return {
+      columns: 1,
+      rows: 1,
+      fontSize: 16,
+      needsScroll: false,
+      rowHeightPx: 0,
+    };
   }
   const metrics = barsChords.map(estimateBarMetrics);
 
-  let best: FitLayout = { columns: 1, rows: count, fontSize: 0 };
+  // ---- Pass 1: try to fit everything on screen with no scrolling,
+  // maximizing font size across every possible column count.
+  let best: FitLayout = {
+    columns: 1,
+    rows: count,
+    fontSize: 0,
+    needsScroll: false,
+    rowHeightPx: 0,
+  };
   for (let c = 1; c <= count; c++) {
     const rows = Math.ceil(count / c);
     const cellW = (width - GRID_GAP * (c - 1)) / c - CELL_PAD_X;
@@ -1034,16 +1056,45 @@ function computeFitLayout(
     const fontSizeForHeight = cellH / LINE_HEIGHT_RATIO;
     const fontSize = Math.min(minFontSizeForWidth, fontSizeForHeight);
 
-    if (fontSize > best.fontSize) best = { columns: c, rows, fontSize };
+    if (fontSize > best.fontSize) {
+      best = { columns: c, rows, fontSize, needsScroll: false, rowHeightPx: 0 };
+    }
   }
 
-  // Only cap the upper bound — never force a minimum. A tiny font that
-  // truly fits is the goal; flooring it here would silently reintroduce
-  // overflow/clipping, which is exactly what we're trying to avoid.
+  if (best.fontSize >= MIN_READABLE_FONT_SIZE) {
+    return { ...best, fontSize: Math.min(48, best.fontSize) };
+  }
+
+  // ---- Pass 2: everything doesn't fit at a readable size without
+  // scrolling. Lock the font at the minimum readable size, pick the widest
+  // column count that still lets every bar's text fit horizontally at that
+  // size, and let the chart scroll vertically to reach the rest.
+  let cMax = 1;
+  for (let c = count; c >= 1; c--) {
+    const cellW = (width - GRID_GAP * (c - 1)) / c - CELL_PAD_X;
+    if (cellW <= 0) continue;
+    const fitsAtMinFont = metrics.every((m) => {
+      const availableForChars = cellW - m.fixedPx;
+      return (
+        availableForChars > 0 &&
+        availableForChars / (m.chars * MONO_CHAR_WIDTH_RATIO) >=
+          MIN_READABLE_FONT_SIZE
+      );
+    });
+    if (fitsAtMinFont) {
+      cMax = c;
+      break;
+    }
+  }
+  const rows = Math.ceil(count / cMax);
+  const rowHeightPx = MIN_READABLE_FONT_SIZE * LINE_HEIGHT_RATIO + CELL_PAD_Y;
+
   return {
-    columns: best.columns,
-    rows: best.rows,
-    fontSize: Math.max(1, Math.min(48, best.fontSize)),
+    columns: cMax,
+    rows,
+    fontSize: MIN_READABLE_FONT_SIZE,
+    needsScroll: true,
+    rowHeightPx,
   };
 }
 
@@ -1293,6 +1344,8 @@ export default function ChordProgressionPracticer() {
     columns: 4,
     rows: 1,
     fontSize: 16,
+    needsScroll: false,
+    rowHeightPx: 0,
   });
 
   useEffect(() => {
@@ -1317,7 +1370,9 @@ export default function ChordProgressionPracticer() {
       setFitLayout((prev) =>
         prev.columns === layout.columns &&
         prev.rows === layout.rows &&
-        Math.abs(prev.fontSize - layout.fontSize) < 0.1
+        prev.needsScroll === layout.needsScroll &&
+        Math.abs(prev.fontSize - layout.fontSize) < 0.1 &&
+        Math.abs(prev.rowHeightPx - layout.rowHeightPx) < 0.1
           ? prev // same object back — React skips the re-render entirely
           : layout,
       );
@@ -2061,8 +2116,17 @@ export default function ChordProgressionPracticer() {
                   ref={formGridContainerRef}
                   className={
                     controlsHidden
-                      ? "flex-1 min-h-0 flex flex-col gap-1"
+                      ? `flex-1 min-h-0 flex flex-col gap-1 ${
+                          fitLayout.needsScroll
+                            ? "overflow-y-auto overscroll-contain"
+                            : ""
+                        }`
                       : "flex flex-col gap-1.5"
+                  }
+                  style={
+                    controlsHidden && fitLayout.needsScroll
+                      ? { WebkitOverflowScrolling: "touch" }
+                      : undefined
                   }
                 >
                   {(introBars.length > 0 || outroBars.length > 0) &&
@@ -2074,19 +2138,33 @@ export default function ChordProgressionPracticer() {
 
                   {controlsHidden ? (
                     // ---- Phone "focus mode": pack every bar into the
-                    // viewport with no scrolling. Font size and column
-                    // count are computed from the actual chord text of
-                    // every bar (see computeFitLayout / estimateBarChars),
-                    // so a bar with two chords (e.g. "A-7 · D7") is never
-                    // clipped — cells use nowrap + visible overflow as a
-                    // safety net in case the estimate runs a touch tight.
+                    // viewport. Font size and column count are computed
+                    // from the actual chord text of every bar (see
+                    // computeFitLayout / estimateBarMetrics), so a bar with
+                    // two chords (e.g. "A-7 · D7") is never clipped — cells
+                    // use nowrap + visible overflow as a safety net in case
+                    // the estimate runs a touch tight. If there isn't room
+                    // to fit every bar at a readable size, the font locks
+                    // at a minimum (MIN_READABLE_FONT_SIZE) and this grid
+                    // switches to fixed-height rows that scroll internally,
+                    // rather than shrinking further into illegibility.
                     <div
-                      className="grid gap-1.5 flex-1 min-h-0 min-w-0"
-                      style={{
-                        gridTemplateColumns: `repeat(${fitLayout.columns}, 1fr)`,
-                        gridTemplateRows: `repeat(${fitLayout.rows}, 1fr)`,
-                        fontSize: `${fitLayout.fontSize}px`,
-                      }}
+                      className="grid gap-1.5 min-w-0"
+                      style={
+                        fitLayout.needsScroll
+                          ? {
+                              gridTemplateColumns: `repeat(${fitLayout.columns}, 1fr)`,
+                              gridAutoRows: `${fitLayout.rowHeightPx}px`,
+                              fontSize: `${fitLayout.fontSize}px`,
+                            }
+                          : {
+                              gridTemplateColumns: `repeat(${fitLayout.columns}, 1fr)`,
+                              gridTemplateRows: `repeat(${fitLayout.rows}, 1fr)`,
+                              fontSize: `${fitLayout.fontSize}px`,
+                              flex: "1 1 0%",
+                              minHeight: 0,
+                            }
+                      }
                     >
                       {displayBars.map((barChords, i) => (
                         <div
