@@ -1851,7 +1851,7 @@ export default function ChordProgressionPracticer() {
                 }
                 style={
                   controlsHidden
-                    ? { height: "calc(100dvh - 1.5rem)" }
+                    ? { height: "calc(100svh - 1.5rem)" }
                     : undefined
                 }
               >
