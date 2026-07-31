@@ -7,6 +7,79 @@ import React, {
 } from "react";
 
 // ============================================================================
+// TYPES
+// ============================================================================
+
+interface ChordDef {
+  root: string;
+  quality: string;
+  beats: number;
+}
+
+interface Measure {
+  chords: ChordDef[];
+  spansBars?: number;
+}
+
+interface SongSection {
+  repeat?: boolean;
+  measures: Measure[];
+}
+
+interface Tempo {
+  bpm: number | string;
+  source?: string;
+}
+
+interface TimeSignature {
+  numerator: number;
+  denominator: number;
+}
+
+interface Song {
+  title: string;
+  composer?: string;
+  key: string;
+  mode: "major" | "minor";
+  timeSignature: TimeSignature;
+  tempo: Tempo;
+  verified?: boolean;
+  notes?: string;
+  form: string[];
+  sections: Record<string, SongSection>;
+}
+
+interface FlatChord {
+  root: string;
+  quality: string;
+  beats: number;
+  isNewBar: boolean;
+  barIndex: number;
+  sectionLabel: string;
+  isRest?: boolean;
+  bassNote?: string;
+}
+
+type VoicingStyleId = "root" | "closed" | "open" | "block" | "drop2";
+type Timbre = "piano" | "epiano" | "synth";
+type Articulation = "block" | "staccato";
+type Subdivision = "quarter" | "eighth" | "sixteenth";
+type AccentMode = "downbeat" | "all";
+type Instrument = "C" | "Bb" | "Eb";
+
+interface VoicedChord {
+  notes: number[];
+  closedNotes: number[];
+  bass: number;
+}
+
+interface FitLayout {
+  columns: number;
+  rows: number;
+  fontSize: number;
+}
+
+// ============================================================================
 // JAZZ STANDARDS DATA
 // ============================================================================
 // In production this should be fetched/imported from jazz_standards.json.
@@ -19,7 +92,7 @@ import React, {
 //     tempo: {bpm, source?}, verified?, notes?, form: string[],
 //     sections: { [label]: { repeat?, measures: [{ chords: [{root, quality, beats}], spansBars? }] } } }
 
-const FALLBACK_SONGS = [
+const FALLBACK_SONGS: Song[] = [
   {
     title: "Autumn Leaves",
     composer: "Joseph Kosma",
@@ -167,7 +240,7 @@ const FALLBACK_SONGS = [
 // MUSIC THEORY UTILITIES
 // ============================================================================
 
-const NOTE_TO_SEMITONE = {
+const NOTE_TO_SEMITONE: Record<string, number> = {
   C: 0,
   "B#": 0,
   "C#": 1,
@@ -239,20 +312,24 @@ const ALL_KEYS = [
 ];
 const ALL_MINOR_KEYS = ALL_KEYS.map((k) => `${k}m`);
 
-function keyRoot(key) {
+function keyRoot(key: string): string {
   return key.endsWith("m") && key.length > 1 ? key.slice(0, -1) : key;
 }
 
-function keySemitone(key) {
+function keySemitone(key: string): number {
   const r = keyRoot(key);
   return NOTE_TO_SEMITONE[r] ?? 0;
 }
 
-function useFlatsForKey(key) {
+function useFlatsForKey(key: string): boolean {
   return FLAT_KEY_ROOTS.has(keyRoot(key));
 }
 
-function transposeRoot(root, semitoneShift, targetKey) {
+function transposeRoot(
+  root: string,
+  semitoneShift: number,
+  targetKey: string,
+): string {
   const base = NOTE_TO_SEMITONE[root];
   if (base === undefined) return root;
   const newSemitone = (((base + semitoneShift) % 12) + 12) % 12;
@@ -274,8 +351,8 @@ function transposeRoot(root, semitoneShift, targetKey) {
 // read): Bb instruments (trumpet, tenor/soprano sax, clarinet) read a major
 // 2nd above concert, so +2. Eb instruments (alto/bari sax) read a major 6th
 // above concert (mod 12, equivalent to a minor 3rd below), so +9.
-const INSTRUMENT_SHIFT = { C: 0, Bb: 2, Eb: 9 };
-const INSTRUMENT_LABELS = {
+const INSTRUMENT_SHIFT: Record<Instrument, number> = { C: 0, Bb: 2, Eb: 9 };
+const INSTRUMENT_LABELS: Record<Instrument, string> = {
   C: "Concert C",
   Bb: "B\u266D Instrument",
   Eb: "E\u266D Instrument",
@@ -285,7 +362,11 @@ const INSTRUMENT_LABELS = {
 // concert-pitch root. `concertTargetKey` is only used to pick sharp vs flat
 // spelling for the concert pitch itself; we derive the instrument's own
 // spelling preference by shifting that key the same amount.
-function transposeForInstrument(root, instrument, concertTargetKey) {
+function transposeForInstrument(
+  root: string,
+  instrument: Instrument,
+  concertTargetKey: string,
+): string {
   const shift = INSTRUMENT_SHIFT[instrument] ?? 0;
   if (shift === 0) return root;
   const displayKey = transposeRoot(
@@ -298,7 +379,7 @@ function transposeForInstrument(root, instrument, concertTargetKey) {
 
 // Chord quality -> interval set (semitones from root). Covers the qualities
 // present in jazz_standards.json. Falls back to dominant 7 for anything unknown.
-const QUALITY_INTERVALS = {
+const QUALITY_INTERVALS: Record<string, number[]> = {
   maj7: [0, 4, 7, 11],
   maj9: [0, 4, 7, 11, 14],
   "6": [0, 4, 7, 9],
@@ -351,13 +432,13 @@ const QUALITY_INTERVALS = {
   "maj7#5": [0, 4, 8, 11],
 };
 
-function qualityIntervals(quality) {
+function qualityIntervals(quality: string): number[] {
   return QUALITY_INTERVALS[quality] || QUALITY_INTERVALS["7"];
 }
 
 // Friendly display label for a chord quality (used in the chart).
-function qualityLabel(quality) {
-  const MAP = {
+function qualityLabel(quality: string): string {
+  const MAP: Record<string, string> = {
     maj7: "maj7",
     maj9: "maj9",
     "6": "6",
@@ -415,12 +496,12 @@ function qualityLabel(quality) {
 
 // VoicingStyle is one of: "root" | "closed" | "open" | "block" | "drop2"
 
-function rootMidi(root, octave) {
+function rootMidi(root: string, octave: number): number {
   return (octave + 1) * 12 + (NOTE_TO_SEMITONE[root] ?? 0);
 }
 
 // Find the MIDI note with the given pitch class closest to a reference MIDI note.
-function closestOctaveNote(pitchClass, referenceMidi) {
+function closestOctaveNote(pitchClass: number, referenceMidi: number): number {
   const base = referenceMidi - (((referenceMidi % 12) + 12) % 12) + pitchClass;
   let best = base;
   for (const cand of [base - 12, base, base + 12]) {
@@ -452,11 +533,11 @@ const VOICING_CENTER = 65; // F above middle C — comfortable mid-register anch
 // long-run accumulated drift that gets reliably canceled out.
 const VOICING_CENTER_PULL = 0.22;
 
-function clampReference(ref) {
+function clampReference(ref: number): number {
   return Math.max(VOICING_RANGE_MIN, Math.min(VOICING_RANGE_MAX, ref));
 }
 
-function pullTowardCenter(naturalReference) {
+function pullTowardCenter(naturalReference: number): number {
   const blended =
     naturalReference * (1 - VOICING_CENTER_PULL) +
     VOICING_CENTER * VOICING_CENTER_PULL;
@@ -472,7 +553,13 @@ function pullTowardCenter(naturalReference) {
 // chord's reference, which compounded every chord change and made voicings
 // drift out of any usable register within a few bars. Each style below is
 // now a one-time transform of a closed voicing computed fresh each call.
-function generateVoicing(root, quality, style, prevVoicing, centerMidi = 65) {
+function generateVoicing(
+  root: string,
+  quality: string,
+  style: VoicingStyleId,
+  prevVoicing: VoicedChord | null,
+  centerMidi: number = 65,
+): VoicedChord {
   const rootPc = NOTE_TO_SEMITONE[root] ?? 0;
   const pitchClasses = [
     ...new Set(
@@ -542,13 +629,16 @@ function generateVoicing(root, quality, style, prevVoicing, centerMidi = 65) {
   return { notes: closed, closedNotes: closed, bass };
 }
 
-const VOICING_STYLES = [
+const VOICING_STYLES: { id: VoicingStyleId; label: string }[] = [
   { id: "closed", label: "Closed" },
   { id: "open", label: "Open" },
   { id: "drop2", label: "Drop 2" },
   { id: "block", label: "Block" },
   { id: "root", label: "Root position" },
 ];
+
+const SUBDIVISIONS: Subdivision[] = ["quarter", "eighth", "sixteenth"];
+const READING_INSTRUMENTS: Instrument[] = ["C", "Bb", "Eb"];
 
 // ============================================================================
 // SONG FLATTENING — turn form + sections into one linear list of {chord, beats}
@@ -557,8 +647,12 @@ const VOICING_STYLES = [
 // FlatChord shape: { root, quality, beats (within its bar), isNewBar (starts a new bar),
 //   barIndex (0-based bar index in the whole flattened song), sectionLabel }
 
-function flattenSection(label, section, numerator) {
-  const out = [];
+function flattenSection(
+  label: string,
+  section: SongSection,
+  numerator: number,
+): FlatChord[] {
+  const out: FlatChord[] = [];
   let bar = 0;
   for (const measure of section.measures) {
     const span = measure.spansBars ?? 1;
@@ -586,10 +680,17 @@ function flattenSection(label, section, numerator) {
 //     looping practice player, since there's no natural point to play a
 //     one-time ending while looping forever, but kept available here in
 //     case a future "play once" mode wants it.
-function flattenSong(song) {
+function flattenSong(song: Song): {
+  intro: FlatChord[];
+  core: FlatChord[];
+  outro: FlatChord[];
+} {
   const num = song.timeSignature.numerator;
 
-  const appendSection = (label, barOffsetRef) => {
+  const appendSection = (
+    label: string,
+    barOffsetRef: { value: number },
+  ): FlatChord[] => {
     const section = song.sections[label];
     if (!section) return [];
     const flat = flattenSection(label, section, num);
@@ -606,7 +707,7 @@ function flattenSong(song) {
     return reindexed;
   };
 
-  let intro = [];
+  let intro: FlatChord[] = [];
   if (song.sections["Intro"] && !song.form.includes("Intro")) {
     const ref = { value: 0 };
     intro = appendSection("Intro", ref);
@@ -616,12 +717,12 @@ function flattenSong(song) {
   // the intro — the intro is a separate one-time buffer, not part of the
   // repeating bar count the chart/loop cares about.
   const coreRef = { value: 0 };
-  const core = [];
+  const core: FlatChord[] = [];
   song.form.forEach((label) => {
     core.push(...appendSection(label, coreRef));
   });
 
-  let outro = [];
+  let outro: FlatChord[] = [];
   const outroRef = { value: 0 };
   if (song.sections["Coda"] && !song.form.includes("Coda")) {
     outro.push(...appendSection("Coda", outroRef));
@@ -641,15 +742,15 @@ function flattenSong(song) {
 // Articulation is one of: "block" | "staccato"
 
 class AudioEngine {
-  ctx = null;
-  masterGain = null;
-  metroGain = null;
-  chordGain = null;
-  activeNodes = new Set(); // tracks every oscillator currently scheduled/playing
+  ctx: AudioContext | null = null;
+  masterGain: GainNode | null = null;
+  metroGain: GainNode | null = null;
+  chordGain: GainNode | null = null;
+  activeNodes: Set<OscillatorNode> = new Set(); // tracks every oscillator currently scheduled/playing
 
-  ensureContext() {
+  ensureContext(): AudioContext {
     if (!this.ctx) {
-      const Ctx = window.AudioContext || window.webkitAudioContext;
+      const Ctx = window.AudioContext || (window as any).webkitAudioContext;
       this.ctx = new Ctx();
       this.masterGain = this.ctx.createGain();
       this.masterGain.gain.value = 1;
@@ -667,14 +768,14 @@ class AudioEngine {
     return this.ctx;
   }
 
-  setMetroVolume(v) {
+  setMetroVolume(v: number): void {
     if (this.metroGain) this.metroGain.gain.value = v;
   }
 
   // Immediately silences and disconnects every oscillator this engine has
   // scheduled, whether it has started yet or is still in the future. Safe
   // to call even if some oscillators have already finished naturally.
-  stopAll() {
+  stopAll(): void {
     const ctx = this.ctx;
     this.activeNodes.forEach((osc) => {
       try {
@@ -691,7 +792,7 @@ class AudioEngine {
     this.activeNodes.clear();
   }
 
-  playClick(time, accent) {
+  playClick(time: number, accent: boolean): void {
     const ctx = this.ensureContext();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -701,7 +802,7 @@ class AudioEngine {
     gain.gain.exponentialRampToValueAtTime(accent ? 1 : 0.6, time + 0.002);
     gain.gain.exponentialRampToValueAtTime(0.0001, time + 0.035);
     osc.connect(gain);
-    gain.connect(this.metroGain);
+    gain.connect(this.metroGain!);
     osc.start(time);
     osc.stop(time + 0.04);
     this.activeNodes.add(osc);
@@ -712,14 +813,25 @@ class AudioEngine {
   // route into (the shared chord bus). All three timbres are built purely
   // from oscillators/envelopes — no sample loading, so the whole component
   // stays a single self-contained file with no external audio assets.
-  _playVoice(midi, gainScale, dest, time, duration, timbre) {
-    const ctx = this.ctx;
+  _playVoice(
+    midi: number,
+    gainScale: number,
+    dest: GainNode,
+    time: number,
+    duration: number,
+    timbre: Timbre,
+  ): void {
+    const ctx = this.ctx!;
     const freq = 440 * Math.pow(2, (midi - 69) / 12);
     const attack =
       timbre === "piano" ? 0.006 : timbre === "epiano" ? 0.008 : 0.015;
     const stopAt = time + duration + 0.08;
 
-    const makeOsc = (type, freqMult, detuneCents = 0) => {
+    const makeOsc = (
+      type: OscillatorType,
+      freqMult: number,
+      detuneCents = 0,
+    ): OscillatorNode => {
       const osc = ctx.createOscillator();
       osc.type = type;
       osc.frequency.value = freq * freqMult;
@@ -729,7 +841,11 @@ class AudioEngine {
       return osc;
     };
 
-    const connectWithEnvelope = (osc, peakGain, decayShape) => {
+    const connectWithEnvelope = (
+      osc: OscillatorNode,
+      peakGain: number,
+      decayShape: (g: GainNode, peak: number) => void,
+    ): void => {
       const g = ctx.createGain();
       g.gain.setValueAtTime(0.0001, time);
       g.gain.linearRampToValueAtTime(peakGain * gainScale, time + attack);
@@ -808,12 +924,18 @@ class AudioEngine {
     osc2.stop(stopAt);
   }
 
-  playChord(midiNotes, bassNote, time, duration, timbre = "piano") {
+  playChord(
+    midiNotes: number[],
+    bassNote: number,
+    time: number,
+    duration: number,
+    timbre: Timbre = "piano",
+  ): void {
     this.ensureContext();
     midiNotes.forEach((n) =>
-      this._playVoice(n, 1, this.chordGain, time, duration, timbre),
+      this._playVoice(n, 1, this.chordGain!, time, duration, timbre),
     );
-    this._playVoice(bassNote, 1.3, this.chordGain, time, duration, timbre);
+    this._playVoice(bassNote, 1.3, this.chordGain!, time, duration, timbre);
   }
 }
 
@@ -833,8 +955,10 @@ const SCHEDULE_AHEAD_S = 0.15;
 // scrolling. Unlike a naive "shrink based on bar count" approach, this
 // looks at the actual text of the widest bar (e.g. a 2-chord bar like
 // "A-7 · D7" needs more width than a 1-chord bar) so nothing gets clipped.
-// Recomputed live via ResizeObserver whenever the container size or the
-// song's bars change.
+// Recomputed on genuine viewport changes (window resize, orientation change,
+// mobile visual-viewport changes) — deliberately NOT via a ResizeObserver on
+// our own output element, since that's what caused a resize feedback loop
+// (see the effect below for details).
 // ============================================================================
 
 // The chord grid renders with the `font-mono` class (JetBrains Mono), which
@@ -856,7 +980,10 @@ const SYMBOL_GAP = 4; // px, matches the gap-1 class used between chord symbols 
 // symbols, which is a fixed pixel value that does NOT shrink with font-size
 // — so it has to be subtracted from available width before dividing by
 // per-character width, rather than folded into the character count.
-function estimateBarMetrics(barChords) {
+function estimateBarMetrics(barChords: FlatChord[]): {
+  chars: number;
+  fixedPx: number;
+} {
   let chars = 0;
   barChords.forEach((c, idx) => {
     if (idx > 0) chars += 1; // the "·" separator character itself
@@ -873,14 +1000,18 @@ function estimateBarMetrics(barChords) {
   return { chars: Math.max(chars, 1), fixedPx };
 }
 
-function computeFitLayout(width, height, barsChords) {
+function computeFitLayout(
+  width: number,
+  height: number,
+  barsChords: FlatChord[][],
+): FitLayout {
   const count = barsChords.length;
   if (!count || width <= 0 || height <= 0) {
     return { columns: 1, rows: 1, fontSize: 16 };
   }
   const metrics = barsChords.map(estimateBarMetrics);
 
-  let best = { columns: 1, rows: count, fontSize: 0 };
+  let best: FitLayout = { columns: 1, rows: count, fontSize: 0 };
   for (let c = 1; c <= count; c++) {
     const rows = Math.ceil(count / c);
     const cellW = (width - GRID_GAP * (c - 1)) / c - CELL_PAD_X;
@@ -920,7 +1051,14 @@ function computeFitLayout(width, height, barsChords) {
 // UI HELPER: chord symbol display
 // ============================================================================
 
-function ChordSymbol({ root, quality, isRest, bassNote }) {
+interface ChordSymbolProps {
+  root: string;
+  quality: string;
+  isRest?: boolean;
+  bassNote?: string;
+}
+
+function ChordSymbol({ root, quality, isRest, bassNote }: ChordSymbolProps) {
   if (isRest || root === "NC") {
     return <span className="whitespace-nowrap text-[#8A8580]">—</span>; // em dash = no chord / rest
   }
@@ -937,8 +1075,8 @@ function ChordSymbol({ root, quality, isRest, bassNote }) {
 
 export default function ChordProgressionPracticer() {
   // ---- Library state ----
-  const [songs, setSongs] = useState(FALLBACK_SONGS);
-  const [loadError, setLoadError] = useState(null);
+  const [songs, setSongs] = useState<Song[]>(FALLBACK_SONGS);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("./jazz_standards.json")
@@ -956,19 +1094,19 @@ export default function ChordProgressionPracticer() {
   // ---- Search / selection state ----
   const [query, setQuery] = useState("");
   const [showResults, setShowResults] = useState(false);
-  const [selectedSong, setSelectedSong] = useState(null);
-  const searchContainerRef = useRef(null);
+  const [selectedSong, setSelectedSong] = useState<Song | null>(null);
+  const searchContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    function handleOutsideClick(e) {
+    function handleOutsideClick(e: MouseEvent) {
       if (
         searchContainerRef.current &&
-        !searchContainerRef.current.contains(e.target)
+        !searchContainerRef.current.contains(e.target as Node)
       ) {
         setShowResults(false);
       }
     }
-    function handleEscape(e) {
+    function handleEscape(e: KeyboardEvent) {
       if (e.key === "Escape") setShowResults(false);
     }
     document.addEventListener("mousedown", handleOutsideClick);
@@ -1000,16 +1138,16 @@ export default function ChordProgressionPracticer() {
   // "auto-fills with a different number while typing" bug). The typed
   // text is only parsed/clamped into `bpm` on blur or Enter.
   const [bpmInput, setBpmInput] = useState("120");
-  const [voicingStyle, setVoicingStyle] = useState("closed");
-  const [articulation, setArticulation] = useState("block");
-  const [timbre, setTimbre] = useState("piano");
+  const [voicingStyle, setVoicingStyle] = useState<VoicingStyleId>("closed");
+  const [articulation, setArticulation] = useState<Articulation>("block");
+  const [timbre, setTimbre] = useState<Timbre>("piano");
   const [showChart, setShowChart] = useState(true);
-  const [displayInstrument, setDisplayInstrument] = useState("C"); // cosmetic only — never affects audio
+  const [displayInstrument, setDisplayInstrument] = useState<Instrument>("C"); // cosmetic only — never affects audio
 
   // ---- Metronome settings ----
   const [metronomeOn, setMetronomeOn] = useState(true);
-  const [subdivision, setSubdivision] = useState("quarter");
-  const [accentMode, setAccentMode] = useState("downbeat");
+  const [subdivision, setSubdivision] = useState<Subdivision>("quarter");
+  const [accentMode, setAccentMode] = useState<AccentMode>("downbeat");
   const [metroVolume, setMetroVolume] = useState(0.5);
 
   // ---- Playback state ----
@@ -1019,11 +1157,11 @@ export default function ChordProgressionPracticer() {
   // ---- "Just show me the chart" mode for small phone screens ----
   const [controlsHidden, setControlsHidden] = useState(false);
 
-  const engineRef = useRef(null);
+  const engineRef = useRef<AudioEngine | null>(null);
   if (!engineRef.current) engineRef.current = new AudioEngine();
 
-  const lastVoicingRef = useRef(null);
-  const rafRef = useRef(null);
+  const lastVoicingRef = useRef<VoicedChord | null>(null);
+  const rafRef = useRef<number | null>(null);
   const playGenRef = useRef(0); // bumped on every start/stop so stale loop-scheduling closures become no-ops
 
   function commitBpmInput() {
@@ -1036,7 +1174,7 @@ export default function ChordProgressionPracticer() {
     setBpmInput(String(clamped));
   }
 
-  function selectSong(song) {
+  function selectSong(song: Song) {
     setSelectedSong(song);
     setSelectedKey(song.key);
     // tempo.bpm may be the literal string "unknown" for songs imported from
@@ -1073,7 +1211,7 @@ export default function ChordProgressionPracticer() {
   }, [selectedSong, selectedKey]);
 
   const transposeAll = useCallback(
-    (chords) =>
+    (chords: FlatChord[]) =>
       chords.map((c) => ({
         ...c,
         root: transposeRoot(c.root, semitoneShift, selectedKey),
@@ -1095,8 +1233,8 @@ export default function ChordProgressionPracticer() {
   );
 
   // Groups a flat chord list into per-bar arrays (for the chart and for the player).
-  function groupIntoBars(chords) {
-    const out = [];
+  function groupIntoBars(chords: FlatChord[]): FlatChord[][] {
+    const out: FlatChord[][] = [];
     chords.forEach((c) => {
       if (!out[c.barIndex]) out[c.barIndex] = [];
       out[c.barIndex].push(c);
@@ -1122,7 +1260,7 @@ export default function ChordProgressionPracticer() {
   // shown in the chord chart. The audio engine always reads from `bars` /
   // `introBars` / `outroBars` above (concert pitch), never from these.
   const applyInstrumentDisplay = useCallback(
-    (groupedBars) =>
+    (groupedBars: FlatChord[][]) =>
       groupedBars.map((bar) =>
         bar.map((c) => ({
           ...c,
@@ -1150,14 +1288,12 @@ export default function ChordProgressionPracticer() {
   // picks a column count + font size so every bar is visible at once,
   // without scrolling — recomputed on resize/orientation change and
   // whenever controls are hidden/shown (which changes available height).
-  const formGridContainerRef = useRef(null);
-  const [fitLayout, setFitLayout] = useState({
+  const formGridContainerRef = useRef<HTMLDivElement | null>(null);
+  const [fitLayout, setFitLayout] = useState<FitLayout>({
     columns: 4,
     rows: 1,
     fontSize: 16,
   });
-
-  const lastMeasureRef = useRef({ width: -1, height: -1 });
 
   useEffect(() => {
     // The fit-to-screen shrink logic only applies in "hide controls" phone
@@ -1168,23 +1304,14 @@ export default function ChordProgressionPracticer() {
     const el = formGridContainerRef.current;
     if (!el) return;
 
-    let rafId = null;
+    let rafId: number | null = null;
 
     const recompute = () => {
       rafId = null;
       const rect = el.getBoundingClientRect();
       const w = Math.round(rect.width);
       const h = Math.round(rect.height);
-      // Bail out on sub-pixel/no-op changes — this is what breaks the
-      // measure -> setState -> layout -> re-measure feedback loop that was
-      // causing the view to constantly resize.
-      if (
-        Math.abs(w - lastMeasureRef.current.width) < 1 &&
-        Math.abs(h - lastMeasureRef.current.height) < 1
-      ) {
-        return;
-      }
-      lastMeasureRef.current = { width: w, height: h };
+      if (w <= 0 || h <= 0) return;
 
       const layout = computeFitLayout(w, h, displayBars);
       setFitLayout((prev) =>
@@ -1196,18 +1323,36 @@ export default function ChordProgressionPracticer() {
       );
     };
 
-    // Debounce via rAF: coalesce bursts of ResizeObserver callbacks (which
-    // can otherwise fire multiple times per frame) into a single measure.
     const scheduleRecompute = () => {
       if (rafId !== null) return;
       rafId = window.requestAnimationFrame(recompute);
     };
 
+    // Initial measurement for this song / mode.
     scheduleRecompute();
-    const ro = new ResizeObserver(scheduleRecompute);
-    ro.observe(el);
+
+    // IMPORTANT: we deliberately do NOT use a ResizeObserver on `el` here.
+    // `el` is the very element whose font-size we're driving — even with
+    // the min-w-0/min-h-0 safeguards on every grid cell, sub-pixel
+    // rounding differences between layout passes can still nudge its
+    // measured size after a re-render, which would re-trigger the
+    // observer, which recomputes, which re-renders... a measure -> resize
+    // -> measure loop that has nothing to do with dvh/svh and can happen
+    // in any real browser given enough floating-point noise.
+    //
+    // Instead we only recompute on genuine, user/browser-driven viewport
+    // changes: window resize, orientation change, and the mobile visual
+    // viewport (covers on-screen keyboard / address bar changes). None of
+    // these can be triggered by our own re-renders, which fully breaks the
+    // feedback loop at its root rather than just dampening it.
+    window.addEventListener("resize", scheduleRecompute);
+    window.addEventListener("orientationchange", scheduleRecompute);
+    window.visualViewport?.addEventListener("resize", scheduleRecompute);
+
     return () => {
-      ro.disconnect();
+      window.removeEventListener("resize", scheduleRecompute);
+      window.removeEventListener("orientationchange", scheduleRecompute);
+      window.visualViewport?.removeEventListener("resize", scheduleRecompute);
       if (rafId !== null) window.cancelAnimationFrame(rafId);
     };
   }, [displayBars, controlsHidden, showChart]);
@@ -1250,7 +1395,7 @@ export default function ChordProgressionPracticer() {
   // ---- Scheduler ----
   function startPlayback() {
     if (!selectedSong || bars.length === 0) return;
-    const engine = engineRef.current;
+    const engine = engineRef.current!;
     const ctx = engine.ensureContext();
     engine.setMetroVolume(metronomeOn ? metroVolume : 0);
 
@@ -1267,9 +1412,12 @@ export default function ChordProgressionPracticer() {
     const secPerBeat = 60 / bpm;
 
     // Flatten to a clean per-bar, per-beat structure for reliable scheduling.
-    // BeatSlot shape: { beatInBar, chord }
-    const barSlots = bars.map((barChords) => {
-      const slots = [];
+    interface BeatSlot {
+      beatInBar: number;
+      chord: FlatChord;
+    }
+    const barSlots: BeatSlot[][] = bars.map((barChords) => {
+      const slots: BeatSlot[] = [];
       let cursor = 0;
       barChords.forEach((c) => {
         slots.push({ beatInBar: cursor, chord: c });
@@ -1281,11 +1429,22 @@ export default function ChordProgressionPracticer() {
     const subDivCount =
       subdivision === "quarter" ? 1 : subdivision === "eighth" ? 2 : 4;
 
+    interface QueueItem {
+      time: number;
+      barIndex: number;
+      beatInBar: number;
+      chord: FlatChord | null;
+      isDownbeat: boolean;
+    }
+
     // Builds one full pass through the song as a flat queue of timed events,
     // starting at `fromTime`. Returns the queue plus the time the pass ends
     // (i.e. where the next pass should begin, for seamless looping).
-    function buildPassQueue(fromTime) {
-      const passQueue = [];
+    function buildPassQueue(fromTime: number): {
+      passQueue: QueueItem[];
+      endTime: number;
+    } {
+      const passQueue: QueueItem[] = [];
       let t = fromTime;
       barSlots.forEach((slots, bIdx) => {
         for (let beat = 0; beat < num; beat++) {
@@ -1310,7 +1469,7 @@ export default function ChordProgressionPracticer() {
     // `voicingRef` carries the last-played voicing across passes so the
     // loop's seam still voice-leads smoothly instead of jumping back to a
     // cold root-position chord every time it repeats.
-    function scheduleQueue(passQueue) {
+    function scheduleQueue(passQueue: QueueItem[]) {
       passQueue.forEach((item) => {
         if (metronomeOn) {
           if (accentMode === "all") {
@@ -1347,7 +1506,7 @@ export default function ChordProgressionPracticer() {
     // start of playback — the seamless loop-continuation logic further
     // down (buildPassQueue/scheduleQueue for subsequent passes) is
     // untouched, so repeats of the form do NOT get an extra count-in bar.
-    function scheduleCountIn(fromTime) {
+    function scheduleCountIn(fromTime: number): number {
       for (let beat = 0; beat < num; beat++) {
         engine.playClick(fromTime + beat * secPerBeat, beat === 0);
       }
@@ -1366,7 +1525,10 @@ export default function ChordProgressionPracticer() {
     // Holds the next lap's queue once it's been scheduled, until playback
     // time actually reaches the loop boundary and we swap it in as "current"
     // (so the RAF loop keeps reading from the right queue/index).
-    const pendingSwap = { queue: null, endTime: 0 };
+    const pendingSwap: { queue: QueueItem[] | null; endTime: number } = {
+      queue: null,
+      endTime: 0,
+    };
     let queueIdx = 0;
 
     // Visual sync + loop-continuation via RAF, comparing ctx.currentTime to
@@ -1659,7 +1821,9 @@ export default function ChordProgressionPracticer() {
                   </label>
                   <select
                     value={voicingStyle}
-                    onChange={(e) => setVoicingStyle(e.target.value)}
+                    onChange={(e) =>
+                      setVoicingStyle(e.target.value as VoicingStyleId)
+                    }
                     className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
                   >
                     {VOICING_STYLES.map((v) => (
@@ -1677,7 +1841,9 @@ export default function ChordProgressionPracticer() {
                   </label>
                   <select
                     value={articulation}
-                    onChange={(e) => setArticulation(e.target.value)}
+                    onChange={(e) =>
+                      setArticulation(e.target.value as Articulation)
+                    }
                     className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
                   >
                     <option value="block">Block (sustain)</option>
@@ -1692,7 +1858,7 @@ export default function ChordProgressionPracticer() {
                   </label>
                   <select
                     value={timbre}
-                    onChange={(e) => setTimbre(e.target.value)}
+                    onChange={(e) => setTimbre(e.target.value as Timbre)}
                     className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
                   >
                     <option value="piano">Piano</option>
@@ -1731,7 +1897,7 @@ export default function ChordProgressionPracticer() {
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs text-[#8A8580]">Subdivision</label>
                   <div className="flex bg-[#1C1B1A] rounded-md p-1 gap-1">
-                    {["quarter", "eighth", "sixteenth"].map((sd) => (
+                    {SUBDIVISIONS.map((sd) => (
                       <button
                         key={sd}
                         onClick={() => setSubdivision(sd)}
@@ -1806,7 +1972,7 @@ export default function ChordProgressionPracticer() {
                       Reading as
                     </span>
                     <div className="flex bg-[#1C1B1A] rounded-md p-1 gap-1">
-                      {["C", "Bb", "Eb"].map((inst) => (
+                      {READING_INSTRUMENTS.map((inst) => (
                         <button
                           key={inst}
                           onClick={() => setDisplayInstrument(inst)}
