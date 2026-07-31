@@ -1157,6 +1157,8 @@ export default function ChordProgressionPracticer() {
     fontSize: 16,
   });
 
+  const lastMeasureRef = useRef({ width: -1, height: -1 });
+
   useEffect(() => {
     // The fit-to-screen shrink logic only applies in "hide controls" phone
     // mode (see render below) — in the normal view the chart flows
@@ -1165,15 +1167,63 @@ export default function ChordProgressionPracticer() {
     if (!controlsHidden) return;
     const el = formGridContainerRef.current;
     if (!el) return;
+
+    let rafId = null;
+
     const recompute = () => {
+      rafId = null;
       const rect = el.getBoundingClientRect();
-      setFitLayout(computeFitLayout(rect.width, rect.height, displayBars));
+      const w = Math.round(rect.width);
+      const h = Math.round(rect.height);
+      // Bail out on sub-pixel/no-op changes — this is what breaks the
+      // measure -> setState -> layout -> re-measure feedback loop that was
+      // causing the view to constantly resize.
+      if (
+        Math.abs(w - lastMeasureRef.current.width) < 1 &&
+        Math.abs(h - lastMeasureRef.current.height) < 1
+      ) {
+        return;
+      }
+      lastMeasureRef.current = { width: w, height: h };
+
+      const layout = computeFitLayout(w, h, displayBars);
+      setFitLayout((prev) =>
+        prev.columns === layout.columns &&
+        prev.rows === layout.rows &&
+        Math.abs(prev.fontSize - layout.fontSize) < 0.1
+          ? prev // same object back — React skips the re-render entirely
+          : layout,
+      );
     };
-    recompute();
-    const ro = new ResizeObserver(recompute);
+
+    // Debounce via rAF: coalesce bursts of ResizeObserver callbacks (which
+    // can otherwise fire multiple times per frame) into a single measure.
+    const scheduleRecompute = () => {
+      if (rafId !== null) return;
+      rafId = window.requestAnimationFrame(recompute);
+    };
+
+    scheduleRecompute();
+    const ro = new ResizeObserver(scheduleRecompute);
     ro.observe(el);
-    return () => ro.disconnect();
+    return () => {
+      ro.disconnect();
+      if (rafId !== null) window.cancelAnimationFrame(rafId);
+    };
   }, [displayBars, controlsHidden, showChart]);
+
+  // Lock page scrolling while in focus mode. With nothing to scroll, there's
+  // no way for the browser's address bar to show/hide mid-session — which
+  // is what was making the dynamic viewport height (and therefore our fixed
+  // container height, and therefore the computed font size) keep shifting.
+  useEffect(() => {
+    if (!controlsHidden) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [controlsHidden]);
 
   // ---- Stop playback & cleanup ----
   const stopPlayback = useCallback(() => {
@@ -1454,7 +1504,8 @@ export default function ChordProgressionPracticer() {
                   // verbatim (i.e. the user hasn't typed anything new since
                   // picking it), clear it so refocusing browses the full list
                   // again rather than re-filtering down to that one song.
-                  if (selectedSong && query === selectedSong.title) setQuery("");
+                  if (selectedSong && query === selectedSong.title)
+                    setQuery("");
                   setShowResults(true);
                 }}
                 placeholder="Search or click to browse all standards\u2026"
