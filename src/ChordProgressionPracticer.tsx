@@ -1461,7 +1461,7 @@ export default function ChordProgressionPracticer() {
       {selectedSong && (
         <button
           onClick={() => setControlsHidden((v) => !v)}
-          className="fixed top-3 right-3 z-50 flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#272524]/90 border border-[#4a4744] backdrop-blur text-xs font-mono text-[#F2EDE4] shadow-lg hover:border-[#D4A24C] transition-colors"
+          className="fixed bottom-3 right-3 z-50 flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#272524]/90 border border-[#4a4744] backdrop-blur text-xs font-mono text-[#F2EDE4] shadow-lg hover:border-[#D4A24C] transition-colors"
           aria-label={controlsHidden ? "Show controls" : "Hide controls"}
         >
           <span>{controlsHidden ? "\u25BC" : "\u25B2"}</span>
@@ -1564,7 +1564,7 @@ export default function ChordProgressionPracticer() {
       ) : (
         <main
           className={`max-w-5xl mx-auto px-4 sm:px-6 flex flex-col gap-6 ${
-            controlsHidden ? "py-3" : "py-6"
+            controlsHidden ? "pt-3 pb-20" : "py-6"
           }`}
         >
           {/* ============== SONG TITLE + KEY/TEMPO CONTROLS ============== */}
