@@ -1073,36 +1073,6 @@ export default function ChordProgressionPracticer() {
   // ---- "Just show me the chart" mode for small phone screens ----
   const [controlsHidden, setControlsHidden] = useState(false);
 
-  // Height of the phone-focus-mode chart card. Computed in JS from
-  // window.innerHeight rather than the CSS `100svh` unit — some mobile /
-  // embedded browsers don't support svh, and when a browser can't parse a
-  // CSS unit it silently drops the whole declaration, collapsing the card
-  // to just its padding (an empty-looking sliver) instead of falling back
-  // to anything usable. window.innerHeight is universally supported.
-  const [viewportHeight, setViewportHeight] = useState<number>(() =>
-    typeof window !== "undefined" ? window.innerHeight : 800,
-  );
-
-  useEffect(() => {
-    const updateViewportHeight = () => {
-      setViewportHeight(
-        window.visualViewport?.height ?? window.innerHeight,
-      );
-    };
-    updateViewportHeight();
-    window.addEventListener("resize", updateViewportHeight);
-    window.addEventListener("orientationchange", updateViewportHeight);
-    window.visualViewport?.addEventListener("resize", updateViewportHeight);
-    return () => {
-      window.removeEventListener("resize", updateViewportHeight);
-      window.removeEventListener("orientationchange", updateViewportHeight);
-      window.visualViewport?.removeEventListener(
-        "resize",
-        updateViewportHeight,
-      );
-    };
-  }, []);
-
   const engineRef = useRef<AudioEngine | null>(null);
   if (!engineRef.current) engineRef.current = new AudioEngine();
 
@@ -1228,19 +1198,6 @@ export default function ChordProgressionPracticer() {
     () => applyInstrumentDisplay(outroBars),
     [outroBars, applyInstrumentDisplay],
   );
-
-  // Lock page scrolling while in focus mode — only the chord grid itself
-  // scrolls (see the grid's own overflow-y-auto below), not the page. This
-  // also means there's nothing that can trigger the browser's address bar
-  // to show/hide mid-session from a page-level scroll gesture.
-  useEffect(() => {
-    if (!controlsHidden) return;
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prevOverflow;
-    };
-  }, [controlsHidden]);
 
   // ---- Stop playback & cleanup ----
   const stopPlayback = useCallback(() => {
@@ -1883,13 +1840,8 @@ export default function ChordProgressionPracticer() {
               <div
                 className={
                   controlsHidden
-                    ? "bg-[#252320] border border-[#3A3836] rounded-xl p-3 flex flex-col gap-2 flex-1 min-h-0"
+                    ? "bg-[#252320] border border-[#3A3836] rounded-xl p-3 flex flex-col gap-2"
                     : "bg-[#252320] border border-[#3A3836] rounded-xl p-3 sm:p-5 flex flex-col gap-4"
-                }
-                style={
-                  controlsHidden
-                    ? { height: `${Math.max(200, viewportHeight - 24)}px` }
-                    : undefined
                 }
               >
                 {introBars.length > 0 && !controlsHidden && (
@@ -1928,18 +1880,7 @@ export default function ChordProgressionPracticer() {
                   </div>
                 )}
 
-                <div
-                  className={
-                    controlsHidden
-                      ? "flex-1 min-h-0 flex flex-col gap-1 overflow-y-auto overscroll-contain"
-                      : "flex flex-col gap-1.5"
-                  }
-                  style={
-                    controlsHidden
-                      ? { WebkitOverflowScrolling: "touch" }
-                      : undefined
-                  }
-                >
+                <div className="flex flex-col gap-1.5">
                   {(introBars.length > 0 || outroBars.length > 0) &&
                     !controlsHidden && (
                       <span className="text-[10px] uppercase tracking-wider text-[#D4A24C] font-mono shrink-0">
@@ -1947,85 +1888,50 @@ export default function ChordProgressionPracticer() {
                       </span>
                     )}
 
-                  {controlsHidden ? (
-                    // ---- Phone "focus mode": a small, fixed, always-legible
-                    // font (no shrinking, no per-bar math), auto-fill columns
-                    // so the browser — not JS — decides how many bars fit per
-                    // row, and cells that wrap to a second line for wide
-                    // multi-chord bars instead of clipping or overlapping.
-                    // If there are more bars than fit on one screen, this
-                    // area scrolls (see the wrapping div's overflow-y-auto
-                    // above) rather than shrinking further.
-                    <div
-                      className="grid gap-1.5 min-w-0"
-                      style={{
-                        gridTemplateColumns:
-                          "repeat(auto-fill, minmax(72px, 1fr))",
-                      }}
-                    >
-                      {displayBars.map((barChords, i) => (
-                        <div
-                          key={i}
-                          className={`font-mono text-[11px] leading-tight border border-[#4a4744] rounded-md px-1 py-1 flex items-center justify-center gap-1 flex-wrap min-w-0 transition-all duration-150 ${
-                            currentBar === i
-                              ? "bar-glow bg-[#3A3836]"
-                              : "bg-[#1f1d1b]"
-                          }`}
-                        >
-                          {barChords.map((c, j) => (
-                            <React.Fragment key={j}>
-                              {j > 0 && (
-                                <span className="text-[#8A8580]">·</span>
-                              )}
-                              <ChordSymbol
-                                root={c.root}
-                                quality={c.quality}
-                                isRest={c.isRest}
-                                bassNote={c.bassNote}
-                              />
-                            </React.Fragment>
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    // ---- Normal view: natural page flow, no forced
-                    // height, page scrolls if the form is long. Multi-chord
-                    // bars simply wrap to a second line inside their own
-                    // cell rather than ever being clipped.
-                    <div
-                      className="grid gap-1.5"
-                      style={{
-                        gridTemplateColumns:
-                          "repeat(auto-fill, minmax(140px, 1fr))",
-                      }}
-                    >
-                      {displayBars.map((barChords, i) => (
-                        <div
-                          key={i}
-                          className={`font-mono text-sm sm:text-base border border-[#4a4744] rounded-md px-2.5 py-2.5 flex items-center justify-center gap-1.5 flex-wrap transition-all duration-150 ${
-                            currentBar === i
-                              ? "bar-glow bg-[#3A3836]"
-                              : "bg-[#1f1d1b]"
-                          }`}
-                        >
-                          {barChords.map((c, j) => (
-                            <React.Fragment key={j}>
-                              {j > 0 && (
-                                <span className="text-[#8A8580]">·</span>
-                              )}
-                              <ChordSymbol
-                                root={c.root}
-                                quality={c.quality}
-                                isRest={c.isRest}
-                                bassNote={c.bassNote}
-                              />
-                            </React.Fragment>
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  {/* Same grid mechanism in both modes — natural page flow,
+                      no forced height, page scrolls if the form is long
+                      (this is the exact rendering path already proven to
+                      work in the controls-shown view). Focus mode ("Hide
+                      controls") just uses a smaller font and tighter
+                      columns so more bars are visible per screen; it isn't
+                      a structurally different layout. Multi-chord bars wrap
+                      to a second line inside their own cell rather than
+                      ever being clipped. */}
+                  <div
+                    className="grid gap-1.5"
+                    style={{
+                      gridTemplateColumns: controlsHidden
+                        ? "repeat(auto-fill, minmax(72px, 1fr))"
+                        : "repeat(auto-fill, minmax(140px, 1fr))",
+                    }}
+                  >
+                    {displayBars.map((barChords, i) => (
+                      <div
+                        key={i}
+                        className={`font-mono border border-[#4a4744] rounded-md flex items-center justify-center gap-1.5 flex-wrap transition-all duration-150 ${
+                          controlsHidden
+                            ? "text-[11px] leading-tight px-1 py-1"
+                            : "text-sm sm:text-base px-2.5 py-2.5"
+                        } ${
+                          currentBar === i
+                            ? "bar-glow bg-[#3A3836]"
+                            : "bg-[#1f1d1b]"
+                        }`}
+                      >
+                        {barChords.map((c, j) => (
+                          <React.Fragment key={j}>
+                            {j > 0 && <span className="text-[#8A8580]">·</span>}
+                            <ChordSymbol
+                              root={c.root}
+                              quality={c.quality}
+                              isRest={c.isRest}
+                              bassNote={c.bassNote}
+                            />
+                          </React.Fragment>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 {outroBars.length > 0 && !controlsHidden && (
