@@ -73,13 +73,6 @@ interface VoicedChord {
   bass: number;
 }
 
-interface FitLayout {
-  columns: number;
-  rows: number;
-  fontSize: number;
-  needsScroll: boolean;
-  rowHeightPx: number;
-}
 
 // ============================================================================
 // JAZZ STANDARDS DATA
@@ -950,153 +943,25 @@ const LOOKAHEAD_MS = 25;
 const SCHEDULE_AHEAD_S = 0.15;
 
 // ============================================================================
-// FIT-TO-SCREEN LAYOUT (used only in "hide controls" phone mode) — picks a
-// grid (columns/rows) and a font size small enough that every bar's FULL
-// chord text (root + quality, all chords in a multi-chord bar) fits inside
-// its cell, and every bar fits within the available viewport with no
-// scrolling. Unlike a naive "shrink based on bar count" approach, this
-// looks at the actual text of the widest bar (e.g. a 2-chord bar like
-// "A-7 · D7" needs more width than a 1-chord bar) so nothing gets clipped.
-// Recomputed on genuine viewport changes (window resize, orientation change,
-// mobile visual-viewport changes) — deliberately NOT via a ResizeObserver on
-// our own output element, since that's what caused a resize feedback loop
-// (see the effect below for details).
+// FOCUS-MODE CHART SIZING (used only in "hide controls" phone mode)
 // ============================================================================
-
-// The chord grid renders with the `font-mono` class (JetBrains Mono), which
-// is a true monospace font — so a character's rendered width is a reliable,
-// near-constant fraction of the font-size. This lets us predict text width
-// from character count alone instead of measuring the DOM. The ratio is set
-// a little generous (rather than the theoretical ~0.6) so estimates err on
-// the side of a slightly-too-small font instead of overflow.
-const MONO_CHAR_WIDTH_RATIO = 0.68; // px width per px of font-size, per character
-const LINE_HEIGHT_RATIO = 1.3; // px line height per px of font-size
-const CELL_PAD_X = 14; // px, combined left+right padding+border inside a cell
-const CELL_PAD_Y = 10; // px, combined top+bottom padding+border inside a cell
-const GRID_GAP = 6; // px, matches the gap-1.5 class used between grid cells
-const SYMBOL_GAP = 4; // px, matches the gap-1 class used between chord symbols within a cell
-
-// Estimates a bar's rendered chord text as { chars, fixedPx }: `chars` is
-// the character count that scales with font-size (root + quality symbols +
-// the "·" separators), and `fixedPx` is the flex `gap` spacing between
-// symbols, which is a fixed pixel value that does NOT shrink with font-size
-// — so it has to be subtracted from available width before dividing by
-// per-character width, rather than folded into the character count.
-function estimateBarMetrics(barChords: FlatChord[]): {
-  chars: number;
-  fixedPx: number;
-} {
-  let chars = 0;
-  barChords.forEach((c, idx) => {
-    if (idx > 0) chars += 1; // the "·" separator character itself
-    if (c.isRest || c.root === "NC") {
-      chars += 1;
-      return;
-    }
-    chars += (c.root?.length || 1) + qualityLabel(c.quality).length;
-    if (c.bassNote) chars += c.bassNote.length + 1;
-  });
-  const n = barChords.length;
-  // n chords + (n-1) separators = (2n-1) flex children = (2n-2) gaps.
-  const fixedPx = Math.max(0, 2 * n - 2) * SYMBOL_GAP;
-  return { chars: Math.max(chars, 1), fixedPx };
-}
-
-// Never render chord text smaller than this. If everything can't fit in the
-// available viewport at this size, the chart scrolls internally instead of
-// continuing to shrink the font — a font small enough to overlap adjacent
-// rows is worse than having to scroll a little.
-const MIN_READABLE_FONT_SIZE = 12; // px
-
-function computeFitLayout(
-  width: number,
-  height: number,
-  barsChords: FlatChord[][],
-): FitLayout {
-  const count = barsChords.length;
-  if (!count || width <= 0 || height <= 0) {
-    return {
-      columns: 1,
-      rows: 1,
-      fontSize: 16,
-      needsScroll: false,
-      rowHeightPx: 0,
-    };
-  }
-  const metrics = barsChords.map(estimateBarMetrics);
-
-  // ---- Pass 1: try to fit everything on screen with no scrolling,
-  // maximizing font size across every possible column count.
-  let best: FitLayout = {
-    columns: 1,
-    rows: count,
-    fontSize: 0,
-    needsScroll: false,
-    rowHeightPx: 0,
-  };
-  for (let c = 1; c <= count; c++) {
-    const rows = Math.ceil(count / c);
-    const cellW = (width - GRID_GAP * (c - 1)) / c - CELL_PAD_X;
-    const cellH = (height - GRID_GAP * (rows - 1)) / rows - CELL_PAD_Y;
-    if (cellW <= 0 || cellH <= 0) continue;
-
-    // The binding constraint is whichever bar needs the most width relative
-    // to what's available — check every bar's own requirement, not a single
-    // precomputed "widest" one, since fixed gap overhead vs. scaling
-    // character width trade off differently at different font sizes.
-    let minFontSizeForWidth = Infinity;
-    for (const m of metrics) {
-      const availableForChars = cellW - m.fixedPx;
-      const fs =
-        availableForChars <= 0
-          ? 0
-          : availableForChars / (m.chars * MONO_CHAR_WIDTH_RATIO);
-      if (fs < minFontSizeForWidth) minFontSizeForWidth = fs;
-    }
-    const fontSizeForHeight = cellH / LINE_HEIGHT_RATIO;
-    const fontSize = Math.min(minFontSizeForWidth, fontSizeForHeight);
-
-    if (fontSize > best.fontSize) {
-      best = { columns: c, rows, fontSize, needsScroll: false, rowHeightPx: 0 };
-    }
-  }
-
-  if (best.fontSize >= MIN_READABLE_FONT_SIZE) {
-    return { ...best, fontSize: Math.min(48, best.fontSize) };
-  }
-
-  // ---- Pass 2: everything doesn't fit at a readable size without
-  // scrolling. Lock the font at the minimum readable size, pick the widest
-  // column count that still lets every bar's text fit horizontally at that
-  // size, and let the chart scroll vertically to reach the rest.
-  let cMax = 1;
-  for (let c = count; c >= 1; c--) {
-    const cellW = (width - GRID_GAP * (c - 1)) / c - CELL_PAD_X;
-    if (cellW <= 0) continue;
-    const fitsAtMinFont = metrics.every((m) => {
-      const availableForChars = cellW - m.fixedPx;
-      return (
-        availableForChars > 0 &&
-        availableForChars / (m.chars * MONO_CHAR_WIDTH_RATIO) >=
-          MIN_READABLE_FONT_SIZE
-      );
-    });
-    if (fitsAtMinFont) {
-      cMax = c;
-      break;
-    }
-  }
-  const rows = Math.ceil(count / cMax);
-  const rowHeightPx = MIN_READABLE_FONT_SIZE * LINE_HEIGHT_RATIO + CELL_PAD_Y;
-
-  return {
-    columns: cMax,
-    rows,
-    fontSize: MIN_READABLE_FONT_SIZE,
-    needsScroll: true,
-    rowHeightPx,
-  };
-}
+// Earlier versions of this tried to compute an exact font size + grid via
+// JavaScript (measuring container pixels, estimating monospace character
+// widths, searching column counts) to cram every bar onto one screen with
+// no scrolling. That math was fragile in practice — it depended on several
+// approximations (character width, gap spacing, cell padding) all being
+// correct simultaneously, and on real devices small discrepancies compounded
+// into a font size that didn't actually fit, causing exactly the kind of
+// row-overlap this was supposed to prevent.
+//
+// This is replaced with a plain CSS grid: a small fixed, always-readable
+// font size, `auto-fill` columns (the browser decides how many columns fit
+// — no JS measurement needed), and cells that wrap to a second line for
+// wide multi-chord bars rather than clipping or overlapping. If there are
+// more bars than fit on one screen, the chart scrolls — CSS grid row
+// sizing based on actual rendered content is something browsers already do
+// correctly, so there's no custom sizing logic left to get wrong.
+// ============================================================================
 
 // ============================================================================
 // UI HELPER: chord symbol display
@@ -1334,88 +1199,10 @@ export default function ChordProgressionPracticer() {
     [outroBars, applyInstrumentDisplay],
   );
 
-  // ---- Fit-to-screen sizing for the core "Form" grid ----
-  // Measures the actual rendered space available for the form grid and
-  // picks a column count + font size so every bar is visible at once,
-  // without scrolling — recomputed on resize/orientation change and
-  // whenever controls are hidden/shown (which changes available height).
-  const formGridContainerRef = useRef<HTMLDivElement | null>(null);
-  const [fitLayout, setFitLayout] = useState<FitLayout>({
-    columns: 4,
-    rows: 1,
-    fontSize: 16,
-    needsScroll: false,
-    rowHeightPx: 0,
-  });
-
-  useEffect(() => {
-    // The fit-to-screen shrink logic only applies in "hide controls" phone
-    // mode (see render below) — in the normal view the chart flows
-    // naturally and the page scrolls like any other page, so there's
-    // nothing to measure/compute there.
-    if (!controlsHidden) return;
-    const el = formGridContainerRef.current;
-    if (!el) return;
-
-    let rafId: number | null = null;
-
-    const recompute = () => {
-      rafId = null;
-      const rect = el.getBoundingClientRect();
-      const w = Math.round(rect.width);
-      const h = Math.round(rect.height);
-      if (w <= 0 || h <= 0) return;
-
-      const layout = computeFitLayout(w, h, displayBars);
-      setFitLayout((prev) =>
-        prev.columns === layout.columns &&
-        prev.rows === layout.rows &&
-        prev.needsScroll === layout.needsScroll &&
-        Math.abs(prev.fontSize - layout.fontSize) < 0.1 &&
-        Math.abs(prev.rowHeightPx - layout.rowHeightPx) < 0.1
-          ? prev // same object back — React skips the re-render entirely
-          : layout,
-      );
-    };
-
-    const scheduleRecompute = () => {
-      if (rafId !== null) return;
-      rafId = window.requestAnimationFrame(recompute);
-    };
-
-    // Initial measurement for this song / mode.
-    scheduleRecompute();
-
-    // IMPORTANT: we deliberately do NOT use a ResizeObserver on `el` here.
-    // `el` is the very element whose font-size we're driving — even with
-    // the min-w-0/min-h-0 safeguards on every grid cell, sub-pixel
-    // rounding differences between layout passes can still nudge its
-    // measured size after a re-render, which would re-trigger the
-    // observer, which recomputes, which re-renders... a measure -> resize
-    // -> measure loop that has nothing to do with dvh/svh and can happen
-    // in any real browser given enough floating-point noise.
-    //
-    // Instead we only recompute on genuine, user/browser-driven viewport
-    // changes: window resize, orientation change, and the mobile visual
-    // viewport (covers on-screen keyboard / address bar changes). None of
-    // these can be triggered by our own re-renders, which fully breaks the
-    // feedback loop at its root rather than just dampening it.
-    window.addEventListener("resize", scheduleRecompute);
-    window.addEventListener("orientationchange", scheduleRecompute);
-    window.visualViewport?.addEventListener("resize", scheduleRecompute);
-
-    return () => {
-      window.removeEventListener("resize", scheduleRecompute);
-      window.removeEventListener("orientationchange", scheduleRecompute);
-      window.visualViewport?.removeEventListener("resize", scheduleRecompute);
-      if (rafId !== null) window.cancelAnimationFrame(rafId);
-    };
-  }, [displayBars, controlsHidden, showChart]);
-
-  // Lock page scrolling while in focus mode. With nothing to scroll, there's
-  // no way for the browser's address bar to show/hide mid-session — which
-  // is what was making the dynamic viewport height (and therefore our fixed
-  // container height, and therefore the computed font size) keep shifting.
+  // Lock page scrolling while in focus mode — only the chord grid itself
+  // scrolls (see the grid's own overflow-y-auto below), not the page. This
+  // also means there's nothing that can trigger the browser's address bar
+  // to show/hide mid-session from a page-level scroll gesture.
   useEffect(() => {
     if (!controlsHidden) return;
     const prevOverflow = document.body.style.overflow;
@@ -1721,8 +1508,7 @@ export default function ChordProgressionPracticer() {
                   // verbatim (i.e. the user hasn't typed anything new since
                   // picking it), clear it so refocusing browses the full list
                   // again rather than re-filtering down to that one song.
-                  if (selectedSong && query === selectedSong.title)
-                    setQuery("");
+                  if (selectedSong && query === selectedSong.title) setQuery("");
                   setShowResults(true);
                 }}
                 placeholder="Search or click to browse all standards\u2026"
@@ -2113,18 +1899,13 @@ export default function ChordProgressionPracticer() {
                 )}
 
                 <div
-                  ref={formGridContainerRef}
                   className={
                     controlsHidden
-                      ? `flex-1 min-h-0 flex flex-col gap-1 ${
-                          fitLayout.needsScroll
-                            ? "overflow-y-auto overscroll-contain"
-                            : ""
-                        }`
+                      ? "flex-1 min-h-0 flex flex-col gap-1 overflow-y-auto overscroll-contain"
                       : "flex flex-col gap-1.5"
                   }
                   style={
-                    controlsHidden && fitLayout.needsScroll
+                    controlsHidden
                       ? { WebkitOverflowScrolling: "touch" }
                       : undefined
                   }
@@ -2137,39 +1918,25 @@ export default function ChordProgressionPracticer() {
                     )}
 
                   {controlsHidden ? (
-                    // ---- Phone "focus mode": pack every bar into the
-                    // viewport. Font size and column count are computed
-                    // from the actual chord text of every bar (see
-                    // computeFitLayout / estimateBarMetrics), so a bar with
-                    // two chords (e.g. "A-7 · D7") is never clipped — cells
-                    // use nowrap + visible overflow as a safety net in case
-                    // the estimate runs a touch tight. If there isn't room
-                    // to fit every bar at a readable size, the font locks
-                    // at a minimum (MIN_READABLE_FONT_SIZE) and this grid
-                    // switches to fixed-height rows that scroll internally,
-                    // rather than shrinking further into illegibility.
+                    // ---- Phone "focus mode": a small, fixed, always-legible
+                    // font (no shrinking, no per-bar math), auto-fill columns
+                    // so the browser — not JS — decides how many bars fit per
+                    // row, and cells that wrap to a second line for wide
+                    // multi-chord bars instead of clipping or overlapping.
+                    // If there are more bars than fit on one screen, this
+                    // area scrolls (see the wrapping div's overflow-y-auto
+                    // above) rather than shrinking further.
                     <div
                       className="grid gap-1.5 min-w-0"
-                      style={
-                        fitLayout.needsScroll
-                          ? {
-                              gridTemplateColumns: `repeat(${fitLayout.columns}, 1fr)`,
-                              gridAutoRows: `${fitLayout.rowHeightPx}px`,
-                              fontSize: `${fitLayout.fontSize}px`,
-                            }
-                          : {
-                              gridTemplateColumns: `repeat(${fitLayout.columns}, 1fr)`,
-                              gridTemplateRows: `repeat(${fitLayout.rows}, 1fr)`,
-                              fontSize: `${fitLayout.fontSize}px`,
-                              flex: "1 1 0%",
-                              minHeight: 0,
-                            }
-                      }
+                      style={{
+                        gridTemplateColumns:
+                          "repeat(auto-fill, minmax(72px, 1fr))",
+                      }}
                     >
                       {displayBars.map((barChords, i) => (
                         <div
                           key={i}
-                          className={`font-mono border border-[#4a4744] rounded-md px-1 flex items-center justify-center gap-1 flex-nowrap whitespace-nowrap min-w-0 min-h-0 transition-all duration-150 ${
+                          className={`font-mono text-[11px] leading-tight border border-[#4a4744] rounded-md px-1 py-1 flex items-center justify-center gap-1 flex-wrap min-w-0 transition-all duration-150 ${
                             currentBar === i
                               ? "bar-glow bg-[#3A3836]"
                               : "bg-[#1f1d1b]"
