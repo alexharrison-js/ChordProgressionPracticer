@@ -1073,6 +1073,36 @@ export default function ChordProgressionPracticer() {
   // ---- "Just show me the chart" mode for small phone screens ----
   const [controlsHidden, setControlsHidden] = useState(false);
 
+  // Height of the phone-focus-mode chart card. Computed in JS from
+  // window.innerHeight rather than the CSS `100svh` unit — some mobile /
+  // embedded browsers don't support svh, and when a browser can't parse a
+  // CSS unit it silently drops the whole declaration, collapsing the card
+  // to just its padding (an empty-looking sliver) instead of falling back
+  // to anything usable. window.innerHeight is universally supported.
+  const [viewportHeight, setViewportHeight] = useState<number>(() =>
+    typeof window !== "undefined" ? window.innerHeight : 800,
+  );
+
+  useEffect(() => {
+    const updateViewportHeight = () => {
+      setViewportHeight(
+        window.visualViewport?.height ?? window.innerHeight,
+      );
+    };
+    updateViewportHeight();
+    window.addEventListener("resize", updateViewportHeight);
+    window.addEventListener("orientationchange", updateViewportHeight);
+    window.visualViewport?.addEventListener("resize", updateViewportHeight);
+    return () => {
+      window.removeEventListener("resize", updateViewportHeight);
+      window.removeEventListener("orientationchange", updateViewportHeight);
+      window.visualViewport?.removeEventListener(
+        "resize",
+        updateViewportHeight,
+      );
+    };
+  }, []);
+
   const engineRef = useRef<AudioEngine | null>(null);
   if (!engineRef.current) engineRef.current = new AudioEngine();
 
@@ -1858,7 +1888,7 @@ export default function ChordProgressionPracticer() {
                 }
                 style={
                   controlsHidden
-                    ? { height: "calc(100svh - 1.5rem)" }
+                    ? { height: `${Math.max(200, viewportHeight - 24)}px` }
                     : undefined
                 }
               >
