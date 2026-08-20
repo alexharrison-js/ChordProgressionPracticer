@@ -9,6 +9,10 @@ Live: https://alexharrison-js.github.io/ChordProgressionPracticer/
 
 `jazz_standards.json` contains 127 jazz standards as a JSON array, alphabetized by title.
 
+## To extract new licks:
+
+Download wjazzd.db from https://jazzomat.hfm-weimar.de/download/downloads/wjazzd.db and drop it in the src folder. Then cd into that folder and run the extract_licks python script and update the script to include the person you're trying to get the licks from
+
 ## Schema
 
 ```json
