@@ -1,0 +1,1730 @@
+{
+  "meta": {
+    "source": "Weimar Jazz Database (WJD), Jazzomat Research Project, Hochschule fuer Musik FRANZ LISZT Weimar",
+    "sourceUrl": "https://jazzomat.hfm-weimar.de",
+    "license": "Open Data Commons Open Database License (ODbL) v1.0",
+    "attribution": "Melodic data derived from note-level transcriptions in the Weimar Jazz Database. Each lick is a short (2-bar) excerpt used for educational practice purposes, with the original tune, performer, and bar location cited alongside it.",
+    "citation": "Pfleiderer, M., Frieler, K., Abesser, J., Zaddach, W.-G., Burkhart, B. (Eds.) (2017). Inside the Jazzomat - New Perspectives for Jazz Research. Schott Campus.",
+    "generatedLickCount": 20,
+    "note": "DEMO SUBSET (2 per performer) for local testing. Run extract_licks.py against wjazzd.db yourself to generate the full 204-lick set \u2014 see README for instructions."
+  },
+  "licks": [
+    {
+      "id": "wjd_0001",
+      "label": "Charlie Parker Lick #1",
+      "performer": "Charlie Parker",
+      "style": "BEBOP",
+      "sourceTune": "Yardbird Suite",
+      "sourceKey": "C-maj",
+      "sourceTempo": 210.5,
+      "barStart": 10,
+      "barCount": 2,
+      "chordContext": ["C6"],
+      "preferFlats": false,
+      "notes": [
+        {
+          "keys": ["a#/4"],
+          "duration": "8",
+          "midi": 70
+        },
+        {
+          "keys": ["a/4"],
+          "duration": "8",
+          "midi": 69
+        },
+        {
+          "keys": ["g#/4"],
+          "duration": "8",
+          "midi": 68
+        },
+        {
+          "keys": ["f/4"],
+          "duration": "8",
+          "midi": 65
+        },
+        {
+          "keys": ["d#/4"],
+          "duration": "8",
+          "midi": 63
+        },
+        {
+          "keys": ["c/4"],
+          "duration": "8",
+          "midi": 60
+        },
+        {
+          "keys": ["g/4"],
+          "duration": "8",
+          "midi": 67
+        },
+        {
+          "keys": ["f/4"],
+          "duration": "8",
+          "midi": 65
+        },
+        {
+          "keys": ["e/4"],
+          "duration": "8",
+          "midi": 64
+        },
+        {
+          "keys": ["a/3"],
+          "duration": "8",
+          "midi": 57
+        },
+        {
+          "rest": true,
+          "duration": "8"
+        },
+        {
+          "keys": ["d/4"],
+          "duration": "8",
+          "midi": 62
+        },
+        {
+          "keys": ["f/4"],
+          "duration": "8",
+          "midi": 65
+        },
+        {
+          "keys": ["g/4"],
+          "duration": "8",
+          "midi": 67
+        },
+        {
+          "keys": ["e/4"],
+          "duration": "16",
+          "midi": 64
+        },
+        {
+          "rest": true,
+          "duration": "8"
+        },
+        {
+          "keys": ["d/4"],
+          "duration": "16",
+          "midi": 62
+        }
+      ]
+    },
+    {
+      "id": "wjd_0002",
+      "label": "Charlie Parker Lick #2",
+      "performer": "Charlie Parker",
+      "style": "BEBOP",
+      "sourceTune": "Thriving On A Riff",
+      "sourceKey": "Bb-maj",
+      "sourceTempo": 226.3,
+      "barStart": 54,
+      "barCount": 2,
+      "chordContext": ["Bbj7", "G7"],
+      "preferFlats": true,
+      "notes": [
+        {
+          "keys": ["c/4"],
+          "duration": "16",
+          "midi": 60
+        },
+        {
+          "rest": true,
+          "duration": "8"
+        },
+        {
+          "keys": ["a/3"],
+          "duration": "16",
+          "midi": 57
+        },
+        {
+          "keys": ["bb/3"],
+          "duration": "16",
+          "midi": 58
+        },
+        {
+          "keys": ["c/4"],
+          "duration": "16",
+          "midi": 60
+        },
+        {
+          "keys": ["d/4"],
+          "duration": "16",
+          "midi": 62
+        },
+        {
+          "keys": ["e/4"],
+          "duration": "16",
+          "midi": 64
+        },
+        {
+          "keys": ["a/4"],
+          "duration": "8",
+          "midi": 69
+        },
+        {
+          "keys": ["g/4"],
+          "duration": "8",
+          "midi": 67
+        },
+        {
+          "keys": ["e/4"],
+          "duration": "8",
+          "midi": 64
+        },
+        {
+          "keys": ["c/4"],
+          "duration": "8",
+          "midi": 60
+        },
+        {
+          "keys": ["f/4"],
+          "duration": "q",
+          "midi": 65
+        },
+        {
+          "keys": ["f/4"],
+          "duration": "q",
+          "midi": 65
+        }
+      ]
+    },
+    {
+      "id": "wjd_0031",
+      "label": "Dizzy Gillespie Lick #1",
+      "performer": "Dizzy Gillespie",
+      "style": "BEBOP",
+      "sourceTune": "Hot House",
+      "sourceKey": "C-maj",
+      "sourceTempo": 171.1,
+      "barStart": 12,
+      "barCount": 2,
+      "chordContext": ["Fm7b5"],
+      "preferFlats": false,
+      "notes": [
+        {
+          "keys": ["f/5"],
+          "duration": "8",
+          "midi": 77
+        },
+        {
+          "keys": ["d/5"],
+          "duration": "8",
+          "midi": 74
+        },
+        {
+          "keys": ["e/5"],
+          "duration": "16",
+          "midi": 76
+        },
+        {
+          "keys": ["f/5"],
+          "duration": "16",
+          "midi": 77
+        },
+        {
+          "keys": ["d#/5"],
+          "duration": "16",
+          "midi": 75
+        },
+        {
+          "keys": ["c#/5"],
+          "duration": "16",
+          "midi": 73
+        },
+        {
+          "keys": ["d/5"],
+          "duration": "16",
+          "midi": 74
+        },
+        {
+          "rest": true,
+          "duration": "8"
+        },
+        {
+          "keys": ["c/5"],
+          "duration": "16",
+          "midi": 72
+        },
+        {
+          "keys": ["b/4"],
+          "duration": "16",
+          "midi": 71
+        },
+        {
+          "rest": true,
+          "duration": "8"
+        },
+        {
+          "keys": ["a/4"],
+          "duration": "16",
+          "midi": 69
+        },
+        {
+          "keys": ["g#/4"],
+          "duration": "q",
+          "midi": 68
+        },
+        {
+          "rest": true,
+          "duration": "16"
+        },
+        {
+          "keys": ["f/4"],
+          "duration": "16",
+          "midi": 65
+        },
+        {
+          "rest": true,
+          "duration": "16"
+        },
+        {
+          "keys": ["g#/4"],
+          "duration": "16",
+          "midi": 68
+        },
+        {
+          "keys": ["a#/4"],
+          "duration": "8",
+          "midi": 70
+        },
+        {
+          "keys": ["f/4"],
+          "duration": "8",
+          "midi": 65
+        },
+        {
+          "keys": ["d#/4"],
+          "duration": "q",
+          "midi": 63
+        }
+      ]
+    },
+    {
+      "id": "wjd_0032",
+      "label": "Dizzy Gillespie Lick #2",
+      "performer": "Dizzy Gillespie",
+      "style": "BEBOP",
+      "sourceTune": "Groovin' High",
+      "sourceKey": "Db-maj",
+      "sourceTempo": 182.3,
+      "barStart": 2,
+      "barCount": 2,
+      "chordContext": ["Dbj7"],
+      "preferFlats": true,
+      "notes": [
+        {
+          "keys": ["c/5"],
+          "duration": "16",
+          "midi": 72
+        },
+        {
+          "rest": true,
+          "duration": "16"
+        },
+        {
+          "keys": ["f/5"],
+          "duration": "16",
+          "midi": 77
+        },
+        {
+          "keys": ["eb/5"],
+          "duration": "q",
+          "midi": 75
+        },
+        {
+          "keys": ["db/5"],
+          "duration": "q",
+          "midi": 73
+        },
+        {
+          "keys": ["c/5"],
+          "duration": "16",
+          "midi": 72
+        },
+        {
+          "rest": true,
+          "duration": "16"
+        },
+        {
+          "keys": ["bb/4"],
+          "duration": "16",
+          "midi": 70
+        },
+        {
+          "keys": ["ab/4"],
+          "duration": "16",
+          "midi": 68
+        },
+        {
+          "keys": ["bb/4"],
+          "duration": "16",
+          "midi": 70
+        },
+        {
+          "keys": ["ab/4"],
+          "duration": "16",
+          "midi": 68
+        },
+        {
+          "keys": ["g/4"],
+          "duration": "16",
+          "midi": 67
+        },
+        {
+          "rest": true,
+          "duration": "16"
+        },
+        {
+          "keys": ["f/4"],
+          "duration": "8",
+          "midi": 65
+        },
+        {
+          "keys": ["eb/4"],
+          "duration": "8",
+          "midi": 63
+        },
+        {
+          "keys": ["e/4"],
+          "duration": "16",
+          "midi": 64
+        },
+        {
+          "keys": ["g/4"],
+          "duration": "16",
+          "midi": 67
+        },
+        {
+          "keys": ["bb/4"],
+          "duration": "16",
+          "midi": 70
+        }
+      ]
+    },
+    {
+      "id": "wjd_0045",
+      "label": "John Coltrane Lick #1",
+      "performer": "John Coltrane",
+      "style": "POSTBOP",
+      "sourceTune": "Impressions",
+      "sourceKey": "D-dor",
+      "sourceTempo": 293.4,
+      "barStart": 284,
+      "barCount": 2,
+      "chordContext": ["Eb-7"],
+      "preferFlats": false,
+      "notes": [
+        {
+          "keys": ["d/4"],
+          "duration": "8",
+          "midi": 62
+        },
+        {
+          "keys": ["c/4"],
+          "duration": "8",
+          "midi": 60
+        },
+        {
+          "keys": ["a/3"],
+          "duration": "16",
+          "midi": 57
+        },
+        {
+          "rest": true,
+          "duration": "16"
+        },
+        {
+          "keys": ["f/3"],
+          "duration": "16",
+          "midi": 53
+        },
+        {
+          "keys": ["d/3"],
+          "duration": "16",
+          "midi": 50
+        },
+        {
+          "rest": true,
+          "duration": "hd"
+        },
+        {
+          "keys": ["d/3"],
+          "duration": "16",
+          "midi": 50
+        },
+        {
+          "keys": ["f/3"],
+          "duration": "q",
+          "midi": 53
+        },
+        {
+          "keys": ["a/3"],
+          "duration": "16",
+          "midi": 57
+        },
+        {
+          "keys": ["f#/4"],
+          "duration": "16",
+          "midi": 66
+        },
+        {
+          "rest": true,
+          "duration": "16"
+        },
+        {
+          "keys": ["g#/4"],
+          "duration": "16",
+          "midi": 68
+        },
+        {
+          "rest": true,
+          "duration": "16"
+        },
+        {
+          "keys": ["g/4"],
+          "duration": "16",
+          "midi": 67
+        },
+        {
+          "rest": true,
+          "duration": "16"
+        },
+        {
+          "keys": ["d/4"],
+          "duration": "16",
+          "midi": 62
+        }
+      ]
+    },
+    {
+      "id": "wjd_0046",
+      "label": "John Coltrane Lick #2",
+      "performer": "John Coltrane",
+      "style": "POSTBOP",
+      "sourceTune": "My Favorite Things",
+      "sourceKey": "E-maj",
+      "sourceTempo": 178.9,
+      "barStart": 104,
+      "barCount": 2,
+      "chordContext": ["Ej7"],
+      "preferFlats": false,
+      "notes": [
+        {
+          "keys": ["c#/5"],
+          "duration": "16",
+          "midi": 73
+        },
+        {
+          "rest": true,
+          "duration": "8"
+        },
+        {
+          "keys": ["a#/4"],
+          "duration": "16",
+          "midi": 70
+        },
+        {
+          "keys": ["g#/4"],
+          "duration": "16",
+          "midi": 68
+        },
+        {
+          "keys": ["g/4"],
+          "duration": "16",
+          "midi": 67
+        },
+        {
+          "keys": ["f#/4"],
+          "duration": "16",
+          "midi": 66
+        },
+        {
+          "keys": ["d#/4"],
+          "duration": "16",
+          "midi": 63
+        },
+        {
+          "keys": ["d/4"],
+          "duration": "16",
+          "midi": 62
+        },
+        {
+          "keys": ["c#/4"],
+          "duration": "16",
+          "midi": 61
+        },
+        {
+          "rest": true,
+          "duration": "hd"
+        },
+        {
+          "keys": ["e/4"],
+          "duration": "q",
+          "midi": 64
+        },
+        {
+          "keys": ["g#/4"],
+          "duration": "q",
+          "midi": 68
+        }
+      ]
+    },
+    {
+      "id": "wjd_0075",
+      "label": "Michael Brecker Lick #1",
+      "performer": "Michael Brecker",
+      "style": "POSTBOP",
+      "sourceTune": "Peep",
+      "sourceKey": "Eb",
+      "sourceTempo": 321.1,
+      "barStart": 36,
+      "barCount": 2,
+      "chordContext": ["Ab79/C", "B/C"],
+      "preferFlats": true,
+      "notes": [
+        {
+          "keys": ["f/3"],
+          "duration": "8",
+          "midi": 53
+        },
+        {
+          "keys": ["bb/3"],
+          "duration": "8",
+          "midi": 58
+        },
+        {
+          "keys": ["c/4"],
+          "duration": "8",
+          "midi": 60
+        },
+        {
+          "keys": ["db/4"],
+          "duration": "8",
+          "midi": 61
+        },
+        {
+          "keys": ["eb/4"],
+          "duration": "8",
+          "midi": 63
+        },
+        {
+          "keys": ["e/4"],
+          "duration": "8",
+          "midi": 64
+        },
+        {
+          "keys": ["gb/4"],
+          "duration": "8",
+          "midi": 66
+        }
+      ]
+    },
+    {
+      "id": "wjd_0076",
+      "label": "Michael Brecker Lick #2",
+      "performer": "Michael Brecker",
+      "style": "POSTBOP",
+      "sourceTune": "Cabin Fever",
+      "sourceKey": "Bb-blues",
+      "sourceTempo": 299.4,
+      "barStart": 0,
+      "barCount": 2,
+      "chordContext": ["NC"],
+      "preferFlats": true,
+      "notes": [
+        {
+          "keys": ["gb/3"],
+          "duration": "q",
+          "midi": 54
+        },
+        {
+          "keys": ["f/3"],
+          "duration": "16",
+          "midi": 53
+        },
+        {
+          "keys": ["e/3"],
+          "duration": "16",
+          "midi": 52
+        },
+        {
+          "keys": ["eb/3"],
+          "duration": "16",
+          "midi": 51
+        },
+        {
+          "rest": true,
+          "duration": "16"
+        },
+        {
+          "keys": ["f/3"],
+          "duration": "16",
+          "midi": 53
+        },
+        {
+          "rest": true,
+          "duration": "16"
+        },
+        {
+          "keys": ["d/3"],
+          "duration": "16",
+          "midi": 50
+        },
+        {
+          "rest": true,
+          "duration": "8d"
+        },
+        {
+          "keys": ["f/3"],
+          "duration": "16",
+          "midi": 53
+        },
+        {
+          "rest": true,
+          "duration": "8"
+        },
+        {
+          "keys": ["d/3"],
+          "duration": "16",
+          "midi": 50
+        },
+        {
+          "keys": ["eb/3"],
+          "duration": "16",
+          "midi": 51
+        }
+      ]
+    },
+    {
+      "id": "wjd_0089",
+      "label": "Sonny Stitt Lick #1",
+      "performer": "Sonny Stitt",
+      "style": "BEBOP",
+      "sourceTune": "Elora",
+      "sourceKey": "Bb-maj",
+      "sourceTempo": 193.2,
+      "barStart": 26,
+      "barCount": 2,
+      "chordContext": ["D-7"],
+      "preferFlats": true,
+      "notes": [
+        {
+          "keys": ["f/4"],
+          "duration": "16",
+          "midi": 65
+        },
+        {
+          "rest": true,
+          "duration": "8"
+        },
+        {
+          "keys": ["eb/4"],
+          "duration": "16",
+          "midi": 63
+        },
+        {
+          "keys": ["e/4"],
+          "duration": "16",
+          "midi": 64
+        },
+        {
+          "keys": ["f/4"],
+          "duration": "16",
+          "midi": 65
+        },
+        {
+          "keys": ["g/4"],
+          "duration": "16",
+          "midi": 67
+        },
+        {
+          "keys": ["ab/4"],
+          "duration": "16",
+          "midi": 68
+        },
+        {
+          "keys": ["b/4"],
+          "duration": "16",
+          "midi": 71
+        },
+        {
+          "keys": ["db/5"],
+          "duration": "16",
+          "midi": 73
+        },
+        {
+          "keys": ["d/5"],
+          "duration": "q",
+          "midi": 74
+        },
+        {
+          "rest": true,
+          "duration": "qd"
+        },
+        {
+          "keys": ["c/4"],
+          "duration": "8",
+          "midi": 60
+        },
+        {
+          "keys": ["d/4"],
+          "duration": "16",
+          "midi": 62
+        },
+        {
+          "keys": ["f/4"],
+          "duration": "16",
+          "midi": 65
+        },
+        {
+          "keys": ["g/4"],
+          "duration": "16",
+          "midi": 67
+        },
+        {
+          "keys": ["a/4"],
+          "duration": "16",
+          "midi": 69
+        },
+        {
+          "keys": ["c/5"],
+          "duration": "8",
+          "midi": 72
+        },
+        {
+          "keys": ["bb/4"],
+          "duration": "8",
+          "midi": 70
+        },
+        {
+          "keys": ["a/4"],
+          "duration": "8",
+          "midi": 69
+        },
+        {
+          "keys": ["g/4"],
+          "duration": "8",
+          "midi": 67
+        }
+      ]
+    },
+    {
+      "id": "wjd_0090",
+      "label": "Sonny Stitt Lick #2",
+      "performer": "Sonny Stitt",
+      "style": "BEBOP",
+      "sourceTune": "Good Kick",
+      "sourceKey": "F-maj",
+      "sourceTempo": 173.9,
+      "barStart": 14,
+      "barCount": 2,
+      "chordContext": ["F7"],
+      "preferFlats": true,
+      "notes": [
+        {
+          "keys": ["d/4"],
+          "duration": "16",
+          "midi": 62
+        },
+        {
+          "rest": true,
+          "duration": "8"
+        },
+        {
+          "keys": ["f/4"],
+          "duration": "16",
+          "midi": 65
+        },
+        {
+          "keys": ["g/4"],
+          "duration": "16",
+          "midi": 67
+        },
+        {
+          "rest": true,
+          "duration": "8"
+        },
+        {
+          "keys": ["ab/4"],
+          "duration": "16",
+          "midi": 68
+        },
+        {
+          "rest": true,
+          "duration": "q"
+        },
+        {
+          "keys": ["f/4"],
+          "duration": "8",
+          "midi": 65
+        },
+        {
+          "keys": ["d/4"],
+          "duration": "8",
+          "midi": 62
+        },
+        {
+          "keys": ["g/4"],
+          "duration": "16",
+          "midi": 67
+        },
+        {
+          "keys": ["ab/4"],
+          "duration": "16",
+          "midi": 68
+        },
+        {
+          "keys": ["a/4"],
+          "duration": "16",
+          "midi": 69
+        },
+        {
+          "rest": true,
+          "duration": "16"
+        },
+        {
+          "keys": ["c/5"],
+          "duration": "16",
+          "midi": 72
+        },
+        {
+          "keys": ["g/4"],
+          "duration": "16",
+          "midi": 67
+        }
+      ]
+    },
+    {
+      "id": "wjd_0119",
+      "label": "Sonny Rollins Lick #1",
+      "performer": "Sonny Rollins",
+      "style": "POSTBOP",
+      "sourceTune": "The Everywhere Calypso",
+      "sourceKey": "C-maj",
+      "sourceTempo": 192.3,
+      "barStart": 22,
+      "barCount": 2,
+      "chordContext": ["A7"],
+      "preferFlats": false,
+      "notes": [
+        {
+          "keys": ["f/3"],
+          "duration": "q",
+          "midi": 53
+        },
+        {
+          "keys": ["a/3"],
+          "duration": "8",
+          "midi": 57
+        },
+        {
+          "keys": ["d/3"],
+          "duration": "8",
+          "midi": 50
+        },
+        {
+          "rest": true,
+          "duration": "8"
+        },
+        {
+          "keys": ["g/3"],
+          "duration": "8",
+          "midi": 55
+        },
+        {
+          "keys": ["b/2"],
+          "duration": "q",
+          "midi": 47
+        },
+        {
+          "rest": true,
+          "duration": "qd"
+        },
+        {
+          "keys": ["g/3"],
+          "duration": "8",
+          "midi": 55
+        },
+        {
+          "keys": ["b/2"],
+          "duration": "8",
+          "midi": 47
+        },
+        {
+          "keys": ["c/3"],
+          "duration": "8",
+          "midi": 48
+        },
+        {
+          "keys": ["d/3"],
+          "duration": "8",
+          "midi": 50
+        },
+        {
+          "keys": ["e/3"],
+          "duration": "8",
+          "midi": 52
+        }
+      ]
+    },
+    {
+      "id": "wjd_0120",
+      "label": "Sonny Rollins Lick #2",
+      "performer": "Sonny Rollins",
+      "style": "HARDBOP",
+      "sourceTune": "Blue Seven",
+      "sourceKey": "Bb-blues",
+      "sourceTempo": 134.1,
+      "barStart": 8,
+      "barCount": 2,
+      "chordContext": ["Eb7"],
+      "preferFlats": true,
+      "notes": [
+        {
+          "keys": ["g/4"],
+          "duration": "16",
+          "midi": 67
+        },
+        {
+          "rest": true,
+          "duration": "16"
+        },
+        {
+          "keys": ["bb/4"],
+          "duration": "16",
+          "midi": 70
+        },
+        {
+          "rest": true,
+          "duration": "8"
+        },
+        {
+          "keys": ["db/5"],
+          "duration": "16",
+          "midi": 73
+        },
+        {
+          "keys": ["d/5"],
+          "duration": "16",
+          "midi": 74
+        },
+        {
+          "rest": true,
+          "duration": "16"
+        },
+        {
+          "keys": ["bb/4"],
+          "duration": "16",
+          "midi": 70
+        },
+        {
+          "rest": true,
+          "duration": "16"
+        },
+        {
+          "keys": ["eb/4"],
+          "duration": "16",
+          "midi": 63
+        }
+      ]
+    },
+    {
+      "id": "wjd_0149",
+      "label": "Joe Henderson Lick #1",
+      "performer": "Joe Henderson",
+      "style": "POSTBOP",
+      "sourceTune": "In 'N Out",
+      "sourceKey": "Eb",
+      "sourceTempo": 276.5,
+      "barStart": 148,
+      "barCount": 2,
+      "chordContext": ["Fsus7913"],
+      "preferFlats": true,
+      "notes": [
+        {
+          "keys": ["e/4"],
+          "duration": "16",
+          "midi": 64
+        },
+        {
+          "rest": true,
+          "duration": "8"
+        },
+        {
+          "keys": ["db/4"],
+          "duration": "16",
+          "midi": 61
+        },
+        {
+          "keys": ["b/3"],
+          "duration": "q",
+          "midi": 59
+        },
+        {
+          "keys": ["d/4"],
+          "duration": "8",
+          "midi": 62
+        },
+        {
+          "keys": ["gb/4"],
+          "duration": "8",
+          "midi": 66
+        },
+        {
+          "keys": ["f/4"],
+          "duration": "16",
+          "midi": 65
+        },
+        {
+          "rest": true,
+          "duration": "8"
+        },
+        {
+          "keys": ["db/4"],
+          "duration": "16",
+          "midi": 61
+        },
+        {
+          "rest": true,
+          "duration": "q"
+        },
+        {
+          "keys": ["eb/4"],
+          "duration": "q",
+          "midi": 63
+        },
+        {
+          "rest": true,
+          "duration": "q"
+        },
+        {
+          "keys": ["eb/4"],
+          "duration": "8",
+          "midi": 63
+        },
+        {
+          "keys": ["f/4"],
+          "duration": "8",
+          "midi": 65
+        }
+      ]
+    },
+    {
+      "id": "wjd_0150",
+      "label": "Joe Henderson Lick #2",
+      "performer": "Joe Henderson",
+      "style": "POSTBOP",
+      "sourceTune": "In 'N Out",
+      "sourceKey": "Eb",
+      "sourceTempo": 276.5,
+      "barStart": 36,
+      "barCount": 2,
+      "chordContext": ["D79"],
+      "preferFlats": true,
+      "notes": [
+        {
+          "keys": ["d/4"],
+          "duration": "8",
+          "midi": 62
+        },
+        {
+          "keys": ["c/4"],
+          "duration": "8",
+          "midi": 60
+        },
+        {
+          "keys": ["bb/3"],
+          "duration": "8",
+          "midi": 58
+        },
+        {
+          "keys": ["ab/3"],
+          "duration": "8",
+          "midi": 56
+        },
+        {
+          "rest": true,
+          "duration": "16"
+        },
+        {
+          "keys": ["a/3"],
+          "duration": "16",
+          "midi": 57
+        },
+        {
+          "keys": ["c/4"],
+          "duration": "16",
+          "midi": 60
+        },
+        {
+          "rest": true,
+          "duration": "q"
+        },
+        {
+          "keys": ["f/4"],
+          "duration": "q",
+          "midi": 65
+        },
+        {
+          "rest": true,
+          "duration": "q"
+        },
+        {
+          "keys": ["eb/4"],
+          "duration": "16",
+          "midi": 63
+        },
+        {
+          "rest": true,
+          "duration": "8"
+        },
+        {
+          "keys": ["f/4"],
+          "duration": "16",
+          "midi": 65
+        },
+        {
+          "rest": true,
+          "duration": "8d"
+        },
+        {
+          "keys": ["f/4"],
+          "duration": "16",
+          "midi": 65
+        }
+      ]
+    },
+    {
+      "id": "wjd_0163",
+      "label": "Cannonball Adderley Lick #1",
+      "performer": "Cannonball Adderley",
+      "style": "HARDBOP",
+      "sourceTune": "Work Song",
+      "sourceKey": "F-min",
+      "sourceTempo": 156.5,
+      "barStart": 28,
+      "barCount": 2,
+      "chordContext": ["C7", "F-7"],
+      "preferFlats": true,
+      "notes": [
+        {
+          "keys": ["d/4"],
+          "duration": "8",
+          "midi": 62
+        },
+        {
+          "rest": true,
+          "duration": "8"
+        },
+        {
+          "keys": ["c/4"],
+          "duration": "8",
+          "midi": 60
+        },
+        {
+          "keys": ["f/4"],
+          "duration": "16",
+          "midi": 65
+        },
+        {
+          "rest": true,
+          "duration": "8"
+        },
+        {
+          "keys": ["g/4"],
+          "duration": "16",
+          "midi": 67
+        },
+        {
+          "keys": ["ab/4"],
+          "duration": "q",
+          "midi": 68
+        },
+        {
+          "keys": ["bb/4"],
+          "duration": "8",
+          "midi": 70
+        },
+        {
+          "keys": ["bb/4"],
+          "duration": "8",
+          "midi": 70
+        },
+        {
+          "keys": ["b/4"],
+          "duration": "16",
+          "midi": 71
+        },
+        {
+          "rest": true,
+          "duration": "16"
+        },
+        {
+          "keys": ["b/4"],
+          "duration": "16",
+          "midi": 71
+        },
+        {
+          "keys": ["c/5"],
+          "duration": "16",
+          "midi": 72
+        },
+        {
+          "rest": true,
+          "duration": "16"
+        },
+        {
+          "keys": ["db/5"],
+          "duration": "16",
+          "midi": 73
+        },
+        {
+          "keys": ["ab/4"],
+          "duration": "16",
+          "midi": 68
+        },
+        {
+          "keys": ["f/4"],
+          "duration": "8",
+          "midi": 65
+        },
+        {
+          "keys": ["eb/4"],
+          "duration": "8",
+          "midi": 63
+        }
+      ]
+    },
+    {
+      "id": "wjd_0164",
+      "label": "Cannonball Adderley Lick #2",
+      "performer": "Cannonball Adderley",
+      "style": "HARDBOP",
+      "sourceTune": "Star Eyes",
+      "sourceKey": "Eb-maj",
+      "sourceTempo": 194.3,
+      "barStart": 14,
+      "barCount": 2,
+      "chordContext": ["Eb-", "Ab7"],
+      "preferFlats": true,
+      "notes": [
+        {
+          "keys": ["d/4"],
+          "duration": "q",
+          "midi": 62
+        },
+        {
+          "rest": true,
+          "duration": "8"
+        },
+        {
+          "keys": ["a/3"],
+          "duration": "8",
+          "midi": 57
+        },
+        {
+          "keys": ["c/4"],
+          "duration": "q",
+          "midi": 60
+        },
+        {
+          "rest": true,
+          "duration": "8"
+        },
+        {
+          "keys": ["bb/3"],
+          "duration": "8",
+          "midi": 58
+        },
+        {
+          "keys": ["a/3"],
+          "duration": "8",
+          "midi": 57
+        },
+        {
+          "keys": ["c/4"],
+          "duration": "8",
+          "midi": 60
+        },
+        {
+          "keys": ["e/4"],
+          "duration": "8",
+          "midi": 64
+        },
+        {
+          "keys": ["g/4"],
+          "duration": "8",
+          "midi": 67
+        },
+        {
+          "keys": ["f/4"],
+          "duration": "8",
+          "midi": 65
+        },
+        {
+          "keys": ["g/4"],
+          "duration": "8",
+          "midi": 67
+        },
+        {
+          "keys": ["ab/4"],
+          "duration": "8",
+          "midi": 68
+        },
+        {
+          "keys": ["bb/4"],
+          "duration": "8",
+          "midi": 70
+        }
+      ]
+    },
+    {
+      "id": "wjd_0177",
+      "label": "Dexter Gordon Lick #1",
+      "performer": "Dexter Gordon",
+      "style": "SWING",
+      "sourceTune": "Cheese Cake",
+      "sourceKey": "C-min",
+      "sourceTempo": 220.6,
+      "barStart": 86,
+      "barCount": 2,
+      "chordContext": ["C-"],
+      "preferFlats": false,
+      "notes": [
+        {
+          "keys": ["g/4"],
+          "duration": "16",
+          "midi": 67
+        },
+        {
+          "rest": true,
+          "duration": "8"
+        },
+        {
+          "keys": ["d/4"],
+          "duration": "16",
+          "midi": 62
+        },
+        {
+          "rest": true,
+          "duration": "h"
+        },
+        {
+          "keys": ["d/4"],
+          "duration": "8",
+          "midi": 62
+        },
+        {
+          "keys": ["d#/4"],
+          "duration": "8",
+          "midi": 63
+        },
+        {
+          "keys": ["d/4"],
+          "duration": "16",
+          "midi": 62
+        },
+        {
+          "rest": true,
+          "duration": "8"
+        },
+        {
+          "keys": ["c/4"],
+          "duration": "16",
+          "midi": 60
+        },
+        {
+          "keys": ["g/3"],
+          "duration": "q",
+          "midi": 55
+        },
+        {
+          "keys": ["g/3"],
+          "duration": "16",
+          "midi": 55
+        },
+        {
+          "rest": true,
+          "duration": "8"
+        },
+        {
+          "keys": ["g/3"],
+          "duration": "16",
+          "midi": 55
+        }
+      ]
+    },
+    {
+      "id": "wjd_0178",
+      "label": "Dexter Gordon Lick #2",
+      "performer": "Dexter Gordon",
+      "style": "BEBOP",
+      "sourceTune": "The Rainbow People",
+      "sourceKey": "Eb-maj",
+      "sourceTempo": 119.9,
+      "barStart": 44,
+      "barCount": 2,
+      "chordContext": ["F-7", "Bb7"],
+      "preferFlats": true,
+      "notes": [
+        {
+          "keys": ["a/3"],
+          "duration": "16",
+          "midi": 57
+        },
+        {
+          "rest": true,
+          "duration": "q"
+        },
+        {
+          "keys": ["e/3"],
+          "duration": "16",
+          "midi": 52
+        },
+        {
+          "keys": ["ab/3"],
+          "duration": "8",
+          "midi": 56
+        },
+        {
+          "keys": ["gb/3"],
+          "duration": "8",
+          "midi": 54
+        },
+        {
+          "keys": ["db/4"],
+          "duration": "q",
+          "midi": 61
+        },
+        {
+          "keys": ["bb/3"],
+          "duration": "8",
+          "midi": 58
+        },
+        {
+          "keys": ["bb/3"],
+          "duration": "8",
+          "midi": 58
+        },
+        {
+          "rest": true,
+          "duration": "hd"
+        },
+        {
+          "keys": ["bb/3"],
+          "duration": "16",
+          "midi": 58
+        }
+      ]
+    },
+    {
+      "id": "wjd_0191",
+      "label": "Joe Lovano Lick #1",
+      "performer": "Joe Lovano",
+      "style": "POSTBOP",
+      "sourceTune": "Lonnie's Lament",
+      "sourceKey": "C-min",
+      "sourceTempo": 200.8,
+      "barStart": 116,
+      "barCount": 2,
+      "chordContext": ["C-7"],
+      "preferFlats": false,
+      "notes": [
+        {
+          "keys": ["d#/4"],
+          "duration": "8",
+          "midi": 63
+        },
+        {
+          "rest": true,
+          "duration": "8"
+        },
+        {
+          "keys": ["f/4"],
+          "duration": "8",
+          "midi": 65
+        },
+        {
+          "rest": true,
+          "duration": "8"
+        },
+        {
+          "keys": ["f/4"],
+          "duration": "8",
+          "midi": 65
+        },
+        {
+          "rest": true,
+          "duration": "8"
+        },
+        {
+          "keys": ["f/4"],
+          "duration": "8",
+          "midi": 65
+        },
+        {
+          "keys": ["g/4"],
+          "duration": "q",
+          "midi": 67
+        },
+        {
+          "keys": ["c/4"],
+          "duration": "q",
+          "midi": 60
+        },
+        {
+          "keys": ["d#/4"],
+          "duration": "q",
+          "midi": 63
+        },
+        {
+          "keys": ["d#/4"],
+          "duration": "q",
+          "midi": 63
+        }
+      ]
+    },
+    {
+      "id": "wjd_0192",
+      "label": "Joe Lovano Lick #2",
+      "performer": "Joe Lovano",
+      "style": "POSTBOP",
+      "sourceTune": "I Can't Get Started",
+      "sourceKey": "C-maj",
+      "sourceTempo": 107.0,
+      "barStart": 8,
+      "barCount": 2,
+      "chordContext": ["NC"],
+      "preferFlats": false,
+      "notes": [
+        {
+          "keys": ["c#/4"],
+          "duration": "16",
+          "midi": 61
+        },
+        {
+          "keys": ["a#/3"],
+          "duration": "16",
+          "midi": 58
+        },
+        {
+          "keys": ["a/3"],
+          "duration": "16",
+          "midi": 57
+        },
+        {
+          "keys": ["g#/3"],
+          "duration": "16",
+          "midi": 56
+        },
+        {
+          "keys": ["a#/3"],
+          "duration": "16",
+          "midi": 58
+        },
+        {
+          "keys": ["d/4"],
+          "duration": "16",
+          "midi": 62
+        },
+        {
+          "keys": ["c/4"],
+          "duration": "16",
+          "midi": 60
+        },
+        {
+          "keys": ["g#/3"],
+          "duration": "16",
+          "midi": 56
+        },
+        {
+          "keys": ["f/3"],
+          "duration": "16",
+          "midi": 53
+        },
+        {
+          "rest": true,
+          "duration": "16"
+        },
+        {
+          "keys": ["a#/3"],
+          "duration": "16",
+          "midi": 58
+        },
+        {
+          "keys": ["g#/3"],
+          "duration": "16",
+          "midi": 56
+        },
+        {
+          "rest": true,
+          "duration": "8d"
+        },
+        {
+          "keys": ["g/3"],
+          "duration": "8",
+          "midi": 55
+        },
+        {
+          "keys": ["d/3"],
+          "duration": "16",
+          "midi": 50
+        },
+        {
+          "keys": ["f/3"],
+          "duration": "16",
+          "midi": 53
+        },
+        {
+          "rest": true,
+          "duration": "16"
+        },
+        {
+          "keys": ["e/3"],
+          "duration": "16",
+          "midi": 52
+        },
+        {
+          "rest": true,
+          "duration": "16"
+        },
+        {
+          "keys": ["g/3"],
+          "duration": "16",
+          "midi": 55
+        },
+        {
+          "keys": ["g/3"],
+          "duration": "16",
+          "midi": 55
+        },
+        {
+          "keys": ["e/3"],
+          "duration": "16",
+          "midi": 52
+        },
+        {
+          "rest": true,
+          "duration": "16"
+        },
+        {
+          "keys": ["d/3"],
+          "duration": "16",
+          "midi": 50
+        },
+        {
+          "keys": ["c/3"],
+          "duration": "16",
+          "midi": 48
+        },
+        {
+          "rest": true,
+          "duration": "16"
+        },
+        {
+          "keys": ["e/3"],
+          "duration": "16",
+          "midi": 52
+        }
+      ]
+    }
+  ]
+}
