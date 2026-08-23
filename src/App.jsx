@@ -15,6 +15,17 @@ export default function App() {
   // (Not a timbre — that's a separate, per-screen "Sound" dropdown.)
   const [displayInstrument, setDisplayInstrument] = useState("C");
 
+  // Shared "Hide controls" state, lifted up here so it can hide the nav
+  // (and mode switcher) in step with whichever mode's own settings/chrome
+  // it's also hiding. Reset to visible on every mode switch so you don't
+  // land on a new tab with everything already hidden.
+  const [controlsHidden, setControlsHidden] = useState(false);
+
+  function switchMode(nextMode) {
+    setMode(nextMode);
+    setControlsHidden(false);
+  }
+
   return (
     <div className="min-h-screen w-full bg-[#1C1B1A] text-[#F2EDE4] font-sans">
       {/* Fonts + shared range-input styling, loaded once at the app shell
@@ -50,37 +61,69 @@ export default function App() {
         }
       `}</style>
 
-      <header className="border-b border-[#3A3836] px-4 sm:px-6 py-4 sticky top-0 bg-[#1C1B1A]/95 backdrop-blur z-30">
-        <div className="max-w-5xl mx-auto flex items-center justify-between gap-3 flex-wrap">
-          <h1 className="font-display text-2xl sm:text-3xl tracking-tight text-[#F2EDE4]">
-            Jazz<span className="text-[#D4A24C]">Shed</span>
-          </h1>
+      {/* One shared floating toggle, regardless of which mode is active —
+          coordinates with the active mode's own hide/show behavior via the
+          controlsHidden/onToggleControls props passed below, and also
+          hides this header/nav (not sticky, so it also just scrolls away
+          normally like everything else). */}
+      <button
+        onClick={() => setControlsHidden((v) => !v)}
+        className="fixed bottom-3 right-3 z-50 flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#272524]/90 border border-[#4a4744] backdrop-blur text-xs font-mono text-[#F2EDE4] shadow-lg hover:border-[#D4A24C] transition-colors"
+        aria-label={controlsHidden ? "Show controls" : "Hide controls"}
+      >
+        <span>{controlsHidden ? "\u25BC" : "\u25B2"}</span>
+        {controlsHidden ? "Show controls" : "Hide controls"}
+      </button>
 
-          <nav className="flex bg-[#272524] border border-[#4a4744] rounded-full p-1 gap-1">
-            {MODES.map((m) => (
-              <button
-                key={m.id}
-                onClick={() => setMode(m.id)}
-                className={`px-4 py-1.5 rounded-full text-sm font-mono transition-colors ${
-                  mode === m.id
-                    ? "bg-[#D4A24C] text-[#1C1B1A] font-semibold"
-                    : "text-[#8A8580] hover:text-[#F2EDE4]"
-                }`}
-              >
-                {m.label}
-              </button>
-            ))}
-          </nav>
-        </div>
-      </header>
+      {!controlsHidden && (
+        <header className="border-b border-[#3A3836] px-4 sm:px-6 py-4 bg-[#1C1B1A]">
+          <div className="max-w-5xl mx-auto flex items-center justify-between gap-3 flex-wrap">
+            <h1 className="font-display text-2xl sm:text-3xl tracking-tight text-[#F2EDE4]">
+              Jazz<span className="text-[#D4A24C]">Shed</span>
+            </h1>
 
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
-        {mode === "song" && <ChordProgressionPracticer />}
-        {mode === "pattern" && <ChordPatternPracticer />}
+            <nav className="flex bg-[#272524] border border-[#4a4744] rounded-full p-1 gap-1">
+              {MODES.map((m) => (
+                <button
+                  key={m.id}
+                  onClick={() => switchMode(m.id)}
+                  className={`px-4 py-1.5 rounded-full text-sm font-mono transition-colors ${
+                    mode === m.id
+                      ? "bg-[#D4A24C] text-[#1C1B1A] font-semibold"
+                      : "text-[#8A8580] hover:text-[#F2EDE4]"
+                  }`}
+                >
+                  {m.label}
+                </button>
+              ))}
+            </nav>
+          </div>
+        </header>
+      )}
+
+      <main
+        className={`max-w-5xl mx-auto px-4 sm:px-6 ${
+          controlsHidden ? "pt-3 pb-20" : "py-6"
+        }`}
+      >
+        {mode === "song" && (
+          <ChordProgressionPracticer
+            controlsHidden={controlsHidden}
+            onToggleControls={() => setControlsHidden((v) => !v)}
+          />
+        )}
+        {mode === "pattern" && (
+          <ChordPatternPracticer
+            controlsHidden={controlsHidden}
+            onToggleControls={() => setControlsHidden((v) => !v)}
+          />
+        )}
         {mode === "licks" && (
           <LickPracticer
             displayInstrument={displayInstrument}
             onChangeDisplayInstrument={setDisplayInstrument}
+            controlsHidden={controlsHidden}
+            onToggleControls={() => setControlsHidden((v) => !v)}
           />
         )}
       </main>

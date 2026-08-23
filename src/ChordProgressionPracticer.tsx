@@ -73,7 +73,6 @@ interface VoicedChord {
   bass: number;
 }
 
-
 // ============================================================================
 // JAZZ STANDARDS DATA
 // ============================================================================
@@ -989,7 +988,15 @@ function ChordSymbol({ root, quality, isRest, bassNote }: ChordSymbolProps) {
   );
 }
 
-export default function ChordProgressionPracticer() {
+interface ChordProgressionPracticerProps {
+  controlsHidden?: boolean;
+  onToggleControls?: () => void;
+}
+
+export default function ChordProgressionPracticer({
+  controlsHidden: controlsHiddenProp,
+  onToggleControls,
+}: ChordProgressionPracticerProps = {}) {
   // ---- Library state ----
   const [songs, setSongs] = useState<Song[]>(FALLBACK_SONGS);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -1071,7 +1078,16 @@ export default function ChordProgressionPracticer() {
   const [currentBar, setCurrentBar] = useState(-1);
 
   // ---- "Just show me the chart" mode for small phone screens ----
-  const [controlsHidden, setControlsHidden] = useState(false);
+  // Controlled externally (by App.jsx) when controlsHidden/onToggleControls
+  // props are provided, so the shared app nav can hide in step with this;
+  // falls back to fully self-contained internal state for standalone use.
+  const [internalControlsHidden, setInternalControlsHidden] = useState(false);
+  const isControlledExternally = controlsHiddenProp !== undefined;
+  const controlsHidden = isControlledExternally
+    ? controlsHiddenProp
+    : internalControlsHidden;
+  const toggleControls =
+    onToggleControls ?? (() => setInternalControlsHidden((v) => !v));
 
   const engineRef = useRef<AudioEngine | null>(null);
   if (!engineRef.current) engineRef.current = new AudioEngine();
@@ -1458,9 +1474,9 @@ export default function ChordProgressionPracticer() {
       `}</style>
 
       {/* ============== ALWAYS-ON-SCREEN HIDE/SHOW CONTROLS BUTTON ============== */}
-      {selectedSong && (
+      {selectedSong && !isControlledExternally && (
         <button
-          onClick={() => setControlsHidden((v) => !v)}
+          onClick={toggleControls}
           className="fixed bottom-3 right-3 z-50 flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#272524]/90 border border-[#4a4744] backdrop-blur text-xs font-mono text-[#F2EDE4] shadow-lg hover:border-[#D4A24C] transition-colors"
           aria-label={controlsHidden ? "Show controls" : "Hide controls"}
         >
@@ -1471,7 +1487,7 @@ export default function ChordProgressionPracticer() {
 
       {/* ============== HEADER / SEARCH ============== */}
       {!controlsHidden && (
-        <header className="border-b border-[#3A3836] px-4 sm:px-6 py-4 sticky top-0 bg-[#1C1B1A]/95 backdrop-blur z-30">
+        <header className="border-b border-[#3A3836] px-4 sm:px-6 py-4 bg-[#1C1B1A]">
           <div className="max-w-5xl mx-auto flex flex-col gap-3">
             <div className="flex items-baseline justify-between gap-3">
               <h1 className="font-display text-2xl sm:text-3xl tracking-tight text-[#F2EDE4]">
@@ -1495,7 +1511,8 @@ export default function ChordProgressionPracticer() {
                   // verbatim (i.e. the user hasn't typed anything new since
                   // picking it), clear it so refocusing browses the full list
                   // again rather than re-filtering down to that one song.
-                  if (selectedSong && query === selectedSong.title) setQuery("");
+                  if (selectedSong && query === selectedSong.title)
+                    setQuery("");
                   setShowResults(true);
                 }}
                 placeholder="Search or click to browse all standards\u2026"

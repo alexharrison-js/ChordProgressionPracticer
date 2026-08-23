@@ -2,7 +2,12 @@ import React, { useCallback, useMemo, useRef, useState } from "react";
 import { Lick, LICK_PERFORMERS, LICK_COMPENDIUM } from "./licks";
 import { LickShuffleBag, useLickFavorites } from "./lickSelection";
 import VexFlowLick from "./VexFlowLick";
-import { AudioEngine, Instrument, INSTRUMENT_LABELS, Timbre } from "./musicEngine";
+import {
+  AudioEngine,
+  Instrument,
+  INSTRUMENT_LABELS,
+  Timbre,
+} from "./musicEngine";
 
 // VexFlow duration code -> length in quarter-note beats (mirrors the Python
 // extraction script's STANDARD_DURATIONS table).
@@ -21,11 +26,15 @@ const DURATION_TO_BEATS: Record<string, number> = {
 interface LickPracticerProps {
   displayInstrument: Instrument;
   onChangeDisplayInstrument: (i: Instrument) => void;
+  controlsHidden?: boolean;
+  onToggleControls?: () => void;
 }
 
 export default function LickPracticer({
   displayInstrument,
   onChangeDisplayInstrument,
+  controlsHidden: controlsHiddenProp,
+  onToggleControls,
 }: LickPracticerProps) {
   const [selectedPerformer, setSelectedPerformer] = useState<string>("__ALL__");
   const [currentLick, setCurrentLick] = useState<Lick | null>(null);
@@ -36,7 +45,14 @@ export default function LickPracticer({
   const [lickBpmInput, setLickBpmInput] = useState("140");
   const [timbre, setTimbre] = useState<Timbre>("piano");
   const [isPlayingLick, setIsPlayingLick] = useState(false);
-  const [controlsHidden, setControlsHidden] = useState(false);
+
+  const [internalControlsHidden, setInternalControlsHidden] = useState(false);
+  const isControlledExternally = controlsHiddenProp !== undefined;
+  const controlsHidden = isControlledExternally
+    ? controlsHiddenProp
+    : internalControlsHidden;
+  const toggleControls =
+    onToggleControls ?? (() => setInternalControlsHidden((v) => !v));
 
   const bagRef = useRef<LickShuffleBag | null>(null);
   if (!bagRef.current) bagRef.current = new LickShuffleBag();
@@ -118,135 +134,134 @@ export default function LickPracticer({
     rafRef.current = window.requestAnimationFrame(tick);
   }
 
-  const pickerOptions = useMemo(
-    () => ["__ALL__", ...LICK_PERFORMERS],
-    [],
-  );
+  const pickerOptions = useMemo(() => ["__ALL__", ...LICK_PERFORMERS], []);
 
   return (
     <div className="flex flex-col gap-4">
-      <button
-        onClick={() => setControlsHidden((v) => !v)}
-        className="fixed bottom-3 right-3 z-50 flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#272524]/90 border border-[#4a4744] backdrop-blur text-xs font-mono text-[#F2EDE4] shadow-lg hover:border-[#D4A24C] transition-colors"
-        aria-label={controlsHidden ? "Show controls" : "Hide controls"}
-      >
-        <span>{controlsHidden ? "\u25BC" : "\u25B2"}</span>
-        {controlsHidden ? "Show controls" : "Hide controls"}
-      </button>
+      {!isControlledExternally && (
+        <button
+          onClick={toggleControls}
+          className="fixed bottom-3 right-3 z-50 flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#272524]/90 border border-[#4a4744] backdrop-blur text-xs font-mono text-[#F2EDE4] shadow-lg hover:border-[#D4A24C] transition-colors"
+          aria-label={controlsHidden ? "Show controls" : "Hide controls"}
+        >
+          <span>{controlsHidden ? "\u25BC" : "\u25B2"}</span>
+          {controlsHidden ? "Show controls" : "Hide controls"}
+        </button>
+      )}
 
       {/* ---- Picker + controls ---- */}
       {!controlsHidden && (
-      <section className="flex flex-col gap-3">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="flex flex-col gap-1.5 col-span-2 sm:col-span-2">
-            <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
-              Soloist
-            </label>
-            <select
-              value={selectedPerformer}
-              onChange={(e) => setSelectedPerformer(e.target.value)}
-              className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
-            >
-              <option value="__ALL__">Random (any soloist)</option>
-              {pickerOptions
-                .filter((p) => p !== "__ALL__")
-                .map((p) => (
-                  <option key={p} value={p}>
-                    {p}
-                  </option>
-                ))}
-            </select>
-          </div>
+        <section className="flex flex-col gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="flex flex-col gap-1.5 col-span-2 sm:col-span-2">
+              <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
+                Soloist
+              </label>
+              <select
+                value={selectedPerformer}
+                onChange={(e) => setSelectedPerformer(e.target.value)}
+                className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
+              >
+                <option value="__ALL__">Random (any soloist)</option>
+                {pickerOptions
+                  .filter((p) => p !== "__ALL__")
+                  .map((p) => (
+                    <option key={p} value={p}>
+                      {p}
+                    </option>
+                  ))}
+              </select>
+            </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
-              Lick tempo
-            </label>
-            <input
-              type="number"
-              min={1}
-              max={400}
-              inputMode="numeric"
-              value={lickBpmInput}
-              onChange={(e) => setLickBpmInput(e.target.value)}
-              onBlur={commitBpmInput}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") e.currentTarget.blur();
-              }}
-              className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none font-mono"
-            />
-          </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
+                Lick tempo
+              </label>
+              <input
+                type="number"
+                min={1}
+                max={400}
+                inputMode="numeric"
+                value={lickBpmInput}
+                onChange={(e) => setLickBpmInput(e.target.value)}
+                onBlur={commitBpmInput}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") e.currentTarget.blur();
+                }}
+                className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none font-mono"
+              />
+            </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
-              Sound
-            </label>
-            <select
-              value={timbre}
-              onChange={(e) => setTimbre(e.target.value as Timbre)}
-              className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
-            >
-              <option value="piano">Piano</option>
-              <option value="epiano">Electric Piano</option>
-              <option value="synth">Synth</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            onClick={showNextLick}
-            className="px-5 py-2.5 rounded-full bg-[#D4A24C] hover:bg-[#e0b15e] text-[#1C1B1A] font-semibold text-sm transition-colors"
-          >
-            {selectedPerformer === "__ALL__"
-              ? "Show random lick"
-              : `Show ${selectedPerformer} lick`}
-          </button>
-
-          <div className="flex items-center gap-1.5">
-            <span className="text-[10px] uppercase tracking-wide text-[#8A8580] font-mono">
-              Reading as
-            </span>
-            <div className="flex bg-[#1C1B1A] rounded-md p-1 gap-1">
-              {(["C", "Bb", "Eb"] as Instrument[]).map((inst) => (
-                <button
-                  key={inst}
-                  onClick={() => onChangeDisplayInstrument(inst)}
-                  title={INSTRUMENT_LABELS[inst]}
-                  className={`text-xs px-2.5 py-1 rounded-md transition-colors font-mono ${
-                    displayInstrument === inst
-                      ? "bg-[#D4A24C] text-[#1C1B1A] font-semibold"
-                      : "text-[#8A8580] hover:text-[#F2EDE4]"
-                  }`}
-                >
-                  {inst === "C" ? "C" : inst === "Bb" ? "B\u266D" : "E\u266D"}
-                </button>
-              ))}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
+                Sound
+              </label>
+              <select
+                value={timbre}
+                onChange={(e) => setTimbre(e.target.value as Timbre)}
+                className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
+              >
+                <option value="piano">Piano</option>
+                <option value="epiano">Electric Piano</option>
+                <option value="synth">Synth</option>
+              </select>
             </div>
           </div>
 
-          <button
-            onClick={() => setShowNotation((v) => !v)}
-            className="text-xs font-mono text-[#8A8580] hover:text-[#D4A24C] underline transition-colors"
-          >
-            {showNotation ? "Hide notation" : "Show notation"}
-          </button>
-          <button
-            onClick={() => setShowChords((v) => !v)}
-            className="text-xs font-mono text-[#8A8580] hover:text-[#D4A24C] underline transition-colors"
-          >
-            {showChords ? "Hide chord context" : "Show chord context"}
-          </button>
-          <button
-            onClick={() => setShowFavorites((v) => !v)}
-            className="text-xs font-mono text-[#8A8580] hover:text-[#D4A24C] underline transition-colors"
-          >
-            {showFavorites
-              ? "Back to lick"
-              : `Favorites (${favoriteLicks.length})`}
-          </button>
-        </div>
-      </section>
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              onClick={showNextLick}
+              className="px-5 py-2.5 rounded-full bg-[#D4A24C] hover:bg-[#e0b15e] text-[#1C1B1A] font-semibold text-sm transition-colors"
+            >
+              {selectedPerformer === "__ALL__"
+                ? "Show random lick"
+                : `Show ${selectedPerformer} lick`}
+            </button>
+
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] uppercase tracking-wide text-[#8A8580] font-mono">
+                Reading as
+              </span>
+              <div className="flex bg-[#1C1B1A] rounded-md p-1 gap-1">
+                {(["C", "Bb", "Eb"] as Instrument[]).map((inst) => (
+                  <button
+                    key={inst}
+                    onClick={() => onChangeDisplayInstrument(inst)}
+                    title={INSTRUMENT_LABELS[inst]}
+                    className={`text-xs px-2.5 py-1 rounded-md transition-colors font-mono ${
+                      displayInstrument === inst
+                        ? "bg-[#D4A24C] text-[#1C1B1A] font-semibold"
+                        : "text-[#8A8580] hover:text-[#F2EDE4]"
+                    }`}
+                  >
+                    {inst === "C" ? "C" : inst === "Bb" ? "B\u266D" : "E\u266D"}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowNotation((v) => !v)}
+              className="text-xs font-mono text-[#8A8580] hover:text-[#D4A24C] underline transition-colors"
+            >
+              {showNotation ? "Hide notation" : "Show notation"}
+            </button>
+            <button
+              onClick={() => setShowChords((v) => !v)}
+              className="text-xs font-mono text-[#8A8580] hover:text-[#D4A24C] underline transition-colors"
+            >
+              {showChords ? "Hide chord context" : "Show chord context"}
+            </button>
+            <button
+              onClick={() => setShowFavorites((v) => !v)}
+              className="text-xs font-mono text-[#8A8580] hover:text-[#D4A24C] underline transition-colors"
+            >
+              {showFavorites
+                ? "Back to lick"
+                : `Favorites (${favoriteLicks.length})`}
+            </button>
+          </div>
+        </section>
       )}
 
       {/* ---- Favorites list ---- */}
@@ -262,7 +277,10 @@ export default function LickPracticer({
           ) : (
             <ul className="flex flex-col divide-y divide-[#3A3836]">
               {favoriteLicks.map((l) => (
-                <li key={l.id} className="py-2 flex items-center justify-between gap-3">
+                <li
+                  key={l.id}
+                  className="py-2 flex items-center justify-between gap-3"
+                >
                   <button
                     onClick={() => showLick(l)}
                     className="text-left text-sm text-[#F2EDE4] hover:text-[#D4A24C] transition-colors"
@@ -288,8 +306,8 @@ export default function LickPracticer({
         <section className="bg-[#252320] border border-[#3A3836] rounded-xl p-4 flex flex-col gap-4">
           {!currentLick ? (
             <p className="text-sm text-[#8A8580] text-center py-8">
-              Pick a soloist (or leave it on Random) and tap "Show lick" to
-              get started.
+              Pick a soloist (or leave it on Random) and tap "Show lick" to get
+              started.
             </p>
           ) : (
             <>

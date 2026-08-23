@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   AudioEngine,
   FlatChord,
@@ -35,7 +41,15 @@ function ChordSymbol({ root, quality }: { root: string; quality: string }) {
 
 const KEY_CENTERS_TO_GENERATE = 24; // enough that a loop feels effectively endless
 
-export default function ChordPatternPracticer() {
+interface ChordPatternPracticerProps {
+  controlsHidden?: boolean;
+  onToggleControls?: () => void;
+}
+
+export default function ChordPatternPracticer({
+  controlsHidden: controlsHiddenProp,
+  onToggleControls,
+}: ChordPatternPracticerProps = {}) {
   const [conceptId, setConceptId] = useState(CHORD_PROGRESSION_CONCEPTS[2].id); // ii-V-I
   const [cycleType, setCycleType] = useState<CycleTypeId>("circle_of_4ths");
   const [repeatsPerKey, setRepeatsPerKey] = useState(1);
@@ -51,7 +65,14 @@ export default function ChordPatternPracticer() {
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentBar, setCurrentBar] = useState(-1);
-  const [controlsHidden, setControlsHidden] = useState(false);
+
+  const [internalControlsHidden, setInternalControlsHidden] = useState(false);
+  const isControlledExternally = controlsHiddenProp !== undefined;
+  const controlsHidden = isControlledExternally
+    ? controlsHiddenProp
+    : internalControlsHidden;
+  const toggleControls =
+    onToggleControls ?? (() => setInternalControlsHidden((v) => !v));
 
   const engineRef = useRef<AudioEngine | null>(null);
   if (!engineRef.current) engineRef.current = new AudioEngine();
@@ -122,7 +143,8 @@ export default function ChordPatternPracticer() {
   useEffect(() => stopPlayback, [stopPlayback]);
 
   useEffect(() => {
-    if (isPlaying) engineRef.current?.setMetroVolume(metronomeOn ? metroVolume : 0);
+    if (isPlaying)
+      engineRef.current?.setMetroVolume(metronomeOn ? metroVolume : 0);
   }, [metronomeOn, metroVolume, isPlaying]);
 
   function startPlayback() {
@@ -213,8 +235,14 @@ export default function ChordPatternPracticer() {
     function tick() {
       if (myGen !== playGenRef.current) return;
       const now = ctx.currentTime;
-      while (queueIdx < currentQueue.length && currentQueue[queueIdx].time <= now) {
-        if (currentQueue[queueIdx].chord || currentQueue[queueIdx].beatInBar === 0) {
+      while (
+        queueIdx < currentQueue.length &&
+        currentQueue[queueIdx].time <= now
+      ) {
+        if (
+          currentQueue[queueIdx].chord ||
+          currentQueue[queueIdx].beatInBar === 0
+        ) {
           setCurrentBar(currentQueue[queueIdx].barIndex);
         }
         queueIdx++;
@@ -245,14 +273,16 @@ export default function ChordPatternPracticer() {
     <div className="flex flex-col gap-6">
       {/* ---- Always-on-screen hide/show controls button, matching the
           song player's focus mode exactly ---- */}
-      <button
-        onClick={() => setControlsHidden((v) => !v)}
-        className="fixed bottom-3 right-3 z-50 flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#272524]/90 border border-[#4a4744] backdrop-blur text-xs font-mono text-[#F2EDE4] shadow-lg hover:border-[#D4A24C] transition-colors"
-        aria-label={controlsHidden ? "Show controls" : "Hide controls"}
-      >
-        <span>{controlsHidden ? "\u25BC" : "\u25B2"}</span>
-        {controlsHidden ? "Show controls" : "Hide controls"}
-      </button>
+      {!isControlledExternally && (
+        <button
+          onClick={toggleControls}
+          className="fixed bottom-3 right-3 z-50 flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#272524]/90 border border-[#4a4744] backdrop-blur text-xs font-mono text-[#F2EDE4] shadow-lg hover:border-[#D4A24C] transition-colors"
+          aria-label={controlsHidden ? "Show controls" : "Hide controls"}
+        >
+          <span>{controlsHidden ? "\u25BC" : "\u25B2"}</span>
+          {controlsHidden ? "Show controls" : "Hide controls"}
+        </button>
+      )}
 
       {!controlsHidden && (
         <>
@@ -354,7 +384,9 @@ export default function ChordPatternPracticer() {
                 </label>
                 <select
                   value={voicingStyle}
-                  onChange={(e) => setVoicingStyle(e.target.value as VoicingStyleId)}
+                  onChange={(e) =>
+                    setVoicingStyle(e.target.value as VoicingStyleId)
+                  }
                   className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
                 >
                   {VOICING_STYLES.map((v) => (
@@ -396,7 +428,11 @@ export default function ChordPatternPracticer() {
                           : "text-[#8A8580] hover:text-[#F2EDE4]"
                       }`}
                     >
-                      {inst === "C" ? "C" : inst === "Bb" ? "B\u266D" : "E\u266D"}
+                      {inst === "C"
+                        ? "C"
+                        : inst === "Bb"
+                          ? "B\u266D"
+                          : "E\u266D"}
                     </button>
                   ))}
                 </div>
@@ -493,8 +529,8 @@ export default function ChordPatternPracticer() {
         </div>
         {!controlsHidden && (
           <p className="text-[10px] text-[#8A8580] font-mono mt-3">
-            Showing the first {Math.min(48, displayBars.length)} bars —
-            playback loops the generated cycle continuously.
+            Showing the first {Math.min(48, displayBars.length)} bars — playback
+            loops the generated cycle continuously.
           </p>
         )}
       </section>
