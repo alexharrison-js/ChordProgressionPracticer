@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   AudioEngine,
   FlatChord,
@@ -57,6 +51,7 @@ export default function ChordPatternPracticer() {
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentBar, setCurrentBar] = useState(-1);
+  const [controlsHidden, setControlsHidden] = useState(false);
 
   const engineRef = useRef<AudioEngine | null>(null);
   if (!engineRef.current) engineRef.current = new AudioEngine();
@@ -127,8 +122,7 @@ export default function ChordPatternPracticer() {
   useEffect(() => stopPlayback, [stopPlayback]);
 
   useEffect(() => {
-    if (isPlaying)
-      engineRef.current?.setMetroVolume(metronomeOn ? metroVolume : 0);
+    if (isPlaying) engineRef.current?.setMetroVolume(metronomeOn ? metroVolume : 0);
   }, [metronomeOn, metroVolume, isPlaying]);
 
   function startPlayback() {
@@ -219,14 +213,8 @@ export default function ChordPatternPracticer() {
     function tick() {
       if (myGen !== playGenRef.current) return;
       const now = ctx.currentTime;
-      while (
-        queueIdx < currentQueue.length &&
-        currentQueue[queueIdx].time <= now
-      ) {
-        if (
-          currentQueue[queueIdx].chord ||
-          currentQueue[queueIdx].beatInBar === 0
-        ) {
+      while (queueIdx < currentQueue.length && currentQueue[queueIdx].time <= now) {
+        if (currentQueue[queueIdx].chord || currentQueue[queueIdx].beatInBar === 0) {
           setCurrentBar(currentQueue[queueIdx].barIndex);
         }
         queueIdx++;
@@ -255,233 +243,261 @@ export default function ChordPatternPracticer() {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* ---- Concept / cycle / key controls ---- */}
-      <section className="flex flex-col gap-4">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          <div className="flex flex-col gap-1.5 col-span-2">
-            <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
-              Progression
-            </label>
-            <select
-              value={conceptId}
-              onChange={(e) => setConceptId(e.target.value)}
-              className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
-            >
-              {CHORD_PROGRESSION_CONCEPTS.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name} ({c.shortLabel})
-                </option>
-              ))}
-            </select>
-          </div>
+      {/* ---- Always-on-screen hide/show controls button, matching the
+          song player's focus mode exactly ---- */}
+      <button
+        onClick={() => setControlsHidden((v) => !v)}
+        className="fixed bottom-3 right-3 z-50 flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#272524]/90 border border-[#4a4744] backdrop-blur text-xs font-mono text-[#F2EDE4] shadow-lg hover:border-[#D4A24C] transition-colors"
+        aria-label={controlsHidden ? "Show controls" : "Hide controls"}
+      >
+        <span>{controlsHidden ? "\u25BC" : "\u25B2"}</span>
+        {controlsHidden ? "Show controls" : "Hide controls"}
+      </button>
 
-          <div className="flex flex-col gap-1.5 col-span-2">
-            <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
-              Cycle
-            </label>
-            <select
-              value={cycleType}
-              onChange={(e) => setCycleType(e.target.value as CycleTypeId)}
-              className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
-            >
-              {CYCLE_TYPES.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
-              Repeats/key
-            </label>
-            <select
-              value={repeatsPerKey}
-              onChange={(e) => setRepeatsPerKey(Number(e.target.value))}
-              className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
-            >
-              {[1, 2, 3, 4, 5].map((n) => (
-                <option key={n} value={n}>
-                  {n}x
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
-              Start key
-            </label>
-            <select
-              value={startKey}
-              onChange={(e) => setStartKey(e.target.value)}
-              className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
-            >
-              {ALL_KEYS.map((k) => (
-                <option key={k} value={k}>
-                  {k}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
-              Tempo (bpm)
-            </label>
-            <input
-              type="number"
-              min={1}
-              max={500}
-              inputMode="numeric"
-              value={bpmInput}
-              onChange={(e) => setBpmInput(e.target.value)}
-              onBlur={commitBpmInput}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") e.currentTarget.blur();
-              }}
-              className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none font-mono"
-            />
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
-              Voicing
-            </label>
-            <select
-              value={voicingStyle}
-              onChange={(e) =>
-                setVoicingStyle(e.target.value as VoicingStyleId)
-              }
-              className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
-            >
-              {VOICING_STYLES.map((v) => (
-                <option key={v.id} value={v.id}>
-                  {v.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
-              Sound
-            </label>
-            <select
-              value={timbre}
-              onChange={(e) => setTimbre(e.target.value as Timbre)}
-              className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
-            >
-              <option value="piano">Piano</option>
-              <option value="epiano">Electric Piano</option>
-              <option value="synth">Synth</option>
-            </select>
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
-              Reading as
-            </label>
-            <div className="flex bg-[#1C1B1A] rounded-md p-1 gap-1">
-              {(["C", "Bb", "Eb"] as Instrument[]).map((inst) => (
-                <button
-                  key={inst}
-                  onClick={() => setDisplayInstrument(inst)}
-                  title={INSTRUMENT_LABELS[inst]}
-                  className={`flex-1 text-xs py-1.5 rounded-md transition-colors font-mono ${
-                    displayInstrument === inst
-                      ? "bg-[#D4A24C] text-[#1C1B1A] font-semibold"
-                      : "text-[#8A8580] hover:text-[#F2EDE4]"
-                  }`}
+      {!controlsHidden && (
+        <>
+          {/* ---- Concept / cycle / key controls ---- */}
+          <section className="flex flex-col gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+              <div className="flex flex-col gap-1.5 col-span-2">
+                <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
+                  Progression
+                </label>
+                <select
+                  value={conceptId}
+                  onChange={(e) => setConceptId(e.target.value)}
+                  className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
                 >
-                  {inst === "C" ? "C" : inst === "Bb" ? "B\u266D" : "E\u266D"}
-                </button>
-              ))}
+                  {CHORD_PROGRESSION_CONCEPTS.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name} ({c.shortLabel})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-1.5 col-span-2">
+                <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
+                  Cycle
+                </label>
+                <select
+                  value={cycleType}
+                  onChange={(e) => setCycleType(e.target.value as CycleTypeId)}
+                  className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
+                >
+                  {CYCLE_TYPES.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
+                  Repeats/key
+                </label>
+                <select
+                  value={repeatsPerKey}
+                  onChange={(e) => setRepeatsPerKey(Number(e.target.value))}
+                  className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
+                >
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <option key={n} value={n}>
+                      {n}x
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
+                  Start key
+                </label>
+                <select
+                  value={startKey}
+                  onChange={(e) => setStartKey(e.target.value)}
+                  className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
+                >
+                  {ALL_KEYS.map((k) => (
+                    <option key={k} value={k}>
+                      {k}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <p className="text-xs text-[#8A8580]">{concept.description}</p>
-      </section>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
+                  Tempo (bpm)
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={500}
+                  inputMode="numeric"
+                  value={bpmInput}
+                  onChange={(e) => setBpmInput(e.target.value)}
+                  onBlur={commitBpmInput}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") e.currentTarget.blur();
+                  }}
+                  className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none font-mono"
+                />
+              </div>
 
-      {/* ---- Metronome ---- */}
-      <section className="bg-[#252320] border border-[#3A3836] rounded-xl p-4 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <h3 className="font-mono text-xs uppercase tracking-wide text-[#8A8580]">
-            Metronome
-          </h3>
-          <button
-            role="switch"
-            aria-checked={metronomeOn}
-            onClick={() => setMetronomeOn((v) => !v)}
-            className={`w-11 h-6 rounded-full transition-colors relative ${
-              metronomeOn ? "bg-[#5B7065]" : "bg-[#4a4744]"
-            }`}
-          >
-            <span
-              className={`absolute top-0.5 left-0.5 w-5 h-5 bg-[#F2EDE4] rounded-full transition-transform ${
-                metronomeOn ? "translate-x-5" : ""
-              }`}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
+                  Voicing
+                </label>
+                <select
+                  value={voicingStyle}
+                  onChange={(e) => setVoicingStyle(e.target.value as VoicingStyleId)}
+                  className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
+                >
+                  {VOICING_STYLES.map((v) => (
+                    <option key={v.id} value={v.id}>
+                      {v.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
+                  Sound
+                </label>
+                <select
+                  value={timbre}
+                  onChange={(e) => setTimbre(e.target.value as Timbre)}
+                  className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
+                >
+                  <option value="piano">Piano</option>
+                  <option value="epiano">Electric Piano</option>
+                  <option value="synth">Synth</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
+                  Reading as
+                </label>
+                <div className="flex bg-[#1C1B1A] rounded-md p-1 gap-1">
+                  {(["C", "Bb", "Eb"] as Instrument[]).map((inst) => (
+                    <button
+                      key={inst}
+                      onClick={() => setDisplayInstrument(inst)}
+                      title={INSTRUMENT_LABELS[inst]}
+                      className={`flex-1 text-xs py-1.5 rounded-md transition-colors font-mono ${
+                        displayInstrument === inst
+                          ? "bg-[#D4A24C] text-[#1C1B1A] font-semibold"
+                          : "text-[#8A8580] hover:text-[#F2EDE4]"
+                      }`}
+                    >
+                      {inst === "C" ? "C" : inst === "Bb" ? "B\u266D" : "E\u266D"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <p className="text-xs text-[#8A8580]">{concept.description}</p>
+          </section>
+
+          {/* ---- Metronome ---- */}
+          <section className="bg-[#252320] border border-[#3A3836] rounded-xl p-4 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <h3 className="font-mono text-xs uppercase tracking-wide text-[#8A8580]">
+                Metronome
+              </h3>
+              <button
+                role="switch"
+                aria-checked={metronomeOn}
+                onClick={() => setMetronomeOn((v) => !v)}
+                className={`w-11 h-6 rounded-full transition-colors relative ${
+                  metronomeOn ? "bg-[#5B7065]" : "bg-[#4a4744]"
+                }`}
+              >
+                <span
+                  className={`absolute top-0.5 left-0.5 w-5 h-5 bg-[#F2EDE4] rounded-full transition-transform ${
+                    metronomeOn ? "translate-x-5" : ""
+                  }`}
+                />
+              </button>
+            </div>
+            <input
+              type="range"
+              min={0}
+              max={1}
+              step={0.01}
+              value={metroVolume}
+              onChange={(e) => setMetroVolume(Number(e.target.value))}
+              className="w-32"
             />
-          </button>
-        </div>
-        <input
-          type="range"
-          min={0}
-          max={1}
-          step={0.01}
-          value={metroVolume}
-          onChange={(e) => setMetroVolume(Number(e.target.value))}
-          className="w-32"
-        />
-      </section>
+          </section>
+
+          {/* ---- Transport — placed above the chart so Play is always
+              reachable without scrolling past a long chord chart ---- */}
+          <div className="flex items-center justify-center gap-4">
+            <button
+              onClick={togglePlay}
+              className={`px-8 py-3 rounded-full font-semibold text-base transition-colors flex items-center gap-2 ${
+                isPlaying
+                  ? "bg-[#8B3A3A] hover:bg-[#9c4444] text-[#F2EDE4]"
+                  : "bg-[#D4A24C] hover:bg-[#e0b15e] text-[#1C1B1A]"
+              }`}
+            >
+              {isPlaying ? "\u25A0 Stop" : "\u25B6 Play pattern"}
+            </button>
+            <span className="text-xs font-mono text-[#8A8580]">
+              {bpm} bpm &middot; 4/4
+            </span>
+          </div>
+        </>
+      )}
 
       {/* ---- Chart ---- */}
-      <section className="bg-[#252320] border border-[#3A3836] rounded-xl p-3 sm:p-5">
+      <section
+        className={
+          controlsHidden
+            ? "bg-[#252320] border border-[#3A3836] rounded-xl p-3 flex flex-col gap-2"
+            : "bg-[#252320] border border-[#3A3836] rounded-xl p-3 sm:p-5"
+        }
+      >
         <div
           className="grid gap-1.5"
           style={{
-            gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))",
+            gridTemplateColumns: controlsHidden
+              ? "repeat(auto-fill, minmax(72px, 1fr))"
+              : "repeat(auto-fill, minmax(120px, 1fr))",
           }}
         >
-          {displayBars.slice(0, 48).map((barChords, i) => (
-            <div
-              key={i}
-              className={`font-mono text-sm sm:text-base border border-[#4a4744] rounded-md px-2.5 py-2.5 flex items-center justify-center gap-1.5 flex-wrap transition-all duration-150 ${
-                currentBar === i ? "bar-glow bg-[#3A3836]" : "bg-[#1f1d1b]"
-              }`}
-            >
-              {barChords.map((c, j) => (
-                <ChordSymbol key={j} root={c.root} quality={c.quality} />
-              ))}
-            </div>
-          ))}
+          {(controlsHidden ? displayBars : displayBars.slice(0, 48)).map(
+            (barChords, i) => (
+              <div
+                key={i}
+                className={`font-mono border border-[#4a4744] rounded-md flex items-center justify-center gap-1.5 flex-wrap transition-all duration-150 ${
+                  controlsHidden
+                    ? "text-[11px] leading-tight px-1 py-1"
+                    : "text-sm sm:text-base px-2.5 py-2.5"
+                } ${currentBar === i ? "bar-glow bg-[#3A3836]" : "bg-[#1f1d1b]"}`}
+              >
+                {barChords.map((c, j) => (
+                  <ChordSymbol key={j} root={c.root} quality={c.quality} />
+                ))}
+              </div>
+            ),
+          )}
         </div>
-        <p className="text-[10px] text-[#8A8580] font-mono mt-3">
-          Showing the first {Math.min(48, displayBars.length)} bars — playback
-          loops the generated cycle continuously.
-        </p>
+        {!controlsHidden && (
+          <p className="text-[10px] text-[#8A8580] font-mono mt-3">
+            Showing the first {Math.min(48, displayBars.length)} bars —
+            playback loops the generated cycle continuously.
+          </p>
+        )}
       </section>
-
-      {/* ---- Transport ---- */}
-      <div className="flex items-center justify-center gap-4">
-        <button
-          onClick={togglePlay}
-          className={`px-8 py-3 rounded-full font-semibold text-base transition-colors flex items-center gap-2 ${
-            isPlaying
-              ? "bg-[#8B3A3A] hover:bg-[#9c4444] text-[#F2EDE4]"
-              : "bg-[#D4A24C] hover:bg-[#e0b15e] text-[#1C1B1A]"
-          }`}
-        >
-          {isPlaying ? "\u25A0 Stop" : "\u25B6 Play pattern"}
-        </button>
-        <span className="text-xs font-mono text-[#8A8580]">
-          {bpm} bpm &middot; 4/4
-        </span>
-      </div>
     </div>
   );
 }
