@@ -1,1730 +1,6591 @@
 {
-  "meta": {
-    "source": "Weimar Jazz Database (WJD), Jazzomat Research Project, Hochschule fuer Musik FRANZ LISZT Weimar",
-    "sourceUrl": "https://jazzomat.hfm-weimar.de",
-    "license": "Open Data Commons Open Database License (ODbL) v1.0",
-    "attribution": "Melodic data derived from note-level transcriptions in the Weimar Jazz Database. Each lick is a short (2-bar) excerpt used for educational practice purposes, with the original tune, performer, and bar location cited alongside it.",
-    "citation": "Pfleiderer, M., Frieler, K., Abesser, J., Zaddach, W.-G., Burkhart, B. (Eds.) (2017). Inside the Jazzomat - New Perspectives for Jazz Research. Schott Campus.",
-    "generatedLickCount": 20,
-    "note": "DEMO SUBSET (2 per performer) for local testing. Run extract_licks.py against wjazzd.db yourself to generate the full 204-lick set \u2014 see README for instructions."
-  },
-  "licks": [
+ "meta": {
+  "source": "Weimar Jazz Database (WJD), Jazzomat Research Project, Hochschule fuer Musik FRANZ LISZT Weimar",
+  "sourceUrl": "https://jazzomat.hfm-weimar.de",
+  "license": "Open Data Commons Open Database License (ODbL) v1.0",
+  "attribution": "Melodic data derived from note-level transcriptions in the Weimar Jazz Database. Licks are selected either along the transcribers' own phrase boundaries (tagged with the song-form section they occur in) or by detecting real ii-V/ii-V-I/V-I harmonic motion in the actual chord changes, with the original tune, performer, and bar location cited alongside each one.",
+  "citation": "Pfleiderer, M., Frieler, K., Abesser, J., Zaddach, W.-G., Burkhart, B. (Eds.) (2017). Inside the Jazzomat - New Perspectives for Jazz Research. Schott Campus.",
+  "generatedLickCount": 20,
+  "note": "DEMO SUBSET (2 per performer) for local testing. Run extract_licks.py yourself to generate the full set."
+ },
+ "licks": [
+  {
+   "id": "wjd_0001",
+   "label": "Charlie Parker Lick #1",
+   "contextLabel": "V-i over A2",
+   "selectionMethod": "harmony",
+   "performer": "Charlie Parker",
+   "style": "BEBOP",
+   "sourceTune": "Thriving On A Riff",
+   "sourceKey": "Bb-maj",
+   "sourceTempo": 226.3,
+   "barStart": 55,
+   "barCount": 9,
+   "chordContext": [
+    "G7",
+    "C-7"
+   ],
+   "preferFlats": true,
+   "notes": [
     {
-      "id": "wjd_0001",
-      "label": "Charlie Parker Lick #1",
-      "performer": "Charlie Parker",
-      "style": "BEBOP",
-      "sourceTune": "Yardbird Suite",
-      "sourceKey": "C-maj",
-      "sourceTempo": 210.5,
-      "barStart": 10,
-      "barCount": 2,
-      "chordContext": ["C6"],
-      "preferFlats": false,
-      "notes": [
-        {
-          "keys": ["a#/4"],
-          "duration": "8",
-          "midi": 70
-        },
-        {
-          "keys": ["a/4"],
-          "duration": "8",
-          "midi": 69
-        },
-        {
-          "keys": ["g#/4"],
-          "duration": "8",
-          "midi": 68
-        },
-        {
-          "keys": ["f/4"],
-          "duration": "8",
-          "midi": 65
-        },
-        {
-          "keys": ["d#/4"],
-          "duration": "8",
-          "midi": 63
-        },
-        {
-          "keys": ["c/4"],
-          "duration": "8",
-          "midi": 60
-        },
-        {
-          "keys": ["g/4"],
-          "duration": "8",
-          "midi": 67
-        },
-        {
-          "keys": ["f/4"],
-          "duration": "8",
-          "midi": 65
-        },
-        {
-          "keys": ["e/4"],
-          "duration": "8",
-          "midi": 64
-        },
-        {
-          "keys": ["a/3"],
-          "duration": "8",
-          "midi": 57
-        },
-        {
-          "rest": true,
-          "duration": "8"
-        },
-        {
-          "keys": ["d/4"],
-          "duration": "8",
-          "midi": 62
-        },
-        {
-          "keys": ["f/4"],
-          "duration": "8",
-          "midi": 65
-        },
-        {
-          "keys": ["g/4"],
-          "duration": "8",
-          "midi": 67
-        },
-        {
-          "keys": ["e/4"],
-          "duration": "16",
-          "midi": 64
-        },
-        {
-          "rest": true,
-          "duration": "8"
-        },
-        {
-          "keys": ["d/4"],
-          "duration": "16",
-          "midi": 62
-        }
-      ]
+     "keys": [
+      "f/4"
+     ],
+     "duration": "q",
+     "midi": 65,
+     "bar": 0
     },
     {
-      "id": "wjd_0002",
-      "label": "Charlie Parker Lick #2",
-      "performer": "Charlie Parker",
-      "style": "BEBOP",
-      "sourceTune": "Thriving On A Riff",
-      "sourceKey": "Bb-maj",
-      "sourceTempo": 226.3,
-      "barStart": 54,
-      "barCount": 2,
-      "chordContext": ["Bbj7", "G7"],
-      "preferFlats": true,
-      "notes": [
-        {
-          "keys": ["c/4"],
-          "duration": "16",
-          "midi": 60
-        },
-        {
-          "rest": true,
-          "duration": "8"
-        },
-        {
-          "keys": ["a/3"],
-          "duration": "16",
-          "midi": 57
-        },
-        {
-          "keys": ["bb/3"],
-          "duration": "16",
-          "midi": 58
-        },
-        {
-          "keys": ["c/4"],
-          "duration": "16",
-          "midi": 60
-        },
-        {
-          "keys": ["d/4"],
-          "duration": "16",
-          "midi": 62
-        },
-        {
-          "keys": ["e/4"],
-          "duration": "16",
-          "midi": 64
-        },
-        {
-          "keys": ["a/4"],
-          "duration": "8",
-          "midi": 69
-        },
-        {
-          "keys": ["g/4"],
-          "duration": "8",
-          "midi": 67
-        },
-        {
-          "keys": ["e/4"],
-          "duration": "8",
-          "midi": 64
-        },
-        {
-          "keys": ["c/4"],
-          "duration": "8",
-          "midi": 60
-        },
-        {
-          "keys": ["f/4"],
-          "duration": "q",
-          "midi": 65
-        },
-        {
-          "keys": ["f/4"],
-          "duration": "q",
-          "midi": 65
-        }
-      ]
+     "keys": [
+      "f/4"
+     ],
+     "duration": "q",
+     "midi": 65,
+     "bar": 0
     },
     {
-      "id": "wjd_0031",
-      "label": "Dizzy Gillespie Lick #1",
-      "performer": "Dizzy Gillespie",
-      "style": "BEBOP",
-      "sourceTune": "Hot House",
-      "sourceKey": "C-maj",
-      "sourceTempo": 171.1,
-      "barStart": 12,
-      "barCount": 2,
-      "chordContext": ["Fm7b5"],
-      "preferFlats": false,
-      "notes": [
-        {
-          "keys": ["f/5"],
-          "duration": "8",
-          "midi": 77
-        },
-        {
-          "keys": ["d/5"],
-          "duration": "8",
-          "midi": 74
-        },
-        {
-          "keys": ["e/5"],
-          "duration": "16",
-          "midi": 76
-        },
-        {
-          "keys": ["f/5"],
-          "duration": "16",
-          "midi": 77
-        },
-        {
-          "keys": ["d#/5"],
-          "duration": "16",
-          "midi": 75
-        },
-        {
-          "keys": ["c#/5"],
-          "duration": "16",
-          "midi": 73
-        },
-        {
-          "keys": ["d/5"],
-          "duration": "16",
-          "midi": 74
-        },
-        {
-          "rest": true,
-          "duration": "8"
-        },
-        {
-          "keys": ["c/5"],
-          "duration": "16",
-          "midi": 72
-        },
-        {
-          "keys": ["b/4"],
-          "duration": "16",
-          "midi": 71
-        },
-        {
-          "rest": true,
-          "duration": "8"
-        },
-        {
-          "keys": ["a/4"],
-          "duration": "16",
-          "midi": 69
-        },
-        {
-          "keys": ["g#/4"],
-          "duration": "q",
-          "midi": 68
-        },
-        {
-          "rest": true,
-          "duration": "16"
-        },
-        {
-          "keys": ["f/4"],
-          "duration": "16",
-          "midi": 65
-        },
-        {
-          "rest": true,
-          "duration": "16"
-        },
-        {
-          "keys": ["g#/4"],
-          "duration": "16",
-          "midi": 68
-        },
-        {
-          "keys": ["a#/4"],
-          "duration": "8",
-          "midi": 70
-        },
-        {
-          "keys": ["f/4"],
-          "duration": "8",
-          "midi": 65
-        },
-        {
-          "keys": ["d#/4"],
-          "duration": "q",
-          "midi": 63
-        }
-      ]
+     "rest": true,
+     "duration": "w",
+     "bar": 2
     },
     {
-      "id": "wjd_0032",
-      "label": "Dizzy Gillespie Lick #2",
-      "performer": "Dizzy Gillespie",
-      "style": "BEBOP",
-      "sourceTune": "Groovin' High",
-      "sourceKey": "Db-maj",
-      "sourceTempo": 182.3,
-      "barStart": 2,
-      "barCount": 2,
-      "chordContext": ["Dbj7"],
-      "preferFlats": true,
-      "notes": [
-        {
-          "keys": ["c/5"],
-          "duration": "16",
-          "midi": 72
-        },
-        {
-          "rest": true,
-          "duration": "16"
-        },
-        {
-          "keys": ["f/5"],
-          "duration": "16",
-          "midi": 77
-        },
-        {
-          "keys": ["eb/5"],
-          "duration": "q",
-          "midi": 75
-        },
-        {
-          "keys": ["db/5"],
-          "duration": "q",
-          "midi": 73
-        },
-        {
-          "keys": ["c/5"],
-          "duration": "16",
-          "midi": 72
-        },
-        {
-          "rest": true,
-          "duration": "16"
-        },
-        {
-          "keys": ["bb/4"],
-          "duration": "16",
-          "midi": 70
-        },
-        {
-          "keys": ["ab/4"],
-          "duration": "16",
-          "midi": 68
-        },
-        {
-          "keys": ["bb/4"],
-          "duration": "16",
-          "midi": 70
-        },
-        {
-          "keys": ["ab/4"],
-          "duration": "16",
-          "midi": 68
-        },
-        {
-          "keys": ["g/4"],
-          "duration": "16",
-          "midi": 67
-        },
-        {
-          "rest": true,
-          "duration": "16"
-        },
-        {
-          "keys": ["f/4"],
-          "duration": "8",
-          "midi": 65
-        },
-        {
-          "keys": ["eb/4"],
-          "duration": "8",
-          "midi": 63
-        },
-        {
-          "keys": ["e/4"],
-          "duration": "16",
-          "midi": 64
-        },
-        {
-          "keys": ["g/4"],
-          "duration": "16",
-          "midi": 67
-        },
-        {
-          "keys": ["bb/4"],
-          "duration": "16",
-          "midi": 70
-        }
-      ]
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 2
     },
     {
-      "id": "wjd_0045",
-      "label": "John Coltrane Lick #1",
-      "performer": "John Coltrane",
-      "style": "POSTBOP",
-      "sourceTune": "Impressions",
-      "sourceKey": "D-dor",
-      "sourceTempo": 293.4,
-      "barStart": 284,
-      "barCount": 2,
-      "chordContext": ["Eb-7"],
-      "preferFlats": false,
-      "notes": [
-        {
-          "keys": ["d/4"],
-          "duration": "8",
-          "midi": 62
-        },
-        {
-          "keys": ["c/4"],
-          "duration": "8",
-          "midi": 60
-        },
-        {
-          "keys": ["a/3"],
-          "duration": "16",
-          "midi": 57
-        },
-        {
-          "rest": true,
-          "duration": "16"
-        },
-        {
-          "keys": ["f/3"],
-          "duration": "16",
-          "midi": 53
-        },
-        {
-          "keys": ["d/3"],
-          "duration": "16",
-          "midi": 50
-        },
-        {
-          "rest": true,
-          "duration": "hd"
-        },
-        {
-          "keys": ["d/3"],
-          "duration": "16",
-          "midi": 50
-        },
-        {
-          "keys": ["f/3"],
-          "duration": "q",
-          "midi": 53
-        },
-        {
-          "keys": ["a/3"],
-          "duration": "16",
-          "midi": 57
-        },
-        {
-          "keys": ["f#/4"],
-          "duration": "16",
-          "midi": 66
-        },
-        {
-          "rest": true,
-          "duration": "16"
-        },
-        {
-          "keys": ["g#/4"],
-          "duration": "16",
-          "midi": 68
-        },
-        {
-          "rest": true,
-          "duration": "16"
-        },
-        {
-          "keys": ["g/4"],
-          "duration": "16",
-          "midi": 67
-        },
-        {
-          "rest": true,
-          "duration": "16"
-        },
-        {
-          "keys": ["d/4"],
-          "duration": "16",
-          "midi": 62
-        }
-      ]
+     "rest": true,
+     "duration": "16",
+     "bar": 2
     },
     {
-      "id": "wjd_0046",
-      "label": "John Coltrane Lick #2",
-      "performer": "John Coltrane",
-      "style": "POSTBOP",
-      "sourceTune": "My Favorite Things",
-      "sourceKey": "E-maj",
-      "sourceTempo": 178.9,
-      "barStart": 104,
-      "barCount": 2,
-      "chordContext": ["Ej7"],
-      "preferFlats": false,
-      "notes": [
-        {
-          "keys": ["c#/5"],
-          "duration": "16",
-          "midi": 73
-        },
-        {
-          "rest": true,
-          "duration": "8"
-        },
-        {
-          "keys": ["a#/4"],
-          "duration": "16",
-          "midi": 70
-        },
-        {
-          "keys": ["g#/4"],
-          "duration": "16",
-          "midi": 68
-        },
-        {
-          "keys": ["g/4"],
-          "duration": "16",
-          "midi": 67
-        },
-        {
-          "keys": ["f#/4"],
-          "duration": "16",
-          "midi": 66
-        },
-        {
-          "keys": ["d#/4"],
-          "duration": "16",
-          "midi": 63
-        },
-        {
-          "keys": ["d/4"],
-          "duration": "16",
-          "midi": 62
-        },
-        {
-          "keys": ["c#/4"],
-          "duration": "16",
-          "midi": 61
-        },
-        {
-          "rest": true,
-          "duration": "hd"
-        },
-        {
-          "keys": ["e/4"],
-          "duration": "q",
-          "midi": 64
-        },
-        {
-          "keys": ["g#/4"],
-          "duration": "q",
-          "midi": 68
-        }
-      ]
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 2
     },
     {
-      "id": "wjd_0075",
-      "label": "Michael Brecker Lick #1",
-      "performer": "Michael Brecker",
-      "style": "POSTBOP",
-      "sourceTune": "Peep",
-      "sourceKey": "Eb",
-      "sourceTempo": 321.1,
-      "barStart": 36,
-      "barCount": 2,
-      "chordContext": ["Ab79/C", "B/C"],
-      "preferFlats": true,
-      "notes": [
-        {
-          "keys": ["f/3"],
-          "duration": "8",
-          "midi": 53
-        },
-        {
-          "keys": ["bb/3"],
-          "duration": "8",
-          "midi": 58
-        },
-        {
-          "keys": ["c/4"],
-          "duration": "8",
-          "midi": 60
-        },
-        {
-          "keys": ["db/4"],
-          "duration": "8",
-          "midi": 61
-        },
-        {
-          "keys": ["eb/4"],
-          "duration": "8",
-          "midi": 63
-        },
-        {
-          "keys": ["e/4"],
-          "duration": "8",
-          "midi": 64
-        },
-        {
-          "keys": ["gb/4"],
-          "duration": "8",
-          "midi": 66
-        }
-      ]
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "16",
+     "midi": 68,
+     "bar": 2
     },
     {
-      "id": "wjd_0076",
-      "label": "Michael Brecker Lick #2",
-      "performer": "Michael Brecker",
-      "style": "POSTBOP",
-      "sourceTune": "Cabin Fever",
-      "sourceKey": "Bb-blues",
-      "sourceTempo": 299.4,
-      "barStart": 0,
-      "barCount": 2,
-      "chordContext": ["NC"],
-      "preferFlats": true,
-      "notes": [
-        {
-          "keys": ["gb/3"],
-          "duration": "q",
-          "midi": 54
-        },
-        {
-          "keys": ["f/3"],
-          "duration": "16",
-          "midi": 53
-        },
-        {
-          "keys": ["e/3"],
-          "duration": "16",
-          "midi": 52
-        },
-        {
-          "keys": ["eb/3"],
-          "duration": "16",
-          "midi": 51
-        },
-        {
-          "rest": true,
-          "duration": "16"
-        },
-        {
-          "keys": ["f/3"],
-          "duration": "16",
-          "midi": 53
-        },
-        {
-          "rest": true,
-          "duration": "16"
-        },
-        {
-          "keys": ["d/3"],
-          "duration": "16",
-          "midi": 50
-        },
-        {
-          "rest": true,
-          "duration": "8d"
-        },
-        {
-          "keys": ["f/3"],
-          "duration": "16",
-          "midi": 53
-        },
-        {
-          "rest": true,
-          "duration": "8"
-        },
-        {
-          "keys": ["d/3"],
-          "duration": "16",
-          "midi": 50
-        },
-        {
-          "keys": ["eb/3"],
-          "duration": "16",
-          "midi": 51
-        }
-      ]
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "8",
+     "midi": 70,
+     "bar": 2
     },
     {
-      "id": "wjd_0089",
-      "label": "Sonny Stitt Lick #1",
-      "performer": "Sonny Stitt",
-      "style": "BEBOP",
-      "sourceTune": "Elora",
-      "sourceKey": "Bb-maj",
-      "sourceTempo": 193.2,
-      "barStart": 26,
-      "barCount": 2,
-      "chordContext": ["D-7"],
-      "preferFlats": true,
-      "notes": [
-        {
-          "keys": ["f/4"],
-          "duration": "16",
-          "midi": 65
-        },
-        {
-          "rest": true,
-          "duration": "8"
-        },
-        {
-          "keys": ["eb/4"],
-          "duration": "16",
-          "midi": 63
-        },
-        {
-          "keys": ["e/4"],
-          "duration": "16",
-          "midi": 64
-        },
-        {
-          "keys": ["f/4"],
-          "duration": "16",
-          "midi": 65
-        },
-        {
-          "keys": ["g/4"],
-          "duration": "16",
-          "midi": 67
-        },
-        {
-          "keys": ["ab/4"],
-          "duration": "16",
-          "midi": 68
-        },
-        {
-          "keys": ["b/4"],
-          "duration": "16",
-          "midi": 71
-        },
-        {
-          "keys": ["db/5"],
-          "duration": "16",
-          "midi": 73
-        },
-        {
-          "keys": ["d/5"],
-          "duration": "q",
-          "midi": 74
-        },
-        {
-          "rest": true,
-          "duration": "qd"
-        },
-        {
-          "keys": ["c/4"],
-          "duration": "8",
-          "midi": 60
-        },
-        {
-          "keys": ["d/4"],
-          "duration": "16",
-          "midi": 62
-        },
-        {
-          "keys": ["f/4"],
-          "duration": "16",
-          "midi": 65
-        },
-        {
-          "keys": ["g/4"],
-          "duration": "16",
-          "midi": 67
-        },
-        {
-          "keys": ["a/4"],
-          "duration": "16",
-          "midi": 69
-        },
-        {
-          "keys": ["c/5"],
-          "duration": "8",
-          "midi": 72
-        },
-        {
-          "keys": ["bb/4"],
-          "duration": "8",
-          "midi": 70
-        },
-        {
-          "keys": ["a/4"],
-          "duration": "8",
-          "midi": 69
-        },
-        {
-          "keys": ["g/4"],
-          "duration": "8",
-          "midi": 67
-        }
-      ]
+     "keys": [
+      "c/5"
+     ],
+     "duration": "8",
+     "midi": 72,
+     "bar": 2
     },
     {
-      "id": "wjd_0090",
-      "label": "Sonny Stitt Lick #2",
-      "performer": "Sonny Stitt",
-      "style": "BEBOP",
-      "sourceTune": "Good Kick",
-      "sourceKey": "F-maj",
-      "sourceTempo": 173.9,
-      "barStart": 14,
-      "barCount": 2,
-      "chordContext": ["F7"],
-      "preferFlats": true,
-      "notes": [
-        {
-          "keys": ["d/4"],
-          "duration": "16",
-          "midi": 62
-        },
-        {
-          "rest": true,
-          "duration": "8"
-        },
-        {
-          "keys": ["f/4"],
-          "duration": "16",
-          "midi": 65
-        },
-        {
-          "keys": ["g/4"],
-          "duration": "16",
-          "midi": 67
-        },
-        {
-          "rest": true,
-          "duration": "8"
-        },
-        {
-          "keys": ["ab/4"],
-          "duration": "16",
-          "midi": 68
-        },
-        {
-          "rest": true,
-          "duration": "q"
-        },
-        {
-          "keys": ["f/4"],
-          "duration": "8",
-          "midi": 65
-        },
-        {
-          "keys": ["d/4"],
-          "duration": "8",
-          "midi": 62
-        },
-        {
-          "keys": ["g/4"],
-          "duration": "16",
-          "midi": 67
-        },
-        {
-          "keys": ["ab/4"],
-          "duration": "16",
-          "midi": 68
-        },
-        {
-          "keys": ["a/4"],
-          "duration": "16",
-          "midi": 69
-        },
-        {
-          "rest": true,
-          "duration": "16"
-        },
-        {
-          "keys": ["c/5"],
-          "duration": "16",
-          "midi": 72
-        },
-        {
-          "keys": ["g/4"],
-          "duration": "16",
-          "midi": 67
-        }
-      ]
+     "keys": [
+      "d/5"
+     ],
+     "duration": "16",
+     "midi": 74,
+     "bar": 2
     },
     {
-      "id": "wjd_0119",
-      "label": "Sonny Rollins Lick #1",
-      "performer": "Sonny Rollins",
-      "style": "POSTBOP",
-      "sourceTune": "The Everywhere Calypso",
-      "sourceKey": "C-maj",
-      "sourceTempo": 192.3,
-      "barStart": 22,
-      "barCount": 2,
-      "chordContext": ["A7"],
-      "preferFlats": false,
-      "notes": [
-        {
-          "keys": ["f/3"],
-          "duration": "q",
-          "midi": 53
-        },
-        {
-          "keys": ["a/3"],
-          "duration": "8",
-          "midi": 57
-        },
-        {
-          "keys": ["d/3"],
-          "duration": "8",
-          "midi": 50
-        },
-        {
-          "rest": true,
-          "duration": "8"
-        },
-        {
-          "keys": ["g/3"],
-          "duration": "8",
-          "midi": 55
-        },
-        {
-          "keys": ["b/2"],
-          "duration": "q",
-          "midi": 47
-        },
-        {
-          "rest": true,
-          "duration": "qd"
-        },
-        {
-          "keys": ["g/3"],
-          "duration": "8",
-          "midi": 55
-        },
-        {
-          "keys": ["b/2"],
-          "duration": "8",
-          "midi": 47
-        },
-        {
-          "keys": ["c/3"],
-          "duration": "8",
-          "midi": 48
-        },
-        {
-          "keys": ["d/3"],
-          "duration": "8",
-          "midi": 50
-        },
-        {
-          "keys": ["e/3"],
-          "duration": "8",
-          "midi": 52
-        }
-      ]
+     "rest": true,
+     "duration": "8",
+     "bar": 2
     },
     {
-      "id": "wjd_0120",
-      "label": "Sonny Rollins Lick #2",
-      "performer": "Sonny Rollins",
-      "style": "HARDBOP",
-      "sourceTune": "Blue Seven",
-      "sourceKey": "Bb-blues",
-      "sourceTempo": 134.1,
-      "barStart": 8,
-      "barCount": 2,
-      "chordContext": ["Eb7"],
-      "preferFlats": true,
-      "notes": [
-        {
-          "keys": ["g/4"],
-          "duration": "16",
-          "midi": 67
-        },
-        {
-          "rest": true,
-          "duration": "16"
-        },
-        {
-          "keys": ["bb/4"],
-          "duration": "16",
-          "midi": 70
-        },
-        {
-          "rest": true,
-          "duration": "8"
-        },
-        {
-          "keys": ["db/5"],
-          "duration": "16",
-          "midi": 73
-        },
-        {
-          "keys": ["d/5"],
-          "duration": "16",
-          "midi": 74
-        },
-        {
-          "rest": true,
-          "duration": "16"
-        },
-        {
-          "keys": ["bb/4"],
-          "duration": "16",
-          "midi": 70
-        },
-        {
-          "rest": true,
-          "duration": "16"
-        },
-        {
-          "keys": ["eb/4"],
-          "duration": "16",
-          "midi": 63
-        }
-      ]
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 2
     },
     {
-      "id": "wjd_0149",
-      "label": "Joe Henderson Lick #1",
-      "performer": "Joe Henderson",
-      "style": "POSTBOP",
-      "sourceTune": "In 'N Out",
-      "sourceKey": "Eb",
-      "sourceTempo": 276.5,
-      "barStart": 148,
-      "barCount": 2,
-      "chordContext": ["Fsus7913"],
-      "preferFlats": true,
-      "notes": [
-        {
-          "keys": ["e/4"],
-          "duration": "16",
-          "midi": 64
-        },
-        {
-          "rest": true,
-          "duration": "8"
-        },
-        {
-          "keys": ["db/4"],
-          "duration": "16",
-          "midi": 61
-        },
-        {
-          "keys": ["b/3"],
-          "duration": "q",
-          "midi": 59
-        },
-        {
-          "keys": ["d/4"],
-          "duration": "8",
-          "midi": 62
-        },
-        {
-          "keys": ["gb/4"],
-          "duration": "8",
-          "midi": 66
-        },
-        {
-          "keys": ["f/4"],
-          "duration": "16",
-          "midi": 65
-        },
-        {
-          "rest": true,
-          "duration": "8"
-        },
-        {
-          "keys": ["db/4"],
-          "duration": "16",
-          "midi": 61
-        },
-        {
-          "rest": true,
-          "duration": "q"
-        },
-        {
-          "keys": ["eb/4"],
-          "duration": "q",
-          "midi": 63
-        },
-        {
-          "rest": true,
-          "duration": "q"
-        },
-        {
-          "keys": ["eb/4"],
-          "duration": "8",
-          "midi": 63
-        },
-        {
-          "keys": ["f/4"],
-          "duration": "8",
-          "midi": 65
-        }
-      ]
+     "rest": true,
+     "duration": "8",
+     "bar": 3
     },
     {
-      "id": "wjd_0150",
-      "label": "Joe Henderson Lick #2",
-      "performer": "Joe Henderson",
-      "style": "POSTBOP",
-      "sourceTune": "In 'N Out",
-      "sourceKey": "Eb",
-      "sourceTempo": 276.5,
-      "barStart": 36,
-      "barCount": 2,
-      "chordContext": ["D79"],
-      "preferFlats": true,
-      "notes": [
-        {
-          "keys": ["d/4"],
-          "duration": "8",
-          "midi": 62
-        },
-        {
-          "keys": ["c/4"],
-          "duration": "8",
-          "midi": 60
-        },
-        {
-          "keys": ["bb/3"],
-          "duration": "8",
-          "midi": 58
-        },
-        {
-          "keys": ["ab/3"],
-          "duration": "8",
-          "midi": 56
-        },
-        {
-          "rest": true,
-          "duration": "16"
-        },
-        {
-          "keys": ["a/3"],
-          "duration": "16",
-          "midi": 57
-        },
-        {
-          "keys": ["c/4"],
-          "duration": "16",
-          "midi": 60
-        },
-        {
-          "rest": true,
-          "duration": "q"
-        },
-        {
-          "keys": ["f/4"],
-          "duration": "q",
-          "midi": 65
-        },
-        {
-          "rest": true,
-          "duration": "q"
-        },
-        {
-          "keys": ["eb/4"],
-          "duration": "16",
-          "midi": 63
-        },
-        {
-          "rest": true,
-          "duration": "8"
-        },
-        {
-          "keys": ["f/4"],
-          "duration": "16",
-          "midi": 65
-        },
-        {
-          "rest": true,
-          "duration": "8d"
-        },
-        {
-          "keys": ["f/4"],
-          "duration": "16",
-          "midi": 65
-        }
-      ]
+     "keys": [
+      "c/5"
+     ],
+     "duration": "8",
+     "midi": 72,
+     "bar": 3
     },
     {
-      "id": "wjd_0163",
-      "label": "Cannonball Adderley Lick #1",
-      "performer": "Cannonball Adderley",
-      "style": "HARDBOP",
-      "sourceTune": "Work Song",
-      "sourceKey": "F-min",
-      "sourceTempo": 156.5,
-      "barStart": 28,
-      "barCount": 2,
-      "chordContext": ["C7", "F-7"],
-      "preferFlats": true,
-      "notes": [
-        {
-          "keys": ["d/4"],
-          "duration": "8",
-          "midi": 62
-        },
-        {
-          "rest": true,
-          "duration": "8"
-        },
-        {
-          "keys": ["c/4"],
-          "duration": "8",
-          "midi": 60
-        },
-        {
-          "keys": ["f/4"],
-          "duration": "16",
-          "midi": 65
-        },
-        {
-          "rest": true,
-          "duration": "8"
-        },
-        {
-          "keys": ["g/4"],
-          "duration": "16",
-          "midi": 67
-        },
-        {
-          "keys": ["ab/4"],
-          "duration": "q",
-          "midi": 68
-        },
-        {
-          "keys": ["bb/4"],
-          "duration": "8",
-          "midi": 70
-        },
-        {
-          "keys": ["bb/4"],
-          "duration": "8",
-          "midi": 70
-        },
-        {
-          "keys": ["b/4"],
-          "duration": "16",
-          "midi": 71
-        },
-        {
-          "rest": true,
-          "duration": "16"
-        },
-        {
-          "keys": ["b/4"],
-          "duration": "16",
-          "midi": 71
-        },
-        {
-          "keys": ["c/5"],
-          "duration": "16",
-          "midi": 72
-        },
-        {
-          "rest": true,
-          "duration": "16"
-        },
-        {
-          "keys": ["db/5"],
-          "duration": "16",
-          "midi": 73
-        },
-        {
-          "keys": ["ab/4"],
-          "duration": "16",
-          "midi": 68
-        },
-        {
-          "keys": ["f/4"],
-          "duration": "8",
-          "midi": 65
-        },
-        {
-          "keys": ["eb/4"],
-          "duration": "8",
-          "midi": 63
-        }
-      ]
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 3
     },
     {
-      "id": "wjd_0164",
-      "label": "Cannonball Adderley Lick #2",
-      "performer": "Cannonball Adderley",
-      "style": "HARDBOP",
-      "sourceTune": "Star Eyes",
-      "sourceKey": "Eb-maj",
-      "sourceTempo": 194.3,
-      "barStart": 14,
-      "barCount": 2,
-      "chordContext": ["Eb-", "Ab7"],
-      "preferFlats": true,
-      "notes": [
-        {
-          "keys": ["d/4"],
-          "duration": "q",
-          "midi": 62
-        },
-        {
-          "rest": true,
-          "duration": "8"
-        },
-        {
-          "keys": ["a/3"],
-          "duration": "8",
-          "midi": 57
-        },
-        {
-          "keys": ["c/4"],
-          "duration": "q",
-          "midi": 60
-        },
-        {
-          "rest": true,
-          "duration": "8"
-        },
-        {
-          "keys": ["bb/3"],
-          "duration": "8",
-          "midi": 58
-        },
-        {
-          "keys": ["a/3"],
-          "duration": "8",
-          "midi": 57
-        },
-        {
-          "keys": ["c/4"],
-          "duration": "8",
-          "midi": 60
-        },
-        {
-          "keys": ["e/4"],
-          "duration": "8",
-          "midi": 64
-        },
-        {
-          "keys": ["g/4"],
-          "duration": "8",
-          "midi": 67
-        },
-        {
-          "keys": ["f/4"],
-          "duration": "8",
-          "midi": 65
-        },
-        {
-          "keys": ["g/4"],
-          "duration": "8",
-          "midi": 67
-        },
-        {
-          "keys": ["ab/4"],
-          "duration": "8",
-          "midi": 68
-        },
-        {
-          "keys": ["bb/4"],
-          "duration": "8",
-          "midi": 70
-        }
-      ]
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 3
     },
     {
-      "id": "wjd_0177",
-      "label": "Dexter Gordon Lick #1",
-      "performer": "Dexter Gordon",
-      "style": "SWING",
-      "sourceTune": "Cheese Cake",
-      "sourceKey": "C-min",
-      "sourceTempo": 220.6,
-      "barStart": 86,
-      "barCount": 2,
-      "chordContext": ["C-"],
-      "preferFlats": false,
-      "notes": [
-        {
-          "keys": ["g/4"],
-          "duration": "16",
-          "midi": 67
-        },
-        {
-          "rest": true,
-          "duration": "8"
-        },
-        {
-          "keys": ["d/4"],
-          "duration": "16",
-          "midi": 62
-        },
-        {
-          "rest": true,
-          "duration": "h"
-        },
-        {
-          "keys": ["d/4"],
-          "duration": "8",
-          "midi": 62
-        },
-        {
-          "keys": ["d#/4"],
-          "duration": "8",
-          "midi": 63
-        },
-        {
-          "keys": ["d/4"],
-          "duration": "16",
-          "midi": 62
-        },
-        {
-          "rest": true,
-          "duration": "8"
-        },
-        {
-          "keys": ["c/4"],
-          "duration": "16",
-          "midi": 60
-        },
-        {
-          "keys": ["g/3"],
-          "duration": "q",
-          "midi": 55
-        },
-        {
-          "keys": ["g/3"],
-          "duration": "16",
-          "midi": 55
-        },
-        {
-          "rest": true,
-          "duration": "8"
-        },
-        {
-          "keys": ["g/3"],
-          "duration": "16",
-          "midi": 55
-        }
-      ]
+     "rest": true,
+     "duration": "16",
+     "bar": 3
     },
     {
-      "id": "wjd_0178",
-      "label": "Dexter Gordon Lick #2",
-      "performer": "Dexter Gordon",
-      "style": "BEBOP",
-      "sourceTune": "The Rainbow People",
-      "sourceKey": "Eb-maj",
-      "sourceTempo": 119.9,
-      "barStart": 44,
-      "barCount": 2,
-      "chordContext": ["F-7", "Bb7"],
-      "preferFlats": true,
-      "notes": [
-        {
-          "keys": ["a/3"],
-          "duration": "16",
-          "midi": 57
-        },
-        {
-          "rest": true,
-          "duration": "q"
-        },
-        {
-          "keys": ["e/3"],
-          "duration": "16",
-          "midi": 52
-        },
-        {
-          "keys": ["ab/3"],
-          "duration": "8",
-          "midi": 56
-        },
-        {
-          "keys": ["gb/3"],
-          "duration": "8",
-          "midi": 54
-        },
-        {
-          "keys": ["db/4"],
-          "duration": "q",
-          "midi": 61
-        },
-        {
-          "keys": ["bb/3"],
-          "duration": "8",
-          "midi": 58
-        },
-        {
-          "keys": ["bb/3"],
-          "duration": "8",
-          "midi": 58
-        },
-        {
-          "rest": true,
-          "duration": "hd"
-        },
-        {
-          "keys": ["bb/3"],
-          "duration": "16",
-          "midi": 58
-        }
-      ]
+     "keys": [
+      "gb/4"
+     ],
+     "duration": "16",
+     "midi": 66,
+     "bar": 3
     },
     {
-      "id": "wjd_0191",
-      "label": "Joe Lovano Lick #1",
-      "performer": "Joe Lovano",
-      "style": "POSTBOP",
-      "sourceTune": "Lonnie's Lament",
-      "sourceKey": "C-min",
-      "sourceTempo": 200.8,
-      "barStart": 116,
-      "barCount": 2,
-      "chordContext": ["C-7"],
-      "preferFlats": false,
-      "notes": [
-        {
-          "keys": ["d#/4"],
-          "duration": "8",
-          "midi": 63
-        },
-        {
-          "rest": true,
-          "duration": "8"
-        },
-        {
-          "keys": ["f/4"],
-          "duration": "8",
-          "midi": 65
-        },
-        {
-          "rest": true,
-          "duration": "8"
-        },
-        {
-          "keys": ["f/4"],
-          "duration": "8",
-          "midi": 65
-        },
-        {
-          "rest": true,
-          "duration": "8"
-        },
-        {
-          "keys": ["f/4"],
-          "duration": "8",
-          "midi": 65
-        },
-        {
-          "keys": ["g/4"],
-          "duration": "q",
-          "midi": 67
-        },
-        {
-          "keys": ["c/4"],
-          "duration": "q",
-          "midi": 60
-        },
-        {
-          "keys": ["d#/4"],
-          "duration": "q",
-          "midi": 63
-        },
-        {
-          "keys": ["d#/4"],
-          "duration": "q",
-          "midi": 63
-        }
-      ]
+     "keys": [
+      "c/5"
+     ],
+     "duration": "16",
+     "midi": 72,
+     "bar": 3
     },
     {
-      "id": "wjd_0192",
-      "label": "Joe Lovano Lick #2",
-      "performer": "Joe Lovano",
-      "style": "POSTBOP",
-      "sourceTune": "I Can't Get Started",
-      "sourceKey": "C-maj",
-      "sourceTempo": 107.0,
-      "barStart": 8,
-      "barCount": 2,
-      "chordContext": ["NC"],
-      "preferFlats": false,
-      "notes": [
-        {
-          "keys": ["c#/4"],
-          "duration": "16",
-          "midi": 61
-        },
-        {
-          "keys": ["a#/3"],
-          "duration": "16",
-          "midi": 58
-        },
-        {
-          "keys": ["a/3"],
-          "duration": "16",
-          "midi": 57
-        },
-        {
-          "keys": ["g#/3"],
-          "duration": "16",
-          "midi": 56
-        },
-        {
-          "keys": ["a#/3"],
-          "duration": "16",
-          "midi": 58
-        },
-        {
-          "keys": ["d/4"],
-          "duration": "16",
-          "midi": 62
-        },
-        {
-          "keys": ["c/4"],
-          "duration": "16",
-          "midi": 60
-        },
-        {
-          "keys": ["g#/3"],
-          "duration": "16",
-          "midi": 56
-        },
-        {
-          "keys": ["f/3"],
-          "duration": "16",
-          "midi": 53
-        },
-        {
-          "rest": true,
-          "duration": "16"
-        },
-        {
-          "keys": ["a#/3"],
-          "duration": "16",
-          "midi": 58
-        },
-        {
-          "keys": ["g#/3"],
-          "duration": "16",
-          "midi": 56
-        },
-        {
-          "rest": true,
-          "duration": "8d"
-        },
-        {
-          "keys": ["g/3"],
-          "duration": "8",
-          "midi": 55
-        },
-        {
-          "keys": ["d/3"],
-          "duration": "16",
-          "midi": 50
-        },
-        {
-          "keys": ["f/3"],
-          "duration": "16",
-          "midi": 53
-        },
-        {
-          "rest": true,
-          "duration": "16"
-        },
-        {
-          "keys": ["e/3"],
-          "duration": "16",
-          "midi": 52
-        },
-        {
-          "rest": true,
-          "duration": "16"
-        },
-        {
-          "keys": ["g/3"],
-          "duration": "16",
-          "midi": 55
-        },
-        {
-          "keys": ["g/3"],
-          "duration": "16",
-          "midi": 55
-        },
-        {
-          "keys": ["e/3"],
-          "duration": "16",
-          "midi": 52
-        },
-        {
-          "rest": true,
-          "duration": "16"
-        },
-        {
-          "keys": ["d/3"],
-          "duration": "16",
-          "midi": 50
-        },
-        {
-          "keys": ["c/3"],
-          "duration": "16",
-          "midi": 48
-        },
-        {
-          "rest": true,
-          "duration": "16"
-        },
-        {
-          "keys": ["e/3"],
-          "duration": "16",
-          "midi": 52
-        }
-      ]
+     "rest": true,
+     "duration": "16",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "db/5"
+     ],
+     "duration": "16",
+     "midi": 73,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "d/5"
+     ],
+     "duration": "q",
+     "midi": 74,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "q",
+     "bar": 4
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 4
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 4
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "16",
+     "midi": 68,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "8",
+     "midi": 70,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "db/5"
+     ],
+     "duration": "8",
+     "midi": 73,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "d/5"
+     ],
+     "duration": "8",
+     "midi": 74,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "c/5"
+     ],
+     "duration": "8",
+     "midi": 72,
+     "bar": 4
+    },
+    {
+     "rest": true,
+     "duration": "q",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "8",
+     "midi": 70,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "8",
+     "midi": 67,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "a/4"
+     ],
+     "duration": "8",
+     "midi": 69,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "8",
+     "midi": 65,
+     "bar": 5
+    },
+    {
+     "rest": true,
+     "duration": "hd",
+     "bar": 6
+    },
+    {
+     "keys": [
+      "c/5"
+     ],
+     "duration": "8",
+     "midi": 72,
+     "bar": 6
+    },
+    {
+     "keys": [
+      "b/4"
+     ],
+     "duration": "16",
+     "midi": 71,
+     "bar": 6
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 6
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 6
+    },
+    {
+     "keys": [
+      "a/4"
+     ],
+     "duration": "16",
+     "midi": 69,
+     "bar": 6
+    },
+    {
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "8",
+     "midi": 68,
+     "bar": 6
+    },
+    {
+     "keys": [
+      "c/5"
+     ],
+     "duration": "8",
+     "midi": 72,
+     "bar": 6
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "8",
+     "midi": 70,
+     "bar": 7
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "8",
+     "midi": 67,
+     "bar": 7
+    },
+    {
+     "rest": true,
+     "duration": "q",
+     "bar": 7
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "8",
+     "midi": 70,
+     "bar": 7
+    },
+    {
+     "keys": [
+      "gb/4"
+     ],
+     "duration": "8",
+     "midi": 66,
+     "bar": 7
+    },
+    {
+     "rest": true,
+     "duration": "q",
+     "bar": 8
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "8",
+     "midi": 62,
+     "bar": 8
+    },
+    {
+     "keys": [
+      "bb/3"
+     ],
+     "duration": "8",
+     "midi": 58,
+     "bar": 8
+    },
+    {
+     "keys": [
+      "g/3"
+     ],
+     "duration": "8",
+     "midi": 55,
+     "bar": 8
+    },
+    {
+     "keys": [
+      "a/3"
+     ],
+     "duration": "8",
+     "midi": 57,
+     "bar": 8
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "16",
+     "midi": 60,
+     "bar": 8
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 8
+    },
+    {
+     "keys": [
+      "bb/3"
+     ],
+     "duration": "16",
+     "midi": 58,
+     "bar": 8
+    },
+    {
+     "keys": [
+      "a/3"
+     ],
+     "duration": "8",
+     "midi": 57,
+     "bar": 8
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "8",
+     "midi": 60,
+     "bar": 8
     }
-  ]
+   ]
+  },
+  {
+   "id": "wjd_0002",
+   "label": "Charlie Parker Lick #2",
+   "contextLabel": "ii-V over A1",
+   "selectionMethod": "harmony",
+   "performer": "Charlie Parker",
+   "style": "BEBOP",
+   "sourceTune": "Thriving On A Riff",
+   "sourceKey": "Bb-maj",
+   "sourceTempo": 226.3,
+   "barStart": 8,
+   "barCount": 4,
+   "chordContext": [
+    "C-7",
+    "F7"
+   ],
+   "preferFlats": true,
+   "notes": [
+    {
+     "keys": [
+      "eb/5"
+     ],
+     "duration": "16",
+     "midi": 75,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "f/5"
+     ],
+     "duration": "16",
+     "midi": 77,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "d/5"
+     ],
+     "duration": "8",
+     "midi": 74,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "8",
+     "midi": 70,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "c/5"
+     ],
+     "duration": "q",
+     "midi": 72,
+     "bar": 2
+    },
+    {
+     "rest": true,
+     "duration": "w",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "e/4"
+     ],
+     "duration": "8",
+     "midi": 64,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "d/5"
+     ],
+     "duration": "16",
+     "midi": 74,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "f/5"
+     ],
+     "duration": "8",
+     "midi": 77,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "e/5"
+     ],
+     "duration": "8",
+     "midi": 76,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "eb/5"
+     ],
+     "duration": "16",
+     "midi": 75,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "b/4"
+     ],
+     "duration": "16",
+     "midi": 71,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "d/5"
+     ],
+     "duration": "16",
+     "midi": 74,
+     "bar": 3
+    }
+   ]
+  },
+  {
+   "id": "wjd_0031",
+   "label": "Dizzy Gillespie Lick #1",
+   "contextLabel": "V-i over A1",
+   "selectionMethod": "harmony",
+   "performer": "Dizzy Gillespie",
+   "style": "BEBOP",
+   "sourceTune": "Be-Bop",
+   "sourceKey": "F-min",
+   "sourceTempo": 290.5,
+   "barStart": 39,
+   "barCount": 2,
+   "chordContext": [
+    "C7",
+    "F-"
+   ],
+   "preferFlats": true,
+   "notes": [
+    {
+     "keys": [
+      "e/5"
+     ],
+     "duration": "8",
+     "midi": 76,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "f/5"
+     ],
+     "duration": "8",
+     "midi": 77,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "gb/5"
+     ],
+     "duration": "16",
+     "midi": 78,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "e/5"
+     ],
+     "duration": "16",
+     "midi": 76,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "f/5"
+     ],
+     "duration": "16",
+     "midi": 77,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "w",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "d/5"
+     ],
+     "duration": "16",
+     "midi": 74,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "eb/6"
+     ],
+     "duration": "16",
+     "midi": 87,
+     "bar": 1
+    }
+   ]
+  },
+  {
+   "id": "wjd_0032",
+   "label": "Dizzy Gillespie Lick #2",
+   "contextLabel": "ii-V over B1",
+   "selectionMethod": "harmony",
+   "performer": "Dizzy Gillespie",
+   "style": "BEBOP",
+   "sourceTune": "Be-Bop",
+   "sourceKey": "F-min",
+   "sourceTempo": 290.5,
+   "barStart": 89,
+   "barCount": 12,
+   "chordContext": [
+    "F-7",
+    "Bb79#"
+   ],
+   "preferFlats": true,
+   "notes": [
+    {
+     "keys": [
+      "c/6"
+     ],
+     "duration": "q",
+     "midi": 84,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "ab/5"
+     ],
+     "duration": "q",
+     "midi": 80,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 0
+    },
+    {
+     "keys": [
+      "c/6"
+     ],
+     "duration": "16",
+     "midi": 84,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 0
+    },
+    {
+     "keys": [
+      "ab/5"
+     ],
+     "duration": "16",
+     "midi": 80,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 0
+    },
+    {
+     "keys": [
+      "db/6"
+     ],
+     "duration": "8",
+     "midi": 85,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "b/5"
+     ],
+     "duration": "8",
+     "midi": 83,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "c/6"
+     ],
+     "duration": "8",
+     "midi": 84,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "bb/5"
+     ],
+     "duration": "8",
+     "midi": 82,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "ab/5"
+     ],
+     "duration": "q",
+     "midi": 80,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "bb/5"
+     ],
+     "duration": "8",
+     "midi": 82,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "ab/5"
+     ],
+     "duration": "8",
+     "midi": 80,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "g/5"
+     ],
+     "duration": "8",
+     "midi": 79,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "f/5"
+     ],
+     "duration": "8",
+     "midi": 77,
+     "bar": 2
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 2
+    },
+    {
+     "keys": [
+      "gb/5"
+     ],
+     "duration": "16",
+     "midi": 78,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "bb/5"
+     ],
+     "duration": "16",
+     "midi": 82,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "c/6"
+     ],
+     "duration": "16",
+     "midi": 84,
+     "bar": 2
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 2
+    },
+    {
+     "keys": [
+      "bb/5"
+     ],
+     "duration": "16",
+     "midi": 82,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "a/5"
+     ],
+     "duration": "16",
+     "midi": 81,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "ab/5"
+     ],
+     "duration": "8",
+     "midi": 80,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "a/5"
+     ],
+     "duration": "8",
+     "midi": 81,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "bb/5"
+     ],
+     "duration": "8",
+     "midi": 82,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "ab/5"
+     ],
+     "duration": "8",
+     "midi": 80,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "g/5"
+     ],
+     "duration": "8",
+     "midi": 79,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "f/5"
+     ],
+     "duration": "8",
+     "midi": 77,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "e/5"
+     ],
+     "duration": "q",
+     "midi": 76,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "8",
+     "midi": 70,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "db/5"
+     ],
+     "duration": "8",
+     "midi": 73,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "c/5"
+     ],
+     "duration": "16",
+     "midi": 72,
+     "bar": 4
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 4
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "16",
+     "midi": 68,
+     "bar": 4
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 4
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "8",
+     "midi": 67,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "8",
+     "midi": 70,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "8",
+     "midi": 68,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "8",
+     "midi": 67,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "8",
+     "midi": 65,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "e/4"
+     ],
+     "duration": "8",
+     "midi": 64,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "8",
+     "midi": 67,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "db/5"
+     ],
+     "duration": "16",
+     "midi": 73,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "c/5"
+     ],
+     "duration": "16",
+     "midi": 72,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "q",
+     "midi": 70,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "8",
+     "midi": 68,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "8",
+     "midi": 67,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 6
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 6
+    },
+    {
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "16",
+     "midi": 68,
+     "bar": 6
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 6
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 6
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 6
+    },
+    {
+     "keys": [
+      "e/4"
+     ],
+     "duration": "16",
+     "midi": 64,
+     "bar": 6
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 6
+    },
+    {
+     "keys": [
+      "ab/3"
+     ],
+     "duration": "16",
+     "midi": 56,
+     "bar": 6
+    },
+    {
+     "keys": [
+      "a/3"
+     ],
+     "duration": "16",
+     "midi": 57,
+     "bar": 6
+    },
+    {
+     "keys": [
+      "bb/3"
+     ],
+     "duration": "16",
+     "midi": 58,
+     "bar": 6
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 6
+    },
+    {
+     "keys": [
+      "db/4"
+     ],
+     "duration": "16",
+     "midi": 61,
+     "bar": 6
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "16",
+     "midi": 60,
+     "bar": 6
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 7
+    },
+    {
+     "keys": [
+      "bb/3"
+     ],
+     "duration": "16",
+     "midi": 58,
+     "bar": 7
+    },
+    {
+     "keys": [
+      "ab/3"
+     ],
+     "duration": "16",
+     "midi": 56,
+     "bar": 7
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 7
+    },
+    {
+     "keys": [
+      "g/3"
+     ],
+     "duration": "16",
+     "midi": 55,
+     "bar": 7
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 7
+    },
+    {
+     "keys": [
+      "bb/3"
+     ],
+     "duration": "16",
+     "midi": 58,
+     "bar": 7
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 7
+    },
+    {
+     "keys": [
+      "ab/3"
+     ],
+     "duration": "16",
+     "midi": 56,
+     "bar": 7
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 7
+    },
+    {
+     "keys": [
+      "f/3"
+     ],
+     "duration": "16",
+     "midi": 53,
+     "bar": 7
+    }
+   ]
+  },
+  {
+   "id": "wjd_0045",
+   "label": "John Coltrane Lick #1",
+   "contextLabel": "V-I over A1",
+   "selectionMethod": "harmony",
+   "performer": "John Coltrane",
+   "style": "HARDBOP",
+   "sourceTune": "26-2",
+   "sourceKey": "F-maj",
+   "sourceTempo": 193.9,
+   "barStart": 27,
+   "barCount": 6,
+   "chordContext": [
+    "F7",
+    "Bb"
+   ],
+   "preferFlats": true,
+   "notes": [
+    {
+     "keys": [
+      "e/4"
+     ],
+     "duration": "q",
+     "midi": 64,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "a/4"
+     ],
+     "duration": "8",
+     "midi": 69,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "db/5"
+     ],
+     "duration": "8",
+     "midi": 73,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "a/4"
+     ],
+     "duration": "8",
+     "midi": 69,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "8",
+     "midi": 70,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "qd",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "c/5"
+     ],
+     "duration": "8",
+     "midi": 72,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "a/4"
+     ],
+     "duration": "8",
+     "midi": 69,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "8",
+     "midi": 67,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "8",
+     "midi": 65,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "e/4"
+     ],
+     "duration": "8",
+     "midi": 64,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "eb/4"
+     ],
+     "duration": "16",
+     "midi": 63,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "db/4"
+     ],
+     "duration": "8",
+     "midi": 61,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "8",
+     "midi": 62,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "bb/3"
+     ],
+     "duration": "q",
+     "midi": 58,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "ab/3"
+     ],
+     "duration": "q",
+     "midi": 56,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "gb/3"
+     ],
+     "duration": "8",
+     "midi": 54,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "f/3"
+     ],
+     "duration": "8",
+     "midi": 53,
+     "bar": 2
+    },
+    {
+     "rest": true,
+     "duration": "hd",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "16",
+     "midi": 62,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "b/3"
+     ],
+     "duration": "q",
+     "midi": 59,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 4
+    },
+    {
+     "keys": [
+      "db/4"
+     ],
+     "duration": "16",
+     "midi": 61,
+     "bar": 4
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 4
+    },
+    {
+     "keys": [
+      "e/4"
+     ],
+     "duration": "q",
+     "midi": 64,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "q",
+     "midi": 60,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "bb/3"
+     ],
+     "duration": "8",
+     "midi": 58,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "8",
+     "midi": 60,
+     "bar": 4
+    },
+    {
+     "rest": true,
+     "duration": "hd",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "a/4"
+     ],
+     "duration": "8",
+     "midi": 69,
+     "bar": 5
+    }
+   ]
+  },
+  {
+   "id": "wjd_0046",
+   "label": "John Coltrane Lick #2",
+   "contextLabel": "V-I over I1",
+   "selectionMethod": "harmony",
+   "performer": "John Coltrane",
+   "style": "HARDBOP",
+   "sourceTune": "Giant Steps",
+   "sourceKey": "Eb-maj",
+   "sourceTempo": 290.3,
+   "barStart": 4,
+   "barCount": 6,
+   "chordContext": [
+    "Gb7",
+    "Cb"
+   ],
+   "preferFlats": true,
+   "notes": [
+    {
+     "keys": [
+      "e/4"
+     ],
+     "duration": "16",
+     "midi": 64,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 0
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "16",
+     "midi": 60,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 0
+    },
+    {
+     "keys": [
+      "ab/3"
+     ],
+     "duration": "16",
+     "midi": 56,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "g/3"
+     ],
+     "duration": "16",
+     "midi": 55,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "gb/3"
+     ],
+     "duration": "8",
+     "midi": 54,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "eb/4"
+     ],
+     "duration": "8",
+     "midi": 63,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "8",
+     "midi": 62,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "8",
+     "midi": 60,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "b/3"
+     ],
+     "duration": "8",
+     "midi": 59,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "8",
+     "midi": 62,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "8",
+     "midi": 67,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "b/4"
+     ],
+     "duration": "8",
+     "midi": 71,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "8",
+     "midi": 62,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "8",
+     "midi": 65,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "8",
+     "midi": 68,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "c/5"
+     ],
+     "duration": "8",
+     "midi": 72,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "eb/4"
+     ],
+     "duration": "8",
+     "midi": 63,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "8",
+     "midi": 65,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "8",
+     "midi": 67,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "8",
+     "midi": 70,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "e/4"
+     ],
+     "duration": "8",
+     "midi": 64,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "8",
+     "midi": 68,
+     "bar": 2
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 2
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 2
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 2
+    },
+    {
+     "keys": [
+      "db/5"
+     ],
+     "duration": "16",
+     "midi": 73,
+     "bar": 2
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "8",
+     "midi": 68,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "gb/4"
+     ],
+     "duration": "8",
+     "midi": 66,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "h",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 4
+    },
+    {
+     "keys": [
+      "a/4"
+     ],
+     "duration": "8",
+     "midi": 69,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "8",
+     "midi": 68,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "8",
+     "midi": 67,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "8",
+     "midi": 65,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "eb/4"
+     ],
+     "duration": "8",
+     "midi": 63,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "8",
+     "midi": 62,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "8",
+     "midi": 60,
+     "bar": 4
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "bb/3"
+     ],
+     "duration": "16",
+     "midi": 58,
+     "bar": 5
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "16",
+     "midi": 68,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "8",
+     "midi": 67,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "8",
+     "midi": 62,
+     "bar": 5
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 5
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "eb/4"
+     ],
+     "duration": "16",
+     "midi": 63,
+     "bar": 5
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "16",
+     "midi": 62,
+     "bar": 5
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 5
+    }
+   ]
+  },
+  {
+   "id": "wjd_0075",
+   "label": "Michael Brecker Lick #1",
+   "contextLabel": "V-i over A2",
+   "selectionMethod": "harmony",
+   "performer": "Michael Brecker",
+   "style": "POSTBOP",
+   "sourceTune": "Midnight Voyage",
+   "sourceKey": "C-min",
+   "sourceTempo": 125.6,
+   "barStart": 63,
+   "barCount": 9,
+   "chordContext": [
+    "G7",
+    "C-6"
+   ],
+   "preferFlats": false,
+   "notes": [
+    {
+     "keys": [
+      "d#/4"
+     ],
+     "duration": "16",
+     "midi": 63,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 0
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 0
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 0
+    },
+    {
+     "keys": [
+      "a/4"
+     ],
+     "duration": "16",
+     "midi": 69,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "b/4"
+     ],
+     "duration": "16",
+     "midi": 71,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 0
+    },
+    {
+     "keys": [
+      "c/5"
+     ],
+     "duration": "16",
+     "midi": 72,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "d/5"
+     ],
+     "duration": "q",
+     "midi": 74,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "d#/5"
+     ],
+     "duration": "16",
+     "midi": 75,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "q",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "d#/5"
+     ],
+     "duration": "16",
+     "midi": 75,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "qd",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "c#/5"
+     ],
+     "duration": "16",
+     "midi": 73,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "d#/5"
+     ],
+     "duration": "16",
+     "midi": 75,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "qd",
+     "bar": 2
+    },
+    {
+     "keys": [
+      "a#/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "g#/4"
+     ],
+     "duration": "16",
+     "midi": 68,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "q",
+     "midi": 67,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "8",
+     "midi": 65,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "d#/4"
+     ],
+     "duration": "8",
+     "midi": 63,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "q",
+     "midi": 62,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "8",
+     "midi": 60,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "a#/3"
+     ],
+     "duration": "8",
+     "midi": 58,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "hd",
+     "bar": 4
+    },
+    {
+     "keys": [
+      "f/3"
+     ],
+     "duration": "16",
+     "midi": 53,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "a#/3"
+     ],
+     "duration": "16",
+     "midi": 58,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "16",
+     "midi": 60,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "d#/4"
+     ],
+     "duration": "16",
+     "midi": 63,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "g#/4"
+     ],
+     "duration": "16",
+     "midi": 68,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "a#/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "c/5"
+     ],
+     "duration": "16",
+     "midi": 72,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "d/5"
+     ],
+     "duration": "16",
+     "midi": 74,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "d#/5"
+     ],
+     "duration": "16",
+     "midi": 75,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "d#/5"
+     ],
+     "duration": "16",
+     "midi": 75,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "f/5"
+     ],
+     "duration": "q",
+     "midi": 77,
+     "bar": 5
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "d#/5"
+     ],
+     "duration": "16",
+     "midi": 75,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "c#/5"
+     ],
+     "duration": "16",
+     "midi": 73,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "c/5"
+     ],
+     "duration": "q",
+     "midi": 72,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "a#/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 5
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "g#/4"
+     ],
+     "duration": "16",
+     "midi": 68,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "8",
+     "midi": 65,
+     "bar": 6
+    },
+    {
+     "keys": [
+      "f#/4"
+     ],
+     "duration": "8",
+     "midi": 66,
+     "bar": 6
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 6
+    },
+    {
+     "keys": [
+      "a#/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 6
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 6
+    },
+    {
+     "keys": [
+      "c#/5"
+     ],
+     "duration": "16",
+     "midi": 73,
+     "bar": 6
+    },
+    {
+     "keys": [
+      "d#/5"
+     ],
+     "duration": "8",
+     "midi": 75,
+     "bar": 6
+    },
+    {
+     "keys": [
+      "f/5"
+     ],
+     "duration": "8",
+     "midi": 77,
+     "bar": 6
+    },
+    {
+     "keys": [
+      "d#/5"
+     ],
+     "duration": "8",
+     "midi": 75,
+     "bar": 6
+    },
+    {
+     "keys": [
+      "e/5"
+     ],
+     "duration": "8",
+     "midi": 76,
+     "bar": 6
+    },
+    {
+     "rest": true,
+     "duration": "h",
+     "bar": 7
+    },
+    {
+     "keys": [
+      "b/4"
+     ],
+     "duration": "16",
+     "midi": 71,
+     "bar": 7
+    },
+    {
+     "keys": [
+      "a#/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 7
+    },
+    {
+     "keys": [
+      "b/4"
+     ],
+     "duration": "16",
+     "midi": 71,
+     "bar": 7
+    },
+    {
+     "keys": [
+      "a#/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 7
+    },
+    {
+     "keys": [
+      "g#/4"
+     ],
+     "duration": "16",
+     "midi": 68,
+     "bar": 7
+    },
+    {
+     "keys": [
+      "d#/4"
+     ],
+     "duration": "16",
+     "midi": 63,
+     "bar": 7
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 7
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 7
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "8",
+     "midi": 67,
+     "bar": 8
+    },
+    {
+     "keys": [
+      "d#/4"
+     ],
+     "duration": "8",
+     "midi": 63,
+     "bar": 8
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "q",
+     "midi": 60,
+     "bar": 8
+    },
+    {
+     "keys": [
+      "d#/4"
+     ],
+     "duration": "16",
+     "midi": 63,
+     "bar": 8
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 8
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 8
+    },
+    {
+     "keys": [
+      "d#/4"
+     ],
+     "duration": "q",
+     "midi": 63,
+     "bar": 8
+    }
+   ]
+  },
+  {
+   "id": "wjd_0076",
+   "label": "Michael Brecker Lick #2",
+   "contextLabel": "Phrase over A1",
+   "selectionMethod": "phrase",
+   "performer": "Michael Brecker",
+   "style": "POSTBOP",
+   "sourceTune": "Nothing Personal",
+   "sourceKey": "G-min",
+   "sourceTempo": 243.8,
+   "barStart": 0,
+   "barCount": 6,
+   "chordContext": [
+    "G-7"
+   ],
+   "preferFlats": false,
+   "notes": [
+    {
+     "keys": [
+      "a/4"
+     ],
+     "duration": "16",
+     "midi": 69,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "8d",
+     "bar": 2
+    },
+    {
+     "keys": [
+      "a/4"
+     ],
+     "duration": "16",
+     "midi": 69,
+     "bar": 2
+    },
+    {
+     "rest": true,
+     "duration": "hd",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "q",
+     "midi": 62,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "h",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "e/4"
+     ],
+     "duration": "16",
+     "midi": 64,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "8",
+     "midi": 65,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "q",
+     "midi": 67,
+     "bar": 4
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 4
+    },
+    {
+     "keys": [
+      "a#/3"
+     ],
+     "duration": "8",
+     "midi": 58,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "q",
+     "midi": 60,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "q",
+     "midi": 62,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "e/4"
+     ],
+     "duration": "q",
+     "midi": 64,
+     "bar": 5
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "8",
+     "midi": 60,
+     "bar": 5
+    }
+   ]
+  },
+  {
+   "id": "wjd_0089",
+   "label": "Sonny Stitt Lick #1",
+   "contextLabel": "ii-V over A1",
+   "selectionMethod": "harmony",
+   "performer": "Sonny Stitt",
+   "style": "BEBOP",
+   "sourceTune": "Good Kick",
+   "sourceKey": "F-maj",
+   "sourceTempo": 173.9,
+   "barStart": 25,
+   "barCount": 12,
+   "chordContext": [
+    "G-7",
+    "C7"
+   ],
+   "preferFlats": true,
+   "notes": [
+    {
+     "keys": [
+      "a/3"
+     ],
+     "duration": "16",
+     "midi": 57,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "16",
+     "midi": 60,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "16",
+     "midi": 62,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "e/4"
+     ],
+     "duration": "16",
+     "midi": 64,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "qd",
+     "bar": 0
+    },
+    {
+     "keys": [
+      "e/4"
+     ],
+     "duration": "16",
+     "midi": 64,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 0
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "a/4"
+     ],
+     "duration": "16",
+     "midi": 69,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "c/5"
+     ],
+     "duration": "16",
+     "midi": 72,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "eb/5"
+     ],
+     "duration": "16",
+     "midi": 75,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "e/5"
+     ],
+     "duration": "16",
+     "midi": 76,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "d/5"
+     ],
+     "duration": "16",
+     "midi": 74,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "hd",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "c/5"
+     ],
+     "duration": "16",
+     "midi": 72,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 2
+    },
+    {
+     "keys": [
+      "db/5"
+     ],
+     "duration": "16",
+     "midi": 73,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "c/5"
+     ],
+     "duration": "16",
+     "midi": 72,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "a/4"
+     ],
+     "duration": "8",
+     "midi": 69,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "8",
+     "midi": 67,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "gb/4"
+     ],
+     "duration": "8",
+     "midi": 66,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "eb/4"
+     ],
+     "duration": "8",
+     "midi": 63,
+     "bar": 2
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 2
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "16",
+     "midi": 60,
+     "bar": 2
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 2
+    },
+    {
+     "keys": [
+      "db/4"
+     ],
+     "duration": "16",
+     "midi": 61,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "16",
+     "midi": 62,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "8",
+     "midi": 70,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "d/5"
+     ],
+     "duration": "8",
+     "midi": 74,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "a/4"
+     ],
+     "duration": "8",
+     "midi": 69,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "8",
+     "midi": 67,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "qd",
+     "bar": 4
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "8",
+     "midi": 62,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "eb/4"
+     ],
+     "duration": "16",
+     "midi": 63,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "a/4"
+     ],
+     "duration": "16",
+     "midi": 69,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "d/5"
+     ],
+     "duration": "8",
+     "midi": 74,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "db/5"
+     ],
+     "duration": "8",
+     "midi": 73,
+     "bar": 4
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 4
+    },
+    {
+     "keys": [
+      "c/5"
+     ],
+     "duration": "16",
+     "midi": 72,
+     "bar": 4
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 4
+    },
+    {
+     "keys": [
+      "b/4"
+     ],
+     "duration": "16",
+     "midi": 71,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 5
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "16",
+     "midi": 62,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "8",
+     "midi": 65,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "a/4"
+     ],
+     "duration": "8",
+     "midi": 69,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "16",
+     "midi": 68,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "e/4"
+     ],
+     "duration": "16",
+     "midi": 64,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "16",
+     "midi": 62,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "8",
+     "midi": 60,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "bb/3"
+     ],
+     "duration": "8",
+     "midi": 58,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "a/3"
+     ],
+     "duration": "8",
+     "midi": 57,
+     "bar": 6
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "8",
+     "midi": 60,
+     "bar": 6
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "8",
+     "midi": 62,
+     "bar": 6
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "8",
+     "midi": 65,
+     "bar": 6
+    }
+   ]
+  },
+  {
+   "id": "wjd_0090",
+   "label": "Sonny Stitt Lick #2",
+   "contextLabel": "Phrase over A1",
+   "selectionMethod": "phrase",
+   "performer": "Sonny Stitt",
+   "style": "BEBOP",
+   "sourceTune": "Good Kick",
+   "sourceKey": "F-maj",
+   "sourceTempo": 173.9,
+   "barStart": 12,
+   "barCount": 5,
+   "chordContext": [
+    "F7"
+   ],
+   "preferFlats": true,
+   "notes": [
+    {
+     "keys": [
+      "gb/5"
+     ],
+     "duration": "16",
+     "midi": 78,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "f/5"
+     ],
+     "duration": "16",
+     "midi": 77,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "d/5"
+     ],
+     "duration": "16",
+     "midi": 74,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 0
+    },
+    {
+     "keys": [
+      "eb/5"
+     ],
+     "duration": "16",
+     "midi": 75,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "e/5"
+     ],
+     "duration": "16",
+     "midi": 76,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "eb/5"
+     ],
+     "duration": "16",
+     "midi": 75,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "d/5"
+     ],
+     "duration": "16",
+     "midi": 74,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 0
+    },
+    {
+     "keys": [
+      "db/5"
+     ],
+     "duration": "16",
+     "midi": 73,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "c/5"
+     ],
+     "duration": "16",
+     "midi": 72,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "db/5"
+     ],
+     "duration": "16",
+     "midi": 73,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "c/5"
+     ],
+     "duration": "16",
+     "midi": 72,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "a/4"
+     ],
+     "duration": "8",
+     "midi": 69,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "8",
+     "midi": 67,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "q",
+     "midi": 65,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "eb/4"
+     ],
+     "duration": "8",
+     "midi": 63,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "16",
+     "midi": 62,
+     "bar": 2
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 2
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 2
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 2
+    },
+    {
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "16",
+     "midi": 68,
+     "bar": 2
+    },
+    {
+     "rest": true,
+     "duration": "q",
+     "bar": 2
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "8",
+     "midi": 65,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "8",
+     "midi": 62,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "16",
+     "midi": 68,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "a/4"
+     ],
+     "duration": "16",
+     "midi": 69,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "c/5"
+     ],
+     "duration": "16",
+     "midi": 72,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 3
+    }
+   ]
+  },
+  {
+   "id": "wjd_0094",
+   "label": "Sonny Rollins Lick #1",
+   "contextLabel": "V-i over A1",
+   "selectionMethod": "harmony",
+   "performer": "Sonny Rollins",
+   "style": "POSTBOP",
+   "sourceTune": "The Everywhere Calypso",
+   "sourceKey": "C-maj",
+   "sourceTempo": 197.2,
+   "barStart": 34,
+   "barCount": 9,
+   "chordContext": [
+    "A7",
+    "D-7"
+   ],
+   "preferFlats": false,
+   "notes": [
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "8",
+     "midi": 65,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "8",
+     "midi": 67,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "8",
+     "midi": 65,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 0
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "8",
+     "midi": 67,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "a/4"
+     ],
+     "duration": "8",
+     "midi": 69,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "f#/4"
+     ],
+     "duration": "8",
+     "midi": 66,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "e/4"
+     ],
+     "duration": "16",
+     "midi": 64,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "8",
+     "midi": 65,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "8",
+     "midi": 65,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "8",
+     "midi": 65,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "e/4"
+     ],
+     "duration": "8",
+     "midi": 64,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "8",
+     "midi": 62,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "q",
+     "midi": 60,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "b/3"
+     ],
+     "duration": "8",
+     "midi": 59,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "a/3"
+     ],
+     "duration": "8",
+     "midi": 57,
+     "bar": 2
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 2
+    },
+    {
+     "keys": [
+      "g/3"
+     ],
+     "duration": "8",
+     "midi": 55,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "f/3"
+     ],
+     "duration": "q",
+     "midi": 53,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "e/3"
+     ],
+     "duration": "16",
+     "midi": 52,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "d/3"
+     ],
+     "duration": "16",
+     "midi": 50,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "c#/3"
+     ],
+     "duration": "8",
+     "midi": 49,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "e/3"
+     ],
+     "duration": "q",
+     "midi": 52,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "c#/3"
+     ],
+     "duration": "8",
+     "midi": 49,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "d/3"
+     ],
+     "duration": "8",
+     "midi": 50,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 4
+    },
+    {
+     "keys": [
+      "f/3"
+     ],
+     "duration": "8",
+     "midi": 53,
+     "bar": 4
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 4
+    },
+    {
+     "keys": [
+      "a/3"
+     ],
+     "duration": "8",
+     "midi": 57,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "a/3"
+     ],
+     "duration": "q",
+     "midi": 57,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "g/3"
+     ],
+     "duration": "q",
+     "midi": 55,
+     "bar": 4
+    },
+    {
+     "rest": true,
+     "duration": "hd",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "f#/4"
+     ],
+     "duration": "16",
+     "midi": 66,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 5
+    },
+    {
+     "rest": true,
+     "duration": "w",
+     "bar": 7
+    },
+    {
+     "keys": [
+      "e/4"
+     ],
+     "duration": "8",
+     "midi": 64,
+     "bar": 7
+    },
+    {
+     "keys": [
+      "c/5"
+     ],
+     "duration": "8",
+     "midi": 72,
+     "bar": 7
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 8
+    },
+    {
+     "keys": [
+      "a/4"
+     ],
+     "duration": "16",
+     "midi": 69,
+     "bar": 8
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 8
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 8
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 8
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "8",
+     "midi": 60,
+     "bar": 8
+    },
+    {
+     "keys": [
+      "a/4"
+     ],
+     "duration": "16",
+     "midi": 69,
+     "bar": 8
+    },
+    {
+     "keys": [
+      "a#/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 8
+    },
+    {
+     "keys": [
+      "a/4"
+     ],
+     "duration": "16",
+     "midi": 69,
+     "bar": 8
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 8
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "q",
+     "midi": 60,
+     "bar": 8
+    }
+   ]
+  },
+  {
+   "id": "wjd_0095",
+   "label": "Sonny Rollins Lick #2",
+   "contextLabel": "ii-V-I over A1",
+   "selectionMethod": "harmony",
+   "performer": "Sonny Rollins",
+   "style": "HARDBOP",
+   "sourceTune": "St. Thomas",
+   "sourceKey": "C-maj",
+   "sourceTempo": 223.9,
+   "barStart": 35,
+   "barCount": 8,
+   "chordContext": [
+    "E-7",
+    "A7",
+    "D-7"
+   ],
+   "preferFlats": false,
+   "notes": [
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "8",
+     "midi": 60,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "8",
+     "midi": 65,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "8",
+     "midi": 67,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "f#/4"
+     ],
+     "duration": "16",
+     "midi": 66,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "d#/4"
+     ],
+     "duration": "16",
+     "midi": 63,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "8",
+     "midi": 60,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "d#/4"
+     ],
+     "duration": "8",
+     "midi": 63,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "f#/4"
+     ],
+     "duration": "8",
+     "midi": 66,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "8",
+     "midi": 67,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "f#/4"
+     ],
+     "duration": "8",
+     "midi": 66,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "d#/4"
+     ],
+     "duration": "8",
+     "midi": 63,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "8",
+     "midi": 60,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "d#/4"
+     ],
+     "duration": "8",
+     "midi": 63,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "f#/4"
+     ],
+     "duration": "8",
+     "midi": 66,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "8",
+     "midi": 67,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "8",
+     "midi": 65,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "d#/4"
+     ],
+     "duration": "8",
+     "midi": 63,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "8",
+     "midi": 60,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "d#/4"
+     ],
+     "duration": "8",
+     "midi": 63,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "f#/4"
+     ],
+     "duration": "16",
+     "midi": 66,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "d#/4"
+     ],
+     "duration": "16",
+     "midi": 63,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "w",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "b/4"
+     ],
+     "duration": "16",
+     "midi": 71,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "c/5"
+     ],
+     "duration": "16",
+     "midi": 72,
+     "bar": 5
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "b/4"
+     ],
+     "duration": "8",
+     "midi": 71,
+     "bar": 5
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "a#/4"
+     ],
+     "duration": "8",
+     "midi": 70,
+     "bar": 5
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 6
+    },
+    {
+     "keys": [
+      "d/5"
+     ],
+     "duration": "16",
+     "midi": 74,
+     "bar": 6
+    },
+    {
+     "keys": [
+      "e/5"
+     ],
+     "duration": "16",
+     "midi": 76,
+     "bar": 6
+    },
+    {
+     "rest": true,
+     "duration": "hd",
+     "bar": 6
+    },
+    {
+     "keys": [
+      "d#/5"
+     ],
+     "duration": "16",
+     "midi": 75,
+     "bar": 6
+    },
+    {
+     "rest": true,
+     "duration": "8d",
+     "bar": 7
+    },
+    {
+     "keys": [
+      "d/5"
+     ],
+     "duration": "16",
+     "midi": 74,
+     "bar": 7
+    },
+    {
+     "rest": true,
+     "duration": "q",
+     "bar": 7
+    },
+    {
+     "keys": [
+      "c#/5"
+     ],
+     "duration": "16",
+     "midi": 73,
+     "bar": 7
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 7
+    },
+    {
+     "keys": [
+      "a/4"
+     ],
+     "duration": "16",
+     "midi": 69,
+     "bar": 7
+    }
+   ]
+  },
+  {
+   "id": "wjd_0124",
+   "label": "Joe Henderson Lick #1",
+   "contextLabel": "ii-V over A2",
+   "selectionMethod": "harmony",
+   "performer": "Joe Henderson",
+   "style": "POSTBOP",
+   "sourceTune": "Johnny Come Lately",
+   "sourceKey": "G-min",
+   "sourceTempo": 248.4,
+   "barStart": 94,
+   "barCount": 9,
+   "chordContext": [
+    "F-",
+    "Bb7"
+   ],
+   "preferFlats": false,
+   "notes": [
+    {
+     "keys": [
+      "g/3"
+     ],
+     "duration": "q",
+     "midi": 55,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "q",
+     "bar": 0
+    },
+    {
+     "keys": [
+      "f#/4"
+     ],
+     "duration": "8",
+     "midi": 66,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "8",
+     "midi": 67,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "qd",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "8",
+     "midi": 67,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "f#/4"
+     ],
+     "duration": "8",
+     "midi": 66,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "f#/4"
+     ],
+     "duration": "8",
+     "midi": 66,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "8",
+     "midi": 65,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "8",
+     "midi": 65,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "d#/4"
+     ],
+     "duration": "8",
+     "midi": 63,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "d#/4"
+     ],
+     "duration": "8",
+     "midi": 63,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "8",
+     "midi": 62,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "8",
+     "midi": 62,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "8",
+     "midi": 60,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "8",
+     "midi": 60,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "a#/3"
+     ],
+     "duration": "q",
+     "midi": 58,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "a/3"
+     ],
+     "duration": "q",
+     "midi": 57,
+     "bar": 2
+    }
+   ]
+  },
+  {
+   "id": "wjd_0125",
+   "label": "Joe Henderson Lick #2",
+   "contextLabel": "ii-V over A1",
+   "selectionMethod": "harmony",
+   "performer": "Joe Henderson",
+   "style": "POSTBOP",
+   "sourceTune": "U.M.M.G.",
+   "sourceKey": "Db-maj",
+   "sourceTempo": 219.9,
+   "barStart": 7,
+   "barCount": 6,
+   "chordContext": [
+    "Eb-7",
+    "Ab7"
+   ],
+   "preferFlats": true,
+   "notes": [
+    {
+     "keys": [
+      "bb/3"
+     ],
+     "duration": "q",
+     "midi": 58,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 0
+    },
+    {
+     "keys": [
+      "bb/3"
+     ],
+     "duration": "8",
+     "midi": 58,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "b/3"
+     ],
+     "duration": "16",
+     "midi": 59,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 0
+    },
+    {
+     "keys": [
+      "db/4"
+     ],
+     "duration": "16",
+     "midi": 61,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "e/4"
+     ],
+     "duration": "16",
+     "midi": 64,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 0
+    },
+    {
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "16",
+     "midi": 68,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "16",
+     "midi": 68,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "e/4"
+     ],
+     "duration": "16",
+     "midi": 64,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "db/4"
+     ],
+     "duration": "8",
+     "midi": 61,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "b/3"
+     ],
+     "duration": "8",
+     "midi": 59,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "bb/3"
+     ],
+     "duration": "8",
+     "midi": 58,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "ab/3"
+     ],
+     "duration": "8",
+     "midi": 56,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "f/3"
+     ],
+     "duration": "8",
+     "midi": 53,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "ab/3"
+     ],
+     "duration": "8",
+     "midi": 56,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "f/3"
+     ],
+     "duration": "q",
+     "midi": 53,
+     "bar": 2
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 2
+    },
+    {
+     "keys": [
+      "g/3"
+     ],
+     "duration": "8",
+     "midi": 55,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "ab/3"
+     ],
+     "duration": "q",
+     "midi": 56,
+     "bar": 2
+    },
+    {
+     "rest": true,
+     "duration": "q",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "bb/3"
+     ],
+     "duration": "8",
+     "midi": 58,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "b/3"
+     ],
+     "duration": "8",
+     "midi": 59,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "eb/4"
+     ],
+     "duration": "8",
+     "midi": 63,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "gb/4"
+     ],
+     "duration": "8",
+     "midi": 66,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "db/5"
+     ],
+     "duration": "8",
+     "midi": 73,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "b/4"
+     ],
+     "duration": "8",
+     "midi": 71,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "gb/4"
+     ],
+     "duration": "q",
+     "midi": 66,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "16",
+     "midi": 68,
+     "bar": 4
+    },
+    {
+     "rest": true,
+     "duration": "hd",
+     "bar": 4
+    },
+    {
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "16",
+     "midi": 68,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "gb/4"
+     ],
+     "duration": "16",
+     "midi": 66,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "db/4"
+     ],
+     "duration": "8",
+     "midi": 61,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "8",
+     "midi": 60,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "a/3"
+     ],
+     "duration": "8",
+     "midi": 57,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "g/3"
+     ],
+     "duration": "8",
+     "midi": 55,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "eb/4"
+     ],
+     "duration": "8",
+     "midi": 63,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "db/4"
+     ],
+     "duration": "8",
+     "midi": 61,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "8",
+     "midi": 60,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "bb/3"
+     ],
+     "duration": "8",
+     "midi": 58,
+     "bar": 5
+    }
+   ]
+  },
+  {
+   "id": "wjd_0138",
+   "label": "Cannonball Adderley Lick #1",
+   "contextLabel": "ii-V over A2",
+   "selectionMethod": "harmony",
+   "performer": "Cannonball Adderley",
+   "style": "HARDBOP",
+   "sourceTune": "Star Eyes",
+   "sourceKey": "Eb-maj",
+   "sourceTempo": 194.3,
+   "barStart": 63,
+   "barCount": 6,
+   "chordContext": [
+    "Eb-",
+    "Ab7"
+   ],
+   "preferFlats": true,
+   "notes": [
+    {
+     "keys": [
+      "db/5"
+     ],
+     "duration": "q",
+     "midi": 73,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "q",
+     "midi": 70,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "gb/4"
+     ],
+     "duration": "q",
+     "midi": 66,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "eb/4"
+     ],
+     "duration": "16",
+     "midi": 63,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "bb/3"
+     ],
+     "duration": "16",
+     "midi": 58,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "db/4"
+     ],
+     "duration": "8",
+     "midi": 61,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "8",
+     "midi": 60,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "hd",
+     "bar": 2
+    },
+    {
+     "keys": [
+      "c/5"
+     ],
+     "duration": "q",
+     "midi": 72,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "a/4"
+     ],
+     "duration": "16",
+     "midi": 69,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "db/4"
+     ],
+     "duration": "16",
+     "midi": 61,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "q",
+     "midi": 68,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "e/4"
+     ],
+     "duration": "16",
+     "midi": 64,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "e/4"
+     ],
+     "duration": "8",
+     "midi": 64,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "8",
+     "midi": 65,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "a/4"
+     ],
+     "duration": "8",
+     "midi": 69,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "c/5"
+     ],
+     "duration": "8",
+     "midi": 72,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "d/5"
+     ],
+     "duration": "16",
+     "midi": 74,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "e/5"
+     ],
+     "duration": "16",
+     "midi": 76,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "f/5"
+     ],
+     "duration": "16",
+     "midi": 77,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "gb/5"
+     ],
+     "duration": "16",
+     "midi": 78,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "g/5"
+     ],
+     "duration": "8",
+     "midi": 79,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "f/5"
+     ],
+     "duration": "8",
+     "midi": 77,
+     "bar": 4
+    },
+    {
+     "rest": true,
+     "duration": "q",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "eb/5"
+     ],
+     "duration": "8",
+     "midi": 75,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "b/4"
+     ],
+     "duration": "8",
+     "midi": 71,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "8",
+     "midi": 70,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "8",
+     "midi": 68,
+     "bar": 5
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "eb/4"
+     ],
+     "duration": "16",
+     "midi": 63,
+     "bar": 5
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "bb/3"
+     ],
+     "duration": "16",
+     "midi": 58,
+     "bar": 5
+    }
+   ]
+  },
+  {
+   "id": "wjd_0139",
+   "label": "Cannonball Adderley Lick #2",
+   "contextLabel": "ii-V over A1",
+   "selectionMethod": "harmony",
+   "performer": "Cannonball Adderley",
+   "style": "HARDBOP",
+   "sourceTune": "Star Eyes",
+   "sourceKey": "Eb-maj",
+   "sourceTempo": 194.3,
+   "barStart": 11,
+   "barCount": 6,
+   "chordContext": [
+    "Eb-",
+    "Ab7"
+   ],
+   "preferFlats": true,
+   "notes": [
+    {
+     "keys": [
+      "g/5"
+     ],
+     "duration": "16",
+     "midi": 79,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "qd",
+     "bar": 0
+    },
+    {
+     "keys": [
+      "gb/5"
+     ],
+     "duration": "8",
+     "midi": 78,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "gb/5"
+     ],
+     "duration": "q",
+     "midi": 78,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "f/5"
+     ],
+     "duration": "16",
+     "midi": 77,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "eb/5"
+     ],
+     "duration": "16",
+     "midi": 75,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "qd",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "db/5"
+     ],
+     "duration": "16",
+     "midi": 73,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "c/5"
+     ],
+     "duration": "16",
+     "midi": 72,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "16",
+     "midi": 68,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "qd",
+     "bar": 2
+    },
+    {
+     "keys": [
+      "gb/4"
+     ],
+     "duration": "8",
+     "midi": 66,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "q",
+     "midi": 65,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "eb/4"
+     ],
+     "duration": "q",
+     "midi": 63,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "q",
+     "midi": 62,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "a/3"
+     ],
+     "duration": "8",
+     "midi": 57,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "q",
+     "midi": 60,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "bb/3"
+     ],
+     "duration": "8",
+     "midi": 58,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "a/3"
+     ],
+     "duration": "8",
+     "midi": 57,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "8",
+     "midi": 60,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "e/4"
+     ],
+     "duration": "8",
+     "midi": 64,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "8",
+     "midi": 67,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "8",
+     "midi": 65,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "8",
+     "midi": 67,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "8",
+     "midi": 68,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "8",
+     "midi": 70,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "b/4"
+     ],
+     "duration": "16",
+     "midi": 71,
+     "bar": 5
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "16",
+     "midi": 68,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 5
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "8",
+     "midi": 65,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 5
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "eb/4"
+     ],
+     "duration": "8",
+     "midi": 63,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "8",
+     "midi": 68,
+     "bar": 5
+    }
+   ]
+  },
+  {
+   "id": "wjd_0152",
+   "label": "Dexter Gordon Lick #1",
+   "contextLabel": "ii-V-I over A2",
+   "selectionMethod": "harmony",
+   "performer": "Dexter Gordon",
+   "style": "SWING",
+   "sourceTune": "Montmartre",
+   "sourceKey": "Bb-min",
+   "sourceTempo": 203.7,
+   "barStart": 57,
+   "barCount": 6,
+   "chordContext": [
+    "C-7",
+    "F7",
+    "Bb-"
+   ],
+   "preferFlats": true,
+   "notes": [
+    {
+     "keys": [
+      "db/5"
+     ],
+     "duration": "16",
+     "midi": 73,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 0
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 0
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "h",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "eb/5"
+     ],
+     "duration": "16",
+     "midi": 75,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "c/5"
+     ],
+     "duration": "16",
+     "midi": 72,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "a/4"
+     ],
+     "duration": "16",
+     "midi": 69,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "gb/4"
+     ],
+     "duration": "16",
+     "midi": 66,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "gb/4"
+     ],
+     "duration": "16",
+     "midi": 66,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "qd",
+     "bar": 2
+    },
+    {
+     "keys": [
+      "db/5"
+     ],
+     "duration": "16",
+     "midi": 73,
+     "bar": 2
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 2
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 2
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 2
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 2
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 2
+    },
+    {
+     "keys": [
+      "eb/4"
+     ],
+     "duration": "16",
+     "midi": 63,
+     "bar": 2
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 2
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 2
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 2
+    },
+    {
+     "keys": [
+      "b/3"
+     ],
+     "duration": "16",
+     "midi": 59,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "db/4"
+     ],
+     "duration": "q",
+     "midi": 61,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "8d",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "bb/3"
+     ],
+     "duration": "16",
+     "midi": 58,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "8",
+     "midi": 60,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "db/4"
+     ],
+     "duration": "8",
+     "midi": 61,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "16",
+     "midi": 60,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "bb/3"
+     ],
+     "duration": "16",
+     "midi": 58,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "g/3"
+     ],
+     "duration": "16",
+     "midi": 55,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "ab/3"
+     ],
+     "duration": "8",
+     "midi": 56,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "a/3"
+     ],
+     "duration": "8",
+     "midi": 57,
+     "bar": 4
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 4
+    },
+    {
+     "keys": [
+      "f/3"
+     ],
+     "duration": "8",
+     "midi": 53,
+     "bar": 4
+    },
+    {
+     "rest": true,
+     "duration": "w",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "f/3"
+     ],
+     "duration": "16",
+     "midi": 53,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "ab/3"
+     ],
+     "duration": "16",
+     "midi": 56,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "b/3"
+     ],
+     "duration": "16",
+     "midi": 59,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "db/4"
+     ],
+     "duration": "16",
+     "midi": 61,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "16",
+     "midi": 60,
+     "bar": 5
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "bb/3"
+     ],
+     "duration": "16",
+     "midi": 58,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "a/3"
+     ],
+     "duration": "16",
+     "midi": 57,
+     "bar": 5
+    }
+   ]
+  },
+  {
+   "id": "wjd_0153",
+   "label": "Dexter Gordon Lick #2",
+   "contextLabel": "ii-V over B1",
+   "selectionMethod": "harmony",
+   "performer": "Dexter Gordon",
+   "style": "SWING",
+   "sourceTune": "Montmartre",
+   "sourceKey": "Bb-min",
+   "sourceTempo": 203.7,
+   "barStart": 111,
+   "barCount": 7,
+   "chordContext": [
+    "E-7",
+    "A7"
+   ],
+   "preferFlats": true,
+   "notes": [
+    {
+     "keys": [
+      "bb/3"
+     ],
+     "duration": "q",
+     "midi": 58,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "8d",
+     "bar": 0
+    },
+    {
+     "keys": [
+      "db/4"
+     ],
+     "duration": "16",
+     "midi": 61,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "w",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "eb/4"
+     ],
+     "duration": "16",
+     "midi": 63,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "e/4"
+     ],
+     "duration": "16",
+     "midi": 64,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "hd",
+     "bar": 2
+    },
+    {
+     "keys": [
+      "bb/3"
+     ],
+     "duration": "16",
+     "midi": 58,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "16",
+     "midi": 60,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "16",
+     "midi": 62,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "eb/4"
+     ],
+     "duration": "16",
+     "midi": 63,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "8",
+     "midi": 68,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "8",
+     "midi": 70,
+     "bar": 2
+    },
+    {
+     "rest": true,
+     "duration": "qd",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "8",
+     "midi": 67,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "ab/4"
+     ],
+     "duration": "16",
+     "midi": 68,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 3
+    },
+    {
+     "rest": true,
+     "duration": "8d",
+     "bar": 3
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "e/4"
+     ],
+     "duration": "16",
+     "midi": 64,
+     "bar": 4
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 4
+    },
+    {
+     "keys": [
+      "gb/4"
+     ],
+     "duration": "16",
+     "midi": 66,
+     "bar": 4
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 4
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 4
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 4
+    },
+    {
+     "keys": [
+      "a/4"
+     ],
+     "duration": "8",
+     "midi": 69,
+     "bar": 4
+    },
+    {
+     "keys": [
+      "b/4"
+     ],
+     "duration": "8",
+     "midi": 71,
+     "bar": 4
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 4
+    },
+    {
+     "keys": [
+      "e/5"
+     ],
+     "duration": "16",
+     "midi": 76,
+     "bar": 4
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "eb/5"
+     ],
+     "duration": "q",
+     "midi": 75,
+     "bar": 5
+    },
+    {
+     "rest": true,
+     "duration": "8d",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "bb/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 5
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "gb/4"
+     ],
+     "duration": "16",
+     "midi": 66,
+     "bar": 5
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 5
+    },
+    {
+     "keys": [
+      "eb/4"
+     ],
+     "duration": "16",
+     "midi": 63,
+     "bar": 5
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "q",
+     "midi": 65,
+     "bar": 5
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 6
+    },
+    {
+     "keys": [
+      "eb/4"
+     ],
+     "duration": "16",
+     "midi": 63,
+     "bar": 6
+    },
+    {
+     "rest": true,
+     "duration": "qd",
+     "bar": 6
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 6
+    }
+   ]
+  },
+  {
+   "id": "wjd_0166",
+   "label": "Joe Lovano Lick #1",
+   "contextLabel": "ii-V over A1",
+   "selectionMethod": "harmony",
+   "performer": "Joe Lovano",
+   "style": "POSTBOP",
+   "sourceTune": "Central Park West",
+   "sourceKey": "B-maj",
+   "sourceTempo": 63.2,
+   "barStart": 50,
+   "barCount": 10,
+   "chordContext": [
+    "C#-7",
+    "F#7"
+   ],
+   "preferFlats": false,
+   "notes": [
+    {
+     "keys": [
+      "c#/4"
+     ],
+     "duration": "q",
+     "midi": 61,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "q",
+     "bar": 0
+    },
+    {
+     "keys": [
+      "d#/4"
+     ],
+     "duration": "q",
+     "midi": 63,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "c#/4"
+     ],
+     "duration": "q",
+     "midi": 61,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "f#/4"
+     ],
+     "duration": "q",
+     "midi": 66,
+     "bar": 1
+    },
+    {
+     "rest": true,
+     "duration": "8d",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "g#/4"
+     ],
+     "duration": "16",
+     "midi": 68,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "a#/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "b/4"
+     ],
+     "duration": "16",
+     "midi": 71,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "d#/5"
+     ],
+     "duration": "16",
+     "midi": 75,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "a#/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "d#/5"
+     ],
+     "duration": "16",
+     "midi": 75,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "f#/5"
+     ],
+     "duration": "16",
+     "midi": 78,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "c#/5"
+     ],
+     "duration": "16",
+     "midi": 73,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "d#/5"
+     ],
+     "duration": "16",
+     "midi": 75,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "a#/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "c#/5"
+     ],
+     "duration": "16",
+     "midi": 73,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "g#/4"
+     ],
+     "duration": "16",
+     "midi": 68,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "a#/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "f#/4"
+     ],
+     "duration": "16",
+     "midi": 66,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "g#/4"
+     ],
+     "duration": "16",
+     "midi": 68,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "d#/4"
+     ],
+     "duration": "16",
+     "midi": 63,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "c#/4"
+     ],
+     "duration": "q",
+     "midi": 61,
+     "bar": 2
+    },
+    {
+     "rest": true,
+     "duration": "8d",
+     "bar": 2
+    },
+    {
+     "keys": [
+      "a#/3"
+     ],
+     "duration": "16",
+     "midi": 58,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "g#/3"
+     ],
+     "duration": "16",
+     "midi": 56,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "d#/3"
+     ],
+     "duration": "16",
+     "midi": 51,
+     "bar": 2
+    },
+    {
+     "rest": true,
+     "duration": "16",
+     "bar": 2
+    },
+    {
+     "keys": [
+      "c#/3"
+     ],
+     "duration": "16",
+     "midi": 49,
+     "bar": 2
+    }
+   ]
+  },
+  {
+   "id": "wjd_0167",
+   "label": "Joe Lovano Lick #2",
+   "contextLabel": "ii-V over B1",
+   "selectionMethod": "harmony",
+   "performer": "Joe Lovano",
+   "style": "POSTBOP",
+   "sourceTune": "Work",
+   "sourceKey": "",
+   "sourceTempo": 209.6,
+   "barStart": 86,
+   "barCount": 4,
+   "chordContext": [
+    "D-7",
+    "G7"
+   ],
+   "preferFlats": false,
+   "notes": [
+    {
+     "keys": [
+      "f#/4"
+     ],
+     "duration": "8",
+     "midi": 66,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "8",
+     "midi": 65,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "d#/4"
+     ],
+     "duration": "16",
+     "midi": 63,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "8",
+     "bar": 0
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "16",
+     "midi": 60,
+     "bar": 0
+    },
+    {
+     "keys": [
+      "f#/4"
+     ],
+     "duration": "q",
+     "midi": 66,
+     "bar": 0
+    },
+    {
+     "rest": true,
+     "duration": "qd",
+     "bar": 1
+    },
+    {
+     "keys": [
+      "g#/3"
+     ],
+     "duration": "8",
+     "midi": 56,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "8",
+     "midi": 62,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "f#/4"
+     ],
+     "duration": "8",
+     "midi": 66,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "8",
+     "midi": 65,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "a/3"
+     ],
+     "duration": "8",
+     "midi": 57,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "q",
+     "midi": 62,
+     "bar": 1
+    },
+    {
+     "keys": [
+      "e/4"
+     ],
+     "duration": "q",
+     "midi": 64,
+     "bar": 2
+    },
+    {
+     "rest": true,
+     "duration": "h",
+     "bar": 2
+    },
+    {
+     "keys": [
+      "a/3"
+     ],
+     "duration": "16",
+     "midi": 57,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "c/4"
+     ],
+     "duration": "16",
+     "midi": 60,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "c#/4"
+     ],
+     "duration": "16",
+     "midi": 61,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "d/4"
+     ],
+     "duration": "16",
+     "midi": 62,
+     "bar": 2
+    },
+    {
+     "keys": [
+      "d#/4"
+     ],
+     "duration": "16",
+     "midi": 63,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "f#/4"
+     ],
+     "duration": "16",
+     "midi": 66,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "d#/4"
+     ],
+     "duration": "16",
+     "midi": 63,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "b/3"
+     ],
+     "duration": "16",
+     "midi": 59,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "d#/4"
+     ],
+     "duration": "16",
+     "midi": 63,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "f#/4"
+     ],
+     "duration": "16",
+     "midi": 66,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "a#/4"
+     ],
+     "duration": "16",
+     "midi": 70,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "f#/4"
+     ],
+     "duration": "16",
+     "midi": 66,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "f/4"
+     ],
+     "duration": "16",
+     "midi": 65,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "g#/4"
+     ],
+     "duration": "16",
+     "midi": 68,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "d#/5"
+     ],
+     "duration": "16",
+     "midi": 75,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "d/5"
+     ],
+     "duration": "16",
+     "midi": 74,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "g/4"
+     ],
+     "duration": "16",
+     "midi": 67,
+     "bar": 3
+    },
+    {
+     "keys": [
+      "g#/4"
+     ],
+     "duration": "16",
+     "midi": 68,
+     "bar": 3
+    }
+   ]
+  }
+ ]
 }
