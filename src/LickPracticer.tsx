@@ -2,12 +2,7 @@ import React, { useCallback, useMemo, useRef, useState } from "react";
 import { Lick, LICK_PERFORMERS, LICK_COMPENDIUM } from "./licks";
 import { LickShuffleBag, useLickFavorites } from "./lickSelection";
 import VexFlowLick from "./VexFlowLick";
-import {
-  AudioEngine,
-  Instrument,
-  INSTRUMENT_LABELS,
-  Timbre,
-} from "./musicEngine";
+import { AudioEngine, Instrument, INSTRUMENT_LABELS, Timbre } from "./musicEngine";
 
 // VexFlow duration code -> length in quarter-note beats (mirrors the Python
 // extraction script's STANDARD_DURATIONS table).
@@ -41,6 +36,7 @@ export default function LickPracticer({
   const [lickBpmInput, setLickBpmInput] = useState("140");
   const [timbre, setTimbre] = useState<Timbre>("piano");
   const [isPlayingLick, setIsPlayingLick] = useState(false);
+  const [controlsHidden, setControlsHidden] = useState(false);
 
   const bagRef = useRef<LickShuffleBag | null>(null);
   if (!bagRef.current) bagRef.current = new LickShuffleBag();
@@ -122,11 +118,24 @@ export default function LickPracticer({
     rafRef.current = window.requestAnimationFrame(tick);
   }
 
-  const pickerOptions = useMemo(() => ["__ALL__", ...LICK_PERFORMERS], []);
+  const pickerOptions = useMemo(
+    () => ["__ALL__", ...LICK_PERFORMERS],
+    [],
+  );
 
   return (
     <div className="flex flex-col gap-4">
+      <button
+        onClick={() => setControlsHidden((v) => !v)}
+        className="fixed bottom-3 right-3 z-50 flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#272524]/90 border border-[#4a4744] backdrop-blur text-xs font-mono text-[#F2EDE4] shadow-lg hover:border-[#D4A24C] transition-colors"
+        aria-label={controlsHidden ? "Show controls" : "Hide controls"}
+      >
+        <span>{controlsHidden ? "\u25BC" : "\u25B2"}</span>
+        {controlsHidden ? "Show controls" : "Hide controls"}
+      </button>
+
       {/* ---- Picker + controls ---- */}
+      {!controlsHidden && (
       <section className="flex flex-col gap-3">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="flex flex-col gap-1.5 col-span-2 sm:col-span-2">
@@ -238,9 +247,10 @@ export default function LickPracticer({
           </button>
         </div>
       </section>
+      )}
 
       {/* ---- Favorites list ---- */}
-      {showFavorites ? (
+      {showFavorites && !controlsHidden ? (
         <section className="bg-[#252320] border border-[#3A3836] rounded-xl p-4 flex flex-col gap-2">
           <h3 className="font-mono text-xs uppercase tracking-wide text-[#8A8580]">
             Favorites
@@ -252,10 +262,7 @@ export default function LickPracticer({
           ) : (
             <ul className="flex flex-col divide-y divide-[#3A3836]">
               {favoriteLicks.map((l) => (
-                <li
-                  key={l.id}
-                  className="py-2 flex items-center justify-between gap-3"
-                >
+                <li key={l.id} className="py-2 flex items-center justify-between gap-3">
                   <button
                     onClick={() => showLick(l)}
                     className="text-left text-sm text-[#F2EDE4] hover:text-[#D4A24C] transition-colors"
@@ -281,8 +288,8 @@ export default function LickPracticer({
         <section className="bg-[#252320] border border-[#3A3836] rounded-xl p-4 flex flex-col gap-4">
           {!currentLick ? (
             <p className="text-sm text-[#8A8580] text-center py-8">
-              Pick a soloist (or leave it on Random) and tap "Show lick" to get
-              started.
+              Pick a soloist (or leave it on Random) and tap "Show lick" to
+              get started.
             </p>
           ) : (
             <>
@@ -291,6 +298,9 @@ export default function LickPracticer({
                   <h2 className="font-display text-2xl text-[#F2EDE4]">
                     {currentLick.label}
                   </h2>
+                  <p className="text-xs text-[#D4A24C] font-mono mt-1 font-semibold">
+                    {currentLick.contextLabel}
+                  </p>
                   <p className="text-xs text-[#8A8580] font-mono mt-1">
                     from &ldquo;{currentLick.sourceTune}&rdquo; &middot;{" "}
                     {currentLick.style} &middot; bar {currentLick.barStart + 1}
@@ -355,20 +365,23 @@ export default function LickPracticer({
         </section>
       )}
 
-      <p className="text-[10px] text-[#8A8580] font-mono leading-relaxed">
-        Licks are short (2-bar) excerpts from real recorded solos, drawn from
-        note-level transcriptions in the{" "}
-        <a
-          href={LICK_COMPENDIUM.meta.sourceUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="underline hover:text-[#D4A24C]"
-        >
-          Weimar Jazz Database
-        </a>{" "}
-        (Jazzomat Research Project, HfM Weimar), licensed under{" "}
-        {LICK_COMPENDIUM.meta.license}.
-      </p>
+      {!controlsHidden && (
+        <p className="text-[10px] text-[#8A8580] font-mono leading-relaxed">
+          Licks are short excerpts from real recorded solos, selected along
+          natural phrase boundaries or real ii-V/ii-V-I harmonic motion, drawn
+          from note-level transcriptions in the{" "}
+          <a
+            href={LICK_COMPENDIUM.meta.sourceUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="underline hover:text-[#D4A24C]"
+          >
+            Weimar Jazz Database
+          </a>{" "}
+          (Jazzomat Research Project, HfM Weimar), licensed under{" "}
+          {LICK_COMPENDIUM.meta.license}.
+        </p>
+      )}
     </div>
   );
 }
