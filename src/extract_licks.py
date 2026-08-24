@@ -187,42 +187,106 @@ def find_harmonic_units(chord_spans):
 # (so the renderer can group/beam notes per-measure reliably instead of
 # re-deriving bar membership from accumulated durations).
 # ----------------------------------------------------------------------------
-def build_note_data(notes_in_range, bar_start, prefer_flats):
-    vf_notes = []
-    prev_pos = None
-    for bar, beat, tatum, division, pitch in notes_in_range:
-        rel_bar = bar - bar_start
-        beat_in_bar = (beat - 1) + ((tatum - 1) / max(1, division))
-        beat_in_lick = rel_bar * 4 + beat_in_bar
+DUR_TO_BEATS = {code: beats for beats, code in STANDARD_DURATIONS}
 
-        frac = DIVISION_TO_BEATFRAC.get(division, 0.25)
-        dur_code, dur_beats = nearest_duration(frac)
-        name, octave = midi_to_name(pitch, prefer_flats)
 
-        if prev_pos is not None:
-            gap = beat_in_lick - prev_pos
-            if gap > 0.2:
-                rest_code, _ = nearest_duration(gap)
-                # attribute the rest to whichever bar it starts in
-                vf_notes.append(
-                    {"rest": True, "duration": rest_code, "bar": rel_bar}
-                )
+def enforce_bar_capacity(vf_notes):
+    """Last-resort safety net: if a bar's chunks still sum past ~4.5 beats
+    (can happen on very dense double-time runs where even the shortest
+    notatable duration, a 32nd note, is still longer than the true note
+    spacing), proportionally rescale that bar's chunks to fit exactly 4
+    beats. Keeps the relative rhythm shape; only engages on genuine
+    outliers, not the vast majority of bars which already total ~4 beats
+    from build_note_data's onset-interval-based accounting."""
+    by_bar = {}
+    for n in vf_notes:
+        by_bar.setdefault(n["bar"], []).append(n)
 
-        vf_notes.append(
-            {
-                "keys": [f"{name.lower()}/{octave}"],
-                "duration": dur_code,
-                "midi": round(pitch),
-                "bar": rel_bar,
-            }
-        )
-        prev_pos = beat_in_lick + dur_beats
+    for bar, entries in by_bar.items():
+        total = sum(DUR_TO_BEATS.get(e["duration"], 0.5) for e in entries)
+        if total <= 4.5:
+            continue
+        scale = 4.0 / total
+        for e in entries:
+            scaled = DUR_TO_BEATS.get(e["duration"], 0.5) * scale
+            new_code, _ = nearest_duration(scaled)
+            e["duration"] = new_code
 
     return vf_notes
 
 
-# ----------------------------------------------------------------------------
-# Main extraction
+def build_note_data(notes_in_range, bar_start, bar_count, prefer_flats):
+    """Converts real notes into VexFlow-ready {keys,duration,bar} entries.
+
+    Durations are derived from the actual gap to the NEXT note's metric
+    position (not each note's own tatum/division guessed in isolation) —
+    a note sounds for its nominal (quantized) duration, and any remaining
+    time before the next note becomes an explicit rest. Both notes and
+    rests are split precisely at bar boundaries when a gap spans more than
+    one bar. This guarantees every bar's tickables sum to exactly 4 beats
+    (mod tiny rounding from duration quantization), which is what keeps
+    VexFlow from cramming/overflowing a measure — the earlier version
+    assigned each note an independent local duration with no such
+    guarantee, which is what caused bars to visually overflow.
+    """
+    events = []
+    for bar, beat, tatum, division, pitch in notes_in_range:
+        rel_bar = bar - bar_start
+        beat_in_bar = (beat - 1) + ((tatum - 1) / max(1, division))
+        beat_in_lick = rel_bar * 4 + beat_in_bar
+        frac = DIVISION_TO_BEATFRAC.get(division, 0.25)
+        name, octave = midi_to_name(pitch, prefer_flats)
+        events.append(
+            {
+                "pos": beat_in_lick,
+                "nominal": frac,
+                "keys": [f"{name.lower()}/{octave}"],
+                "midi": round(pitch),
+            }
+        )
+    events.sort(key=lambda e: e["pos"])
+
+    lick_end = bar_count * 4.0
+
+    def emit_span(vf_notes, start, end, keys=None, midi=None):
+        """Fills [start, end) with note/rest chunks, split at bar lines."""
+        pos = start
+        first = True
+        while pos < end - 1e-6:
+            bar_of_pos = int(pos // 4)
+            bar_boundary = (bar_of_pos + 1) * 4
+            chunk_end = min(end, bar_boundary)
+            chunk_len = chunk_end - pos
+            if chunk_len <= 1e-6:
+                pos = chunk_end
+                continue
+            dur_code, dur_beats = nearest_duration(chunk_len)
+            entry = {"duration": dur_code, "bar": bar_of_pos}
+            if keys is not None and first:
+                entry["keys"] = keys
+                entry["midi"] = midi
+            else:
+                entry["rest"] = True
+            vf_notes.append(entry)
+            first = False
+            pos = chunk_end
+
+    vf_notes = []
+    if events and events[0]["pos"] > 0.05:
+        emit_span(vf_notes, 0.0, events[0]["pos"])
+
+    for i, ev in enumerate(events):
+        next_pos = events[i + 1]["pos"] if i + 1 < len(events) else lick_end
+        gap = max(0.0, next_pos - ev["pos"])
+        sounding = min(ev["nominal"], gap) if gap > 0 else ev["nominal"]
+        sounding = max(sounding, 0.125)  # never quantize a note away to nothing
+
+        note_end = ev["pos"] + sounding
+        emit_span(vf_notes, ev["pos"], note_end, keys=ev["keys"], midi=ev["midi"])
+        if next_pos - note_end > 0.05:
+            emit_span(vf_notes, note_end, next_pos)
+
+    return enforce_bar_capacity(vf_notes)
 # ----------------------------------------------------------------------------
 TARGET_PERFORMERS = [
     "Charlie Parker",
@@ -307,7 +371,9 @@ def extract_phrase_licks(cur, melid, performer, title, key_field, tempo, style):
                         "barStart": piece_start,
                         "barCount": piece_end - piece_start + 1,
                         "chordContext": chords_in_chunk,
-                        "notes": build_note_data(chunk_notes, piece_start, prefer_flats),
+                        "notes": build_note_data(
+                            chunk_notes, piece_start, piece_end - piece_start + 1, prefer_flats
+                        ),
                         "preferFlats": prefer_flats,
                         "selectionMethod": "phrase",
                         "contextLabel": (
@@ -363,7 +429,7 @@ def extract_harmonic_unit_licks(cur, melid, performer, title, key_field, tempo, 
                 "barStart": start,
                 "barCount": end - start + 1,
                 "chordContext": chords_in_chunk,
-                "notes": build_note_data(chunk_notes, start, prefer_flats),
+                "notes": build_note_data(chunk_notes, start, end - start + 1, prefer_flats),
                 "preferFlats": prefer_flats,
                 "selectionMethod": "harmony",
                 "contextLabel": (

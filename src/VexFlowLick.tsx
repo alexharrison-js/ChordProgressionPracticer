@@ -44,8 +44,34 @@ function transposeVexKey(
     bb: 10,
     b: 11,
   };
-  const SHARP = ["c", "c#", "d", "d#", "e", "f", "f#", "g", "g#", "a", "a#", "b"];
-  const FLAT = ["c", "db", "d", "eb", "e", "f", "gb", "g", "ab", "a", "bb", "b"];
+  const SHARP = [
+    "c",
+    "c#",
+    "d",
+    "d#",
+    "e",
+    "f",
+    "f#",
+    "g",
+    "g#",
+    "a",
+    "a#",
+    "b",
+  ];
+  const FLAT = [
+    "c",
+    "db",
+    "d",
+    "eb",
+    "e",
+    "f",
+    "gb",
+    "g",
+    "ab",
+    "a",
+    "bb",
+    "b",
+  ];
 
   const pc = NOTE_INDEX[pitchPart.toLowerCase()] ?? 0;
   const octave = parseInt(octavePart, 10);
@@ -65,7 +91,10 @@ interface VexFlowLickProps {
   displayInstrument: Instrument;
 }
 
-export default function VexFlowLick({ lick, displayInstrument }: VexFlowLickProps) {
+export default function VexFlowLick({
+  lick,
+  displayInstrument,
+}: VexFlowLickProps) {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [containerWidth, setContainerWidth] = useState(340);
@@ -103,7 +132,16 @@ export default function VexFlowLick({ lick, displayInstrument }: VexFlowLickProp
       }
       if (cancelled || !containerRef.current) return;
 
-      const { Renderer, Stave, StaveNote, Voice, Formatter, Accidental, Dot, Beam } = VF;
+      const {
+        Renderer,
+        Stave,
+        StaveNote,
+        Voice,
+        Formatter,
+        Accidental,
+        Dot,
+        Beam,
+      } = VF;
 
       const shift =
         displayInstrument === "C" ? 0 : displayInstrument === "Bb" ? 2 : 9;
@@ -168,10 +206,6 @@ export default function VexFlowLick({ lick, displayInstrument }: VexFlowLickProp
               keys: transposedKeys,
               duration: n.duration,
             });
-            transposedKeys.forEach((k, idx) => {
-              const accidental = k.split("/")[0].slice(1);
-              if (accidental) sn.addModifier(new Accidental(accidental), idx);
-            });
             if (n.duration.includes("d")) sn.addModifier(new Dot(), 0);
             return sn;
           });
@@ -179,6 +213,13 @@ export default function VexFlowLick({ lick, displayInstrument }: VexFlowLickProp
           const voice = new Voice({ num_beats: 4, beat_value: 4 });
           voice.setStrict(false);
           voice.addTickables(staveNotes);
+
+          // Adds accidentals automatically, following standard notation
+          // convention: an accidental is shown once per pitch per measure
+          // and suppressed on repeats — this replaced manually adding a
+          // modifier to every note, which showed a flat/sharp on every
+          // single occurrence and made dense bebop lines look cluttered.
+          Accidental.applyAccidentals([voice], "C");
 
           new Formatter().joinVoices([voice]).format([voice], STAVE_WIDTH - 30);
           voice.draw(context, stave);
