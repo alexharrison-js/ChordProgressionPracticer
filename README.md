@@ -9,6 +9,48 @@ Live: https://alexharrison-js.github.io/ChordProgressionPracticer/
 
 `jazz_standards.json` contains 127 jazz standards as a JSON array, alphabetized by title.
 
+# Bopland Licks
+
+We pull bebop licks from https://bopland.org/ - they deserve all credit for lick collecting. They're awesome go check them out
+
+### Get treble clef bopland licks
+
+cd ~/Code/ChordProgressionPracticer
+
+python3.11 -m venv venv
+source .venv/bin/activate
+
+python -m pip install requests
+python download_bopland.py
+
+python3 download_bopland.py \
+ --database treble-clef-licks \
+ --download-assets \
+ --json
+
+python3 -m pip install requests
+python3 -m pip install oemer
+
+python3 test_bopland_omr.py
+
+Produces something like:
+bopland.sqlite3
+bopland_licks.json
+
+bopland_assets/
+000...
+9sjJo9wH.png
+9sjJo9wH.mp3
+...
+
+### Get all 5 bopland databases
+
+python3 download_bopland.py \
+ --all-databases \
+ --download-assets \
+ --mp3 \
+ --json
+
 ## To extract new licks:
 
 Download wjazzd.db from https://jazzomat.hfm-weimar.de/download/downloads/wjazzd.db and drop it in the src folder. Then cd into that folder and run the extract_licks python script and update the script to include the person you're trying to get the licks from

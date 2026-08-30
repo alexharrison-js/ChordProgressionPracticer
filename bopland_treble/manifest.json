@@ -1,0 +1,26 @@
+{
+  "source": {
+    "name": "BopLand.org",
+    "database": "treble-clef-licks",
+    "title": "Treble Clef Licks",
+    "databaseUrl": "https://bopland.org/data/treble-clef-licks.js?t=1335",
+    "imageUrlPattern": "https://bopland.org/data/<LICK_ID>.png"
+  },
+  "database": {
+    "declaredCount": 2458,
+    "extractedCount": 2458
+  },
+  "download": {
+    "total": 2458,
+    "downloaded": 2448,
+    "alreadyExisted": 10,
+    "failed": 0,
+    "failures": []
+  },
+  "output": {
+    "javascript": "bopland_treble/treble-clef-licks.js",
+    "rawMetadata": "bopland_treble/licks.json",
+    "applicationMetadata": "bopland_treble/application_licks.json",
+    "imageDirectory": "bopland_treble/images"
+  }
+}

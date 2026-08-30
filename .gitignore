@@ -26,6 +26,9 @@ lib-cov
 coverage
 *.lcov
 
+venv
+venv/*
+
 # nyc test coverage
 .nyc_output
 
@@ -145,3 +148,4 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+venv/

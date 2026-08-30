@@ -1,98 +1,123 @@
-import { useCallback, useEffect, useState } from "react";
-import { Lick, ALL_LICKS, licksByPerformer } from "./licks";
+import { useCallback, useMemo, useState } from "react";
+import { ALL_LICKS, Lick } from "./licks";
+import { ALL_BOPLAND_LICKS, BoplandLick } from "./bopland";
 
 // ============================================================================
-// FAVORITES — persisted in the browser's localStorage
+// FAVORITES
 // ============================================================================
 
-const FAVORITES_KEY = "jazzshed.lickFavorites.v1";
+const FAVORITES_STORAGE_KEY = "chord-progression-practicer.favorite-lick-ids";
 
-function readFavoriteIds(): Set<string> {
+function readFavoriteIds(): string[] {
   try {
-    const raw = window.localStorage.getItem(FAVORITES_KEY);
-    if (!raw) return new Set();
-    const arr = JSON.parse(raw);
-    return new Set(Array.isArray(arr) ? arr : []);
+    const raw = localStorage.getItem(FAVORITES_STORAGE_KEY);
+
+    if (!raw) {
+      return [];
+    }
+
+    const parsed = JSON.parse(raw);
+
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    return parsed.filter((id): id is string => typeof id === "string");
   } catch {
-    return new Set();
+    return [];
   }
 }
 
-function writeFavoriteIds(ids: Set<string>): void {
+function writeFavoriteIds(ids: string[]) {
   try {
-    window.localStorage.setItem(FAVORITES_KEY, JSON.stringify([...ids]));
+    localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(ids));
   } catch {
-    // localStorage unavailable (private mode, quota, etc.) — fail silently,
-    // favorites just won't persist for this session.
+    // localStorage can be unavailable in some browser environments.
   }
+}
+
+export type FavoriteLick = Lick | BoplandLick;
+
+export function findLickById(id: string): FavoriteLick | undefined {
+  return (
+    ALL_LICKS.find((lick) => lick.id === id) ??
+    ALL_BOPLAND_LICKS.find((lick) => lick.id === id)
+  );
 }
 
 export function useLickFavorites() {
-  const [favoriteIds, setFavoriteIds] = useState<Set<string>>(() =>
-    typeof window !== "undefined" ? readFavoriteIds() : new Set(),
-  );
-
-  useEffect(() => {
-    writeFavoriteIds(favoriteIds);
-  }, [favoriteIds]);
-
-  const isFavorite = useCallback(
-    (id: string) => favoriteIds.has(id),
-    [favoriteIds],
-  );
+  const [favoriteIds, setFavoriteIds] = useState<string[]>(readFavoriteIds);
 
   const toggleFavorite = useCallback((id: string) => {
-    setFavoriteIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+    setFavoriteIds((current) => {
+      const next = current.includes(id)
+        ? current.filter((existing) => existing !== id)
+        : [...current, id];
+
+      writeFavoriteIds(next);
       return next;
     });
   }, []);
 
-  const favoriteLicks: Lick[] = ALL_LICKS.filter((l) => favoriteIds.has(l.id));
+  const isFavorite = useCallback(
+    (id: string) => favoriteIds.includes(id),
+    [favoriteIds],
+  );
 
-  return { isFavorite, toggleFavorite, favoriteLicks, favoriteIds };
+  const favoriteLicks = useMemo(
+    () =>
+      favoriteIds
+        .map((id) => findLickById(id))
+        .filter((lick): lick is FavoriteLick => lick !== undefined),
+    [favoriteIds],
+  );
+
+  return {
+    favoriteIds,
+    isFavorite,
+    toggleFavorite,
+    favoriteLicks,
+  };
 }
 
 // ============================================================================
-// TRUE RANDOM, NO-IMMEDIATE-REPEAT SELECTION
+// WJD SHUFFLE BAG
 // ============================================================================
-// A simple "shuffle bag": each pool (all licks, or one performer's licks) is
-// shuffled once; picks are drawn from the bag in order, so every lick in the
-// pool is seen once before any repeat, and the order is freshly randomized
-// each time the bag empties. This avoids the classic "true randomness feels
-// repetitive" complaint (naive Math.random() picks can and do repeat the
-// same item several times in a row).
+//
+// Keeps the existing WJD behavior: shuffle through the collection without
+// immediately repeating the same lick.
+//
 // ============================================================================
-
-function shuffle<T>(arr: T[]): T[] {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
 
 export class LickShuffleBag {
-  private bags: Map<string, string[]> = new Map(); // poolKey -> remaining lick ids
+  private bags: Record<string, Lick[]> = {};
 
-  private poolFor(poolKey: string): Lick[] {
-    return poolKey === "__ALL__" ? ALL_LICKS : licksByPerformer(poolKey);
+  private refill(performer: string, source: Lick[]): void {
+    const shuffled = [...source];
+
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    this.bags[performer] = shuffled;
   }
 
-  next(poolKey: string): Lick | null {
-    const pool = this.poolFor(poolKey);
-    if (pool.length === 0) return null;
+  next(performer: string): Lick {
+    const source =
+      performer === "__ALL__"
+        ? ALL_LICKS
+        : ALL_LICKS.filter((lick) => lick.performer === performer);
 
-    let bag = this.bags.get(poolKey);
-    if (!bag || bag.length === 0) {
-      bag = shuffle(pool.map((l) => l.id));
-      this.bags.set(poolKey, bag);
+    if (source.length === 0) {
+      throw new Error(`No WJD licks found for performer "${performer}".`);
     }
-    const id = bag.pop()!;
-    this.bags.set(poolKey, bag);
-    return pool.find((l) => l.id === id) ?? null;
+
+    if (!this.bags[performer] || this.bags[performer].length === 0) {
+      this.refill(performer, source);
+    }
+
+    return this.bags[performer].pop()!;
   }
 }
