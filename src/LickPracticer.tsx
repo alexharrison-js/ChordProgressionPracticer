@@ -631,16 +631,27 @@ export default function LickPracticer({
         <p className="text-[10px] text-[#8A8580] font-mono leading-relaxed">
           {source === "bopland" ? (
             <>
-              Musical notation image source:{" "}
-              <a
-                href="https://bopland.org"
-                target="_blank"
-                rel="noreferrer"
-                className="underline hover:text-[#D4A24C]"
-              >
-                Bopland
-              </a>{" "}
-              · Treble Clef Licks.
+              <p className="text-[10px] text-[#8A8580] font-mono text-center mt-2">
+                This lick came from{" "}
+                <a
+                  href="https://bopland.org"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline hover:text-[#D4A24C]"
+                >
+                  Bopland
+                </a>
+                . If you like it, consider purchasing a{" "}
+                <a
+                  href="https://bopland.org/books"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline hover:text-[#D4A24C]"
+                >
+                  book
+                </a>
+                .
+              </p>
             </>
           ) : (
             <>
