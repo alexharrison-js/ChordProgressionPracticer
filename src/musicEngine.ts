@@ -412,12 +412,74 @@ export function groupIntoBars(chords: FlatChord[]): FlatChord[][] {
 
 export type Timbre = "piano" | "epiano" | "synth";
 
+// ----------------------------------------------------------------------------
+// Sample-based instruments — ported from the ear trainer app's instrument
+// list verbatim, so the same sample pack (expected at
+// /public/samples/{id}-mp3/{NoteName}{Octave}.mp3, e.g. "C4.mp3") works
+// here without renaming anything.
+// ----------------------------------------------------------------------------
+
+export const SAMPLE_INSTRUMENTS: { id: string; label: string }[] = [
+  { id: "accordion", label: "Accordion" },
+  { id: "acoustic_grand_piano", label: "Grand Piano" },
+  { id: "alto_sax", label: "Alto Sax" },
+  { id: "baritone_sax", label: "Baritone Sax" },
+  { id: "bassoon", label: "Bassoon" },
+  { id: "bright_acoustic_piano", label: "Bright Piano" },
+  { id: "celesta", label: "Celesta" },
+  { id: "cello", label: "Cello" },
+  { id: "clarinet", label: "Clarinet" },
+  { id: "dulcimer", label: "Dulcimer" },
+  { id: "electric_guitar_clean", label: "Clean Guitar" },
+  { id: "electric_guitar_jazz", label: "Jazz Guitar" },
+  { id: "electric_piano_1", label: "E. Piano 1" },
+  { id: "electric_piano_2", label: "E. Piano 2" },
+  { id: "english_horn", label: "English Horn" },
+  { id: "flute", label: "Flute" },
+  { id: "french_horn", label: "French Horn" },
+  { id: "muted_trumpet", label: "Muted Trumpet" },
+  { id: "oboe", label: "Oboe" },
+  { id: "tenor_sax", label: "Tenor Sax" },
+  { id: "trombone", label: "Trombone" },
+  { id: "trumpet", label: "Trumpet" },
+  { id: "viola", label: "Viola" },
+  { id: "violin", label: "Violin" },
+];
+
+export type SampleInstrumentId = (typeof SAMPLE_INSTRUMENTS)[number]["id"];
+
+// A SoundSource is either "play this through the built-in oscillator synth
+// with this timbre" (existing behavior, unchanged) or "play this through
+// real recorded samples of this instrument" (new). Every place that used to
+// take a bare `Timbre` now takes one of these instead, so the caller picks
+// the sound the same way regardless of which underlying engine produces it.
+export type SoundSource =
+  | { kind: "synth"; timbre: Timbre }
+  | { kind: "sample"; instrumentId: SampleInstrumentId };
+
+export const DEFAULT_SOUND_SOURCE: SoundSource = {
+  kind: "synth",
+  timbre: "piano",
+};
+
 export class AudioEngine {
   ctx: AudioContext | null = null;
   masterGain: GainNode | null = null;
   metroGain: GainNode | null = null;
   chordGain: GainNode | null = null;
-  activeNodes: Set<OscillatorNode> = new Set();
+  // Holds both oscillators (synth) and buffer sources (samples) — widening
+  // this from oscillator-only to include AudioBufferSourceNode is what lets
+  // stopAll() immediately silence either sound source uniformly, with no
+  // separate cleanup path needed for samples.
+  activeNodes: Set<OscillatorNode | AudioBufferSourceNode> = new Set();
+
+  // Decoded sample buffers, cached by "{instrumentId}_{midi}" so a note is
+  // only ever fetched/decoded once per instrument per session.
+  private bufferCache: Map<string, AudioBuffer> = new Map();
+  // In-flight fetches, keyed the same way, so concurrent requests for the
+  // same note (e.g. preloading several notes of a chord at once) share one
+  // network request instead of firing duplicates.
+  private pendingFetches: Map<string, Promise<AudioBuffer | null>> = new Map();
 
   ensureContext(): AudioContext {
     if (!this.ctx) {
@@ -441,6 +503,130 @@ export class AudioEngine {
 
   setMetroVolume(v: number): void {
     if (this.metroGain) this.metroGain.gain.value = v;
+  }
+
+  // ----------------------------------------------------------------------
+  // Sample loading (ported from the ear trainer app's getBuffer)
+  // ----------------------------------------------------------------------
+  // Converts a MIDI note number to the sample filename convention used by
+  // the shared sample pack: flat spelling + octave, e.g. 60 -> "C4".
+  private midiToSampleName(midi: number): string {
+    const FLAT = [
+      "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B",
+    ];
+    return `${FLAT[((midi % 12) + 12) % 12]}${Math.floor(midi / 12) - 1}`;
+  }
+
+  private sampleBaseUrl(): string {
+    // Vite exposes the configured base path here; falls back to "/" for
+    // any non-Vite environment so this doesn't throw.
+    try {
+      const base = (import.meta as any)?.env?.BASE_URL ?? "/";
+      return String(base).replace(/\/$/, "");
+    } catch {
+      return "";
+    }
+  }
+
+  // Fetches (and caches) the sample for `targetMidi` on `instrumentId`. If
+  // no sample exists for that exact pitch, searches outward (±1, ±2, ...
+  // up to an octave) for the nearest pitch that DOES have a sample, and
+  // reports back how many semitones of pitch-shift (via playbackRate) are
+  // needed to make that sample sound like the target note. This means a
+  // sample pack doesn't need a recording of every single semitone to sound
+  // right across the full range used in a chord voicing.
+  private async getSampleBuffer(
+    instrumentId: string,
+    targetMidi: number,
+  ): Promise<{ buffer: AudioBuffer; semitoneShift: number } | null> {
+    const exactKey = `${instrumentId}_${targetMidi}`;
+    const exact = this.bufferCache.get(exactKey);
+    if (exact) {
+      return { buffer: exact, semitoneShift: 0 };
+    }
+
+    const offsets = [0, -1, 1, -2, 2, -3, 3, -4, 4, -5, 5, -6, 6, -7, 7, -8, 8, -9, 9, -10, 10, -11, 11, -12, 12];
+    for (const off of offsets) {
+      const midi = targetMidi + off;
+      const key = `${instrumentId}_${midi}`;
+      if (off !== 0) {
+        const cached = this.bufferCache.get(key);
+        if (cached) return { buffer: cached, semitoneShift: -off };
+      }
+      if (off === 0) {
+        const buf = await this.fetchAndDecode(instrumentId, midi, key);
+        if (buf) return { buffer: buf, semitoneShift: 0 };
+      }
+    }
+    return null;
+  }
+
+  private fetchAndDecode(
+    instrumentId: string,
+    midi: number,
+    cacheKey: string,
+  ): Promise<AudioBuffer | null> {
+    const pending = this.pendingFetches.get(cacheKey);
+    if (pending) return pending;
+
+    const promise = (async () => {
+      try {
+        const ctx = this.ensureContext();
+        const url = `${this.sampleBaseUrl()}/samples/${instrumentId}-mp3/${this.midiToSampleName(midi)}.mp3`;
+        const res = await fetch(url);
+        if (!res.ok) return null;
+        const buf = await ctx.decodeAudioData(await res.arrayBuffer());
+        this.bufferCache.set(cacheKey, buf);
+        return buf;
+      } catch {
+        return null;
+      } finally {
+        this.pendingFetches.delete(cacheKey);
+      }
+    })();
+
+    this.pendingFetches.set(cacheKey, promise);
+    return promise;
+  }
+
+  // Ensures every note that's about to be needed is already decoded and
+  // cached BEFORE playback starts. Sample fetching is asynchronous
+  // (network + decode), but the scheduler plays notes at precisely
+  // computed lookahead times — without preloading, the first occurrence
+  // of a given pitch could start late while its sample is still loading.
+  // Call this (and await it) once before starting playback whenever the
+  // sound source is sample-based.
+  async preloadSamples(
+    instrumentId: SampleInstrumentId,
+    midiNotes: number[],
+  ): Promise<void> {
+    const unique = Array.from(new Set(midiNotes));
+    await Promise.all(
+      unique.map((midi) => this.getSampleBuffer(instrumentId, midi)),
+    );
+  }
+
+  // Eagerly loads every note across a practical playing range for an
+  // instrument, all at once, rather than waiting to discover which exact
+  // pitches a given piece needs. Meant to be called once — right when the
+  // user selects a sample instrument, with a loading indicator in the UI
+  // — so that every song/pattern/lick played afterward is instant with no
+  // further preload step. Notes the sample pack doesn't actually have an
+  // individual file for simply 404 and are skipped silently; the
+  // nearest-neighbor fallback in getSampleBuffer already covers those
+  // gaps at playback time using whichever nearby notes DID load.
+  //
+  // Default range (MIDI 36–96, roughly C2–C7) comfortably covers this
+  // app's chord-voicing range (48–84) plus typical melodic lick content;
+  // widen it if a particular instrument/use case needs more.
+  async preloadInstrumentRange(
+    instrumentId: SampleInstrumentId,
+    minMidi = 36,
+    maxMidi = 96,
+  ): Promise<void> {
+    const notes: number[] = [];
+    for (let m = minMidi; m <= maxMidi; m++) notes.push(m);
+    await this.preloadSamples(instrumentId, notes);
   }
 
   stopAll(): void {
@@ -573,14 +759,70 @@ export class AudioEngine {
     osc2.stop(stopAt);
   }
 
+  // Plays one note through real recorded samples rather than an
+  // oscillator. The gain envelope here is what prevents "bleed" between
+  // fast chord changes: it ramps to near-silence by `time + duration` and
+  // hard-stops the underlying buffer source shortly after, regardless of
+  // how long the raw sample recording naturally rings on for. Without
+  // this, a piano sample's multi-second decay tail would still be
+  // audible under the start of the next chord.
+  private _playSampledVoice(
+    instrumentId: SampleInstrumentId,
+    midi: number,
+    gainScale: number,
+    dest: GainNode,
+    time: number,
+    duration: number,
+  ): void {
+    const ctx = this.ensureContext();
+    this.getSampleBuffer(instrumentId, midi).then((result) => {
+      // If playback was stopped (or this note's time has already passed)
+      // before the sample finished loading, don't start it late.
+      if (!result || ctx.currentTime > time + duration) return;
+
+      const source = ctx.createBufferSource();
+      source.buffer = result.buffer;
+      if (result.semitoneShift) {
+        source.playbackRate.value = Math.pow(2, result.semitoneShift / 12);
+      }
+
+      const gain = ctx.createGain();
+      gain.gain.value = 0;
+      source.connect(gain);
+      gain.connect(dest);
+
+      const attack = 0.02;
+      const release = Math.min(0.3, duration * 0.4);
+      const sustainEnd = Math.max(time + attack, time + duration - release);
+      gain.gain.setValueAtTime(0, time);
+      gain.gain.linearRampToValueAtTime(0.5 * gainScale, time + attack);
+      gain.gain.setValueAtTime(0.5 * gainScale, sustainEnd);
+      gain.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+
+      source.start(time);
+      source.stop(time + duration + 0.1); // hard cutoff — no ring-past-duration
+      this.activeNodes.add(source);
+      source.onended = () => this.activeNodes.delete(source);
+    });
+  }
+
   playChord(
     midiNotes: number[],
     bassNote: number,
     time: number,
     duration: number,
-    timbre: Timbre = "piano",
+    soundSource: SoundSource = DEFAULT_SOUND_SOURCE,
   ): void {
     this.ensureContext();
+    if (soundSource.kind === "sample") {
+      const { instrumentId } = soundSource;
+      midiNotes.forEach((n) =>
+        this._playSampledVoice(instrumentId, n, 1, this.chordGain!, time, duration),
+      );
+      this._playSampledVoice(instrumentId, bassNote, 1.3, this.chordGain!, time, duration);
+      return;
+    }
+    const { timbre } = soundSource;
     midiNotes.forEach((n) =>
       this._playVoice(n, 1, this.chordGain!, time, duration, timbre),
     );
@@ -594,9 +836,13 @@ export class AudioEngine {
     midi: number,
     time: number,
     duration: number,
-    timbre: Timbre = "piano",
+    soundSource: SoundSource = DEFAULT_SOUND_SOURCE,
   ): void {
     this.ensureContext();
-    this._playVoice(midi, 0.9, this.chordGain!, time, duration, timbre);
+    if (soundSource.kind === "sample") {
+      this._playSampledVoice(soundSource.instrumentId, midi, 0.9, this.chordGain!, time, duration);
+      return;
+    }
+    this._playVoice(midi, 0.9, this.chordGain!, time, duration, soundSource.timbre);
   }
 }
