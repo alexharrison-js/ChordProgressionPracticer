@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   AudioEngine,
   FlatChord,
@@ -14,6 +8,8 @@ import {
   VoicingStyleId,
   VOICING_STYLES,
   VoicedChord,
+  SampleInstrumentId,
+  SoundSource,
   generateVoicing,
   groupIntoBars,
   qualityLabel,
@@ -26,6 +22,7 @@ import {
   CycleTypeId,
   generatePatternBars,
 } from "./chordProgressionConcepts";
+import SoundSourceSelector, { SoundMode } from "./SoundSourceSelector";
 
 // ============================================================================
 // CHORD SYMBOL DISPLAY (matches the song player's ChordSymbol component)
@@ -58,6 +55,11 @@ export default function ChordPatternPracticer({
   const [bpmInput, setBpmInput] = useState("120");
   const [voicingStyle, setVoicingStyle] = useState<VoicingStyleId>("closed");
   const [timbre, setTimbre] = useState<Timbre>("piano");
+  const [soundMode, setSoundMode] = useState<SoundMode>("synth");
+  const [sampleInstrument, setSampleInstrument] = useState<SampleInstrumentId>(
+    "acoustic_grand_piano",
+  );
+  const [samplesLoading, setSamplesLoading] = useState(false);
   const [displayInstrument, setDisplayInstrument] = useState<Instrument>("C");
 
   const [metronomeOn, setMetronomeOn] = useState(true);
@@ -143,13 +145,44 @@ export default function ChordPatternPracticer({
   useEffect(() => stopPlayback, [stopPlayback]);
 
   useEffect(() => {
-    if (isPlaying)
-      engineRef.current?.setMetroVolume(metronomeOn ? metroVolume : 0);
+    if (isPlaying) engineRef.current?.setMetroVolume(metronomeOn ? metroVolume : 0);
   }, [metronomeOn, metroVolume, isPlaying]);
 
-  function startPlayback() {
+  function currentSoundSource(): SoundSource {
+    return soundMode === "sample"
+      ? { kind: "sample", instrumentId: sampleInstrument }
+      : { kind: "synth", timbre };
+  }
+
+  async function handleSampleInstrumentChange(id: SampleInstrumentId) {
+    setSampleInstrument(id);
+    setSamplesLoading(true);
+    try {
+      await engineRef.current!.preloadInstrumentRange(id);
+    } finally {
+      setSamplesLoading(false);
+    }
+  }
+
+  async function startPlayback() {
     if (bars.length === 0) return;
     const engine = engineRef.current!;
+    const soundSource = currentSoundSource();
+
+    // Safety net: covers notes outside the eagerly-preloaded range, or
+    // playback starting before that preload finished.
+    if (soundSource.kind === "sample") {
+      const midiPitches = new Set<number>();
+      bars.forEach((barChords) => {
+        barChords.forEach((c) => {
+          const v = generateVoicing(c.root, c.quality, voicingStyle, null);
+          v.notes.forEach((n) => midiPitches.add(n));
+          midiPitches.add(v.bass);
+        });
+      });
+      await engine.preloadSamples(soundSource.instrumentId, [...midiPitches]);
+    }
+
     const ctx = engine.ensureContext();
     engine.setMetroVolume(metronomeOn ? metroVolume : 0);
     engine.stopAll();
@@ -205,7 +238,7 @@ export default function ChordPatternPracticer({
             lastVoicingRef.current.bass,
             item.time,
             item.chord.beats * secPerBeat,
-            timbre,
+            soundSource,
           );
         }
       });
@@ -235,14 +268,8 @@ export default function ChordPatternPracticer({
     function tick() {
       if (myGen !== playGenRef.current) return;
       const now = ctx.currentTime;
-      while (
-        queueIdx < currentQueue.length &&
-        currentQueue[queueIdx].time <= now
-      ) {
-        if (
-          currentQueue[queueIdx].chord ||
-          currentQueue[queueIdx].beatInBar === 0
-        ) {
+      while (queueIdx < currentQueue.length && currentQueue[queueIdx].time <= now) {
+        if (currentQueue[queueIdx].chord || currentQueue[queueIdx].beatInBar === 0) {
           setCurrentBar(currentQueue[queueIdx].barIndex);
         }
         queueIdx++;
@@ -384,9 +411,7 @@ export default function ChordPatternPracticer({
                 </label>
                 <select
                   value={voicingStyle}
-                  onChange={(e) =>
-                    setVoicingStyle(e.target.value as VoicingStyleId)
-                  }
+                  onChange={(e) => setVoicingStyle(e.target.value as VoicingStyleId)}
                   className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
                 >
                   {VOICING_STYLES.map((v) => (
@@ -398,18 +423,15 @@ export default function ChordPatternPracticer({
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
-                  Sound
-                </label>
-                <select
-                  value={timbre}
-                  onChange={(e) => setTimbre(e.target.value as Timbre)}
-                  className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
-                >
-                  <option value="piano">Piano</option>
-                  <option value="epiano">Electric Piano</option>
-                  <option value="synth">Synth</option>
-                </select>
+                <SoundSourceSelector
+                  soundMode={soundMode}
+                  onChangeSoundMode={setSoundMode}
+                  timbre={timbre}
+                  onChangeTimbre={setTimbre}
+                  sampleInstrument={sampleInstrument}
+                  onChangeSampleInstrument={handleSampleInstrumentChange}
+                  samplesLoading={samplesLoading}
+                />
               </div>
 
               <div className="flex flex-col gap-1.5">
@@ -428,11 +450,7 @@ export default function ChordPatternPracticer({
                           : "text-[#8A8580] hover:text-[#F2EDE4]"
                       }`}
                     >
-                      {inst === "C"
-                        ? "C"
-                        : inst === "Bb"
-                          ? "B\u266D"
-                          : "E\u266D"}
+                      {inst === "C" ? "C" : inst === "Bb" ? "B\u266D" : "E\u266D"}
                     </button>
                   ))}
                 </div>
@@ -529,8 +547,8 @@ export default function ChordPatternPracticer({
         </div>
         {!controlsHidden && (
           <p className="text-[10px] text-[#8A8580] font-mono mt-3">
-            Showing the first {Math.min(48, displayBars.length)} bars — playback
-            loops the generated cycle continuously.
+            Showing the first {Math.min(48, displayBars.length)} bars —
+            playback loops the generated cycle continuously.
           </p>
         )}
       </section>
