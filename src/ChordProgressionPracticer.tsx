@@ -5,6 +5,7 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
+import SoundSourceSelector from "./SoundSourceSelector";
 
 // ============================================================================
 // TYPES
@@ -66,12 +67,57 @@ type Articulation = "block" | "staccato";
 type Subdivision = "quarter" | "eighth" | "sixteenth";
 type AccentMode = "downbeat" | "all";
 type Instrument = "C" | "Bb" | "Eb";
+type SoundMode = "synth" | "sample";
+
+// Sample-based instruments, ported from the ear trainer app's instrument
+// list verbatim, so the same sample pack (expected at
+// /public/samples/{id}-mp3/{NoteName}{Octave}.mp3, e.g. "C4.mp3") works
+// here without renaming anything.
+const SAMPLE_INSTRUMENTS: { id: string; label: string }[] = [
+  { id: "accordion", label: "Accordion" },
+  { id: "acoustic_grand_piano", label: "Grand Piano" },
+  { id: "alto_sax", label: "Alto Sax" },
+  { id: "baritone_sax", label: "Baritone Sax" },
+  { id: "bassoon", label: "Bassoon" },
+  { id: "bright_acoustic_piano", label: "Bright Piano" },
+  { id: "celesta", label: "Celesta" },
+  { id: "cello", label: "Cello" },
+  { id: "clarinet", label: "Clarinet" },
+  { id: "dulcimer", label: "Dulcimer" },
+  { id: "electric_guitar_clean", label: "Clean Guitar" },
+  { id: "electric_guitar_jazz", label: "Jazz Guitar" },
+  { id: "electric_piano_1", label: "E. Piano 1" },
+  { id: "electric_piano_2", label: "E. Piano 2" },
+  { id: "english_horn", label: "English Horn" },
+  { id: "flute", label: "Flute" },
+  { id: "french_horn", label: "French Horn" },
+  { id: "muted_trumpet", label: "Muted Trumpet" },
+  { id: "oboe", label: "Oboe" },
+  { id: "tenor_sax", label: "Tenor Sax" },
+  { id: "trombone", label: "Trombone" },
+  { id: "trumpet", label: "Trumpet" },
+  { id: "viola", label: "Viola" },
+  { id: "violin", label: "Violin" },
+];
+
+type SampleInstrumentId = (typeof SAMPLE_INSTRUMENTS)[number]["id"];
+
+// A SoundSource is either "play this through the built-in oscillator synth
+// with this timbre" (existing behavior, unchanged) or "play this through
+// real recorded samples of this instrument" (new). playChord/playNote now
+// take one of these instead of a bare Timbre, and branch internally.
+type SoundSource =
+  | { kind: "synth"; timbre: Timbre }
+  | { kind: "sample"; instrumentId: SampleInstrumentId };
+
+const DEFAULT_SOUND_SOURCE: SoundSource = { kind: "synth", timbre: "piano" };
 
 interface VoicedChord {
   notes: number[];
   closedNotes: number[];
   bass: number;
 }
+
 
 // ============================================================================
 // JAZZ STANDARDS DATA
@@ -740,7 +786,12 @@ class AudioEngine {
   masterGain: GainNode | null = null;
   metroGain: GainNode | null = null;
   chordGain: GainNode | null = null;
-  activeNodes: Set<OscillatorNode> = new Set(); // tracks every oscillator currently scheduled/playing
+  // Holds both oscillators (synth) and buffer sources (samples) — widening
+  // this lets stopAll() immediately silence either sound source uniformly.
+  activeNodes: Set<OscillatorNode | AudioBufferSourceNode> = new Set();
+
+  private bufferCache: Map<string, AudioBuffer> = new Map();
+  private pendingFetches: Map<string, Promise<AudioBuffer | null>> = new Map();
 
   ensureContext(): AudioContext {
     if (!this.ctx) {
@@ -764,6 +815,144 @@ class AudioEngine {
 
   setMetroVolume(v: number): void {
     if (this.metroGain) this.metroGain.gain.value = v;
+  }
+
+  // ----------------------------------------------------------------------
+  // Sample loading (mirrors musicEngine.ts's sample engine)
+  // ----------------------------------------------------------------------
+  private midiToSampleName(midi: number): string {
+    const FLAT = [
+      "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B",
+    ];
+    return `${FLAT[((midi % 12) + 12) % 12]}${Math.floor(midi / 12) - 1}`;
+  }
+
+  private sampleBaseUrl(): string {
+    try {
+      const base = (import.meta as any)?.env?.BASE_URL ?? "/";
+      return String(base).replace(/\/$/, "");
+    } catch {
+      return "";
+    }
+  }
+
+  private async getSampleBuffer(
+    instrumentId: string,
+    targetMidi: number,
+  ): Promise<{ buffer: AudioBuffer; semitoneShift: number } | null> {
+    const exactKey = `${instrumentId}_${targetMidi}`;
+    const exact = this.bufferCache.get(exactKey);
+    if (exact) return { buffer: exact, semitoneShift: 0 };
+
+    const offsets = [0, -1, 1, -2, 2, -3, 3, -4, 4, -5, 5, -6, 6, -7, 7, -8, 8, -9, 9, -10, 10, -11, 11, -12, 12];
+    for (const off of offsets) {
+      const midi = targetMidi + off;
+      const key = `${instrumentId}_${midi}`;
+      if (off !== 0) {
+        const cached = this.bufferCache.get(key);
+        if (cached) return { buffer: cached, semitoneShift: -off };
+      }
+      if (off === 0) {
+        const buf = await this.fetchAndDecode(instrumentId, midi, key);
+        if (buf) return { buffer: buf, semitoneShift: 0 };
+      }
+    }
+    return null;
+  }
+
+  private fetchAndDecode(
+    instrumentId: string,
+    midi: number,
+    cacheKey: string,
+  ): Promise<AudioBuffer | null> {
+    const pending = this.pendingFetches.get(cacheKey);
+    if (pending) return pending;
+
+    const promise = (async () => {
+      try {
+        const ctx = this.ensureContext();
+        const url = `${this.sampleBaseUrl()}/samples/${instrumentId}-mp3/${this.midiToSampleName(midi)}.mp3`;
+        const res = await fetch(url);
+        if (!res.ok) return null;
+        const buf = await ctx.decodeAudioData(await res.arrayBuffer());
+        this.bufferCache.set(cacheKey, buf);
+        return buf;
+      } catch {
+        return null;
+      } finally {
+        this.pendingFetches.delete(cacheKey);
+      }
+    })();
+
+    this.pendingFetches.set(cacheKey, promise);
+    return promise;
+  }
+
+  async preloadSamples(
+    instrumentId: SampleInstrumentId,
+    midiNotes: number[],
+  ): Promise<void> {
+    const unique = Array.from(new Set(midiNotes));
+    await Promise.all(
+      unique.map((midi) => this.getSampleBuffer(instrumentId, midi)),
+    );
+  }
+
+  // Eagerly loads a practical playing range for an instrument all at once
+  // — call this once when the user selects a sample instrument (with a
+  // loading indicator), rather than per-piece, so playback afterward is
+  // instant with no further preload step.
+  async preloadInstrumentRange(
+    instrumentId: SampleInstrumentId,
+    minMidi = 36,
+    maxMidi = 96,
+  ): Promise<void> {
+    const notes: number[] = [];
+    for (let m = minMidi; m <= maxMidi; m++) notes.push(m);
+    await this.preloadSamples(instrumentId, notes);
+  }
+
+  // Plays one note through real recorded samples. The gain envelope fades
+  // to near-silence by `time + duration` and hard-stops the underlying
+  // buffer source shortly after, regardless of how long the raw sample
+  // naturally rings on — this is what prevents fast chord changes from
+  // bleeding into each other.
+  private _playSampledVoice(
+    instrumentId: SampleInstrumentId,
+    midi: number,
+    gainScale: number,
+    dest: GainNode,
+    time: number,
+    duration: number,
+  ): void {
+    const ctx = this.ensureContext();
+    this.getSampleBuffer(instrumentId, midi).then((result) => {
+      if (!result || ctx.currentTime > time + duration) return;
+
+      const source = ctx.createBufferSource();
+      source.buffer = result.buffer;
+      if (result.semitoneShift) {
+        source.playbackRate.value = Math.pow(2, result.semitoneShift / 12);
+      }
+
+      const gain = ctx.createGain();
+      gain.gain.value = 0;
+      source.connect(gain);
+      gain.connect(dest);
+
+      const attack = 0.02;
+      const release = Math.min(0.3, duration * 0.4);
+      const sustainEnd = Math.max(time + attack, time + duration - release);
+      gain.gain.setValueAtTime(0, time);
+      gain.gain.linearRampToValueAtTime(0.5 * gainScale, time + attack);
+      gain.gain.setValueAtTime(0.5 * gainScale, sustainEnd);
+      gain.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+
+      source.start(time);
+      source.stop(time + duration + 0.1);
+      this.activeNodes.add(source);
+      source.onended = () => this.activeNodes.delete(source);
+    });
   }
 
   // Immediately silences and disconnects every oscillator this engine has
@@ -923,9 +1112,18 @@ class AudioEngine {
     bassNote: number,
     time: number,
     duration: number,
-    timbre: Timbre = "piano",
+    soundSource: SoundSource = DEFAULT_SOUND_SOURCE,
   ): void {
     this.ensureContext();
+    if (soundSource.kind === "sample") {
+      const { instrumentId } = soundSource;
+      midiNotes.forEach((n) =>
+        this._playSampledVoice(instrumentId, n, 1, this.chordGain!, time, duration),
+      );
+      this._playSampledVoice(instrumentId, bassNote, 1.3, this.chordGain!, time, duration);
+      return;
+    }
+    const { timbre } = soundSource;
     midiNotes.forEach((n) =>
       this._playVoice(n, 1, this.chordGain!, time, duration, timbre),
     );
@@ -1064,6 +1262,11 @@ export default function ChordProgressionPracticer({
   const [voicingStyle, setVoicingStyle] = useState<VoicingStyleId>("closed");
   const [articulation, setArticulation] = useState<Articulation>("block");
   const [timbre, setTimbre] = useState<Timbre>("piano");
+  const [soundMode, setSoundMode] = useState<SoundMode>("synth");
+  const [sampleInstrument, setSampleInstrument] = useState<SampleInstrumentId>(
+    "acoustic_grand_piano",
+  );
+  const [samplesLoading, setSamplesLoading] = useState(false);
   const [showChart, setShowChart] = useState(true);
   const [displayInstrument, setDisplayInstrument] = useState<Instrument>("C"); // cosmetic only — never affects audio
 
@@ -1237,10 +1440,43 @@ export default function ChordProgressionPracticer({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSong, selectedKey, bpm]);
 
+  function currentSoundSource(): SoundSource {
+    return soundMode === "sample"
+      ? { kind: "sample", instrumentId: sampleInstrument }
+      : { kind: "synth", timbre };
+  }
+
+  async function handleSampleInstrumentChange(id: SampleInstrumentId) {
+    setSampleInstrument(id);
+    setSamplesLoading(true);
+    try {
+      await engineRef.current!.preloadInstrumentRange(id);
+    } finally {
+      setSamplesLoading(false);
+    }
+  }
+
   // ---- Scheduler ----
-  function startPlayback() {
+  async function startPlayback() {
     if (!selectedSong || bars.length === 0) return;
     const engine = engineRef.current!;
+    const soundSource = currentSoundSource();
+
+    // Safety net: covers notes outside the eagerly-preloaded range, or
+    // playback starting before that preload finished.
+    if (soundSource.kind === "sample") {
+      const midiPitches = new Set<number>();
+      bars.forEach((barChords) => {
+        barChords.forEach((c) => {
+          if (c.isRest) return;
+          const v = generateVoicing(c.root, c.quality, voicingStyle, null);
+          v.notes.forEach((n) => midiPitches.add(n));
+          midiPitches.add(v.bass);
+        });
+      });
+      await engine.preloadSamples(soundSource.instrumentId, [...midiPitches]);
+    }
+
     const ctx = engine.ensureContext();
     engine.setMetroVolume(metronomeOn ? metroVolume : 0);
 
@@ -1340,7 +1576,7 @@ export default function ChordProgressionPracticer({
             lastVoicingRef.current.bass,
             item.time,
             duration,
-            timbre,
+            soundSource,
           );
         }
       });
@@ -1511,8 +1747,7 @@ export default function ChordProgressionPracticer({
                   // verbatim (i.e. the user hasn't typed anything new since
                   // picking it), clear it so refocusing browses the full list
                   // again rather than re-filtering down to that one song.
-                  if (selectedSong && query === selectedSong.title)
-                    setQuery("");
+                  if (selectedSong && query === selectedSong.title) setQuery("");
                   setShowResults(true);
                 }}
                 placeholder="Search or click to browse all standards\u2026"
@@ -1698,18 +1933,15 @@ export default function ChordProgressionPracticer({
 
                 {/* Sound / timbre */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs uppercase tracking-wide text-[#8A8580] font-mono">
-                    Sound
-                  </label>
-                  <select
-                    value={timbre}
-                    onChange={(e) => setTimbre(e.target.value as Timbre)}
-                    className="bg-[#272524] border border-[#4a4744] rounded-md px-2.5 py-2 text-sm focus:border-[#D4A24C] focus:outline-none"
-                  >
-                    <option value="piano">Piano</option>
-                    <option value="epiano">Electric Piano</option>
-                    <option value="synth">Synth</option>
-                  </select>
+                  <SoundSourceSelector
+                    soundMode={soundMode}
+                    onChangeSoundMode={setSoundMode}
+                    timbre={timbre}
+                    onChangeTimbre={setTimbre}
+                    sampleInstrument={sampleInstrument}
+                    onChangeSampleInstrument={handleSampleInstrumentChange}
+                    samplesLoading={samplesLoading}
+                  />
                 </div>
               </div>
             </section>
